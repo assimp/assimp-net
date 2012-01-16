@@ -1,0 +1,336 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Text;
+using System.Runtime.InteropServices;
+using Assimp.Unmanaged;
+
+namespace Assimp {
+    /// <summary>
+    /// A mesh represents geometry with a single material.
+    /// </summary>
+    public class Mesh {
+        private String _name;
+        private PrimitiveType _primitiveType;
+        private int _materialIndex;
+        private int _vertexCount;
+        private Vector3D[] _vertices;
+        private Vector3D[] _normals;
+        private Vector3D[] _tangents;
+        private Vector3D[] _bitangents;
+        private Face[] _faces;
+        private List<Color4D[]> _colors;
+        private List<Vector3D[]> _texCoords;
+        private List<uint> _texComponentNumber;
+
+        //TODO:
+        //Bones
+        //AnimMeshes
+
+        /// <summary>
+        /// Gets the mesh name. This tends to be used
+        /// when formats name nodes and meshes independently,
+        /// vertex animations refer to meshes by their names,
+        /// or importers split meshes up, each mesh will reference
+        /// the same (dummy) name.
+        /// </summary>
+        public String Name {
+            get {
+                return _name;
+            }
+        }
+
+        /// <summary>
+        /// Gets the primitive type. This may contain more than one
+        /// type unless if <see cref="Assimp.PostProcessStep.SortByPrimitiveType"/>
+        /// option is not set.
+        /// </summary>
+        public PrimitiveType PrimitiveType {
+            get {
+                return _primitiveType;
+            }
+        }
+
+        /// <summary>
+        /// Gets the index of the material associated with this mesh.
+        /// </summary>
+        public int MaterialIndex {
+            get {
+                return _materialIndex;
+            }
+        }
+
+        /// <summary>
+        /// Gets the number of vertices in this mesh. This is also
+        /// the size for all per-vertex data arays.
+        /// </summary>
+        public int VertexCount {
+            get {
+                return _vertexCount;
+            }
+        }
+
+        /// <summary>
+        /// Gets if the mesh has a vertex array. This should always return
+        /// true provided no special scene flags are set.
+        /// </summary>
+        public bool HasVertices {
+            get {
+                return _vertices != null;
+            }
+        }
+
+        /// <summary>
+        /// Gets the vertex position array.
+        /// </summary>
+        public Vector3D[] Vertices {
+            get {
+                return _vertices;
+            }
+        }
+
+        /// <summary>
+        /// Gets if the mesh as normals.
+        /// </summary>
+        public bool HasNormals {
+            get {
+                return _normals != null;
+            }
+        }
+
+        /// <summary>
+        /// Gets the vertex normal array.
+        /// </summary>
+        public Vector3D[] Normals {
+            get {
+                return _normals;
+            }
+        }
+
+        /// <summary>
+        /// Gets if the mesh has tangents and bitangents. It is not
+        /// possible for one to be without the other.
+        /// </summary>
+        public bool HasTangentBasis {
+            get {
+                return VertexCount > 0 && _tangents != null &&_bitangents != null;
+            }
+        }
+
+        /// <summary>
+        /// Gets the vertex tangent array.
+        /// </summary>
+        public Vector3D[] Tangents {
+            get {
+                return _tangents;
+            }
+        }
+
+        /// <summary>
+        /// Gets the vertex bitangent array.
+        /// </summary>
+        public Vector3D[] BiTangents {
+            get {
+                return _bitangents;
+            }
+        }
+
+        /// <summary>
+        /// Gets the number of faces contained in the mesh.
+        /// </summary>
+        public int FaceCount {
+            get {
+                return (_faces == null) ? 0 : _faces.Length;
+            }
+        }
+
+        /// <summary>
+        /// Gets if the mesh contains faces. If no special
+        /// scene flags are set, this should always return true.
+        /// </summary>
+        public bool HasFaces {
+            get {
+                return _faces != null;
+            }
+        }
+
+        /// <summary>
+        /// Gets the mesh's faces. Each face will contain indices
+        /// to the vertices.
+        /// </summary>
+        public Face[] Faces {
+            get {
+                return _faces;
+            }
+        }
+
+        /// <summary>
+        /// Gets the number of valid vertex color channels contained in the
+        /// mesh. This can be a value between zero and the maximum vertex color count.
+        /// </summary>
+        public int VertexColorChannelCount {
+            get {
+                return (_colors == null) ? 0 : _colors.Count;
+            }
+        }
+
+        /// <summary>
+        /// Gets the number of valid texture coordinate channels contained
+        /// in the mesh. This can be a value between zero and the maximum texture coordinate count.
+        /// </summary>
+        public int TextureCoordsChannelCount {
+            get {
+                return (_texCoords == null) ? 0 : _texCoords.Count;
+            }
+        }
+
+        internal Mesh(AiMesh mesh) {
+            _name = mesh.Name.Data;
+            _primitiveType = mesh.PrimitiveTypes;
+            _vertexCount = (int) mesh.NumVertices;
+            _materialIndex = (int) mesh.MaterialIndex;
+
+            if(mesh.NumVertices > 0) {
+                if(mesh.Vertices != IntPtr.Zero) {
+                    _vertices = MemoryHelper.MarshalArray<Vector3D>(mesh.Vertices, _vertexCount);
+                }
+                if(mesh.Normals != IntPtr.Zero) {
+                    _normals = MemoryHelper.MarshalArray<Vector3D>(mesh.Normals, _vertexCount);
+                }
+                if(mesh.Tangents != IntPtr.Zero) {
+                    _tangents = MemoryHelper.MarshalArray<Vector3D>(mesh.Tangents, _vertexCount);
+                }
+                if(mesh.BiTangents != IntPtr.Zero) {
+                    _bitangents = MemoryHelper.MarshalArray<Vector3D>(mesh.BiTangents, _vertexCount);
+                }
+            }
+
+            if(mesh.NumFaces > 0 && mesh.Faces != IntPtr.Zero) {
+                AiFace[] faces = MemoryHelper.MarshalArray<AiFace>(mesh.Faces, (int) mesh.NumFaces);
+                _faces = new Face[faces.Length];
+                for(int i = 0; i < _faces.Length; i++) {
+                    _faces[i] = new Face(faces[i]);
+                }
+            }
+
+            uint[] components = mesh.NumUVComponents;
+            if(components != null) {
+                _texComponentNumber = new List<uint>();
+                foreach(uint num in components) {
+                    if(num > 0) {
+                        _texComponentNumber.Add(num);
+                    }
+                }
+            }
+
+            IntPtr[] texCoords = mesh.TextureCoords;
+            if(texCoords != null) {
+                _texCoords = new List<Vector3D[]>();
+                foreach(IntPtr texPtr in texCoords) {
+                    if(texPtr != IntPtr.Zero) {
+                        _texCoords.Add(MemoryHelper.MarshalArray<Vector3D>(texPtr, _vertexCount));
+                    }
+                }
+            }
+
+            IntPtr[] vertexColors = mesh.Colors;
+            if(vertexColors != null) {
+                _colors = new List<Color4D[]>();
+                foreach(IntPtr colorPtr in vertexColors) {
+                    if(colorPtr != IntPtr.Zero) {
+                        _colors.Add(MemoryHelper.MarshalArray<Color4D>(colorPtr, _vertexCount));
+                    }
+                }
+            }
+            
+            //TODO: Bones, Animations
+        }
+
+        public bool HasVertexColors(int channelIndex) {
+            if(_colors != null) {
+                if(channelIndex >= _colors.Count || channelIndex < 0) {
+                    return false;
+                }
+                return VertexCount > 0 && _colors[channelIndex] != null;
+            }
+            return false;
+        }
+
+        public bool HasTextureCoords(int channelIndex) {
+            if(_texCoords != null) {
+                if(channelIndex >= _texCoords.Count || channelIndex < 0) {
+                    return false;
+                }
+                return VertexCount > 0 && _texCoords[channelIndex] != null;
+            }
+            return false;
+        }
+
+        public Color4D[] GetVertexColors(int channelIndex) {
+            if(HasVertexColors(channelIndex)) {
+                return _colors[channelIndex];
+            }
+            return null;
+        }
+
+        public Vector3D[] GetTextureCoords(int channelIndex) {
+            if(HasTextureCoords(channelIndex)) {
+                return _texCoords[channelIndex];
+            }
+            return null;
+        }
+
+        public int GetUVComponentCount(int channelIndex) {
+            if(HasTextureCoords(channelIndex)) {
+                if(_texComponentNumber != null) {
+                    return (int)_texComponentNumber[channelIndex];
+                }
+            }
+            return 0;
+        }
+
+        public uint[] GetIndices() {
+            if(HasFaces) {
+                List<uint> indices = new List<uint>();
+                foreach(Face face in _faces) {
+                    if(face.IndexCount > 0 && face.Indices != null) {
+                        indices.AddRange(face.Indices);
+                    }
+                }
+                return indices.ToArray();
+            }
+            return null;
+        }
+
+        public int[] GetIntIndices() {
+            if(HasFaces) {
+                List<int> indices = new List<int>();
+                foreach(Face face in _faces) {
+                    if(face.IndexCount > 0 && face.Indices != null) {
+                        indices.AddRange(face.IntIndices);
+                    }
+                }
+                return indices.ToArray();
+            }
+            return null;
+        }
+
+        public short[] GetShortIndices() {
+            //We could use a dirty hack here to do a conversion...but may as well be
+            //safe just in case
+            if(HasFaces) {
+                List<short> indices = new List<short>();
+                foreach(Face face in _faces) {
+                    if(face.IndexCount > 0 && face.Indices != null) {
+                        foreach(uint index in face.Indices) {
+                            indices.Add((short) index);
+                        }
+                    }
+                }
+                return indices.ToArray();
+            }
+            return null;
+        }
+    }
+}
