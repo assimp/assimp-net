@@ -796,7 +796,7 @@ namespace Assimp {
     /// <summary>
     /// Defines the purpose of a texture.
     /// </summary>
-    public enum TextureType {
+    public enum TextureType : uint {
         /// <summary>
         /// No texture, but the value can be used as a 'texture semantic'.
         /// </summary>

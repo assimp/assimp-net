@@ -31,9 +31,9 @@ namespace Assimp {
         private Node _rootNode;
         private Mesh[] _meshes;
         private Light[] _lights;
+        private Camera[] _cameras;
 
         //TODO:
-        //Cameras
         //Animations
         //Materials
         //Textures
@@ -92,10 +92,34 @@ namespace Assimp {
             }
         }
 
+        public int CameraCount {
+            get {
+                return (_cameras == null) ? 0 : _cameras.Length;
+            }
+        }
+
+        public bool HasCameras {
+            get {
+                return _cameras != null;
+            }
+        }
+
+        public Camera[] Cameras {
+            get {
+                return _cameras;
+            }
+        }
+
         internal Scene(AiScene scene, MemoryInfo memInfo) {
             _memInfo = memInfo;
             _flags = scene.Flags;
 
+            //Read scenegraph
+            if(scene.RootNode != IntPtr.Zero) {
+                _rootNode = new Node(MemoryHelper.MarshalStructure<AiNode>(scene.RootNode), null);
+            }
+
+            //Read meshes
             if(scene.NumMeshes > 0 && scene.Meshes != IntPtr.Zero) {
                 AiMesh[] meshes = MemoryHelper.MarshalArray<AiMesh>(Marshal.ReadIntPtr(scene.Meshes), (int) scene.NumMeshes);
                 _meshes = new Mesh[meshes.Length];
@@ -104,15 +128,21 @@ namespace Assimp {
                 }
             }
 
-            if(scene.RootNode != IntPtr.Zero) {
-                _rootNode = new Node(MemoryHelper.MarshalStructure<AiNode>(scene.RootNode), null);
-            }
-
+            //Read lights
             if(scene.NumLights > 0 && scene.Lights != IntPtr.Zero) {
                 AiLight[] lights = MemoryHelper.MarshalArray<AiLight>(Marshal.ReadIntPtr(scene.Lights), (int) scene.NumLights);
                 _lights = new Light[lights.Length];
                 for(int i = 0; i < _lights.Length; i++) {
                     _lights[i] = new Light(lights[i]);
+                }
+            }
+
+            //Read cameras
+            if(scene.NumCameras > 0 && scene.Cameras != IntPtr.Zero) {
+                AiCamera[] cameras = MemoryHelper.MarshalArray<AiCamera>(Marshal.ReadIntPtr(scene.Cameras), (int) scene.NumCameras);
+                _cameras = new Camera[cameras.Length];
+                for(int i = 0; i < _cameras.Length; i++) {
+                    _cameras[i] = new Camera(cameras[i]);
                 }
             }
         }
