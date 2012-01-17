@@ -128,7 +128,14 @@ namespace Assimp.Unmanaged {
         public static extern void SetImportPropertyFloat([InAttribute()] [MarshalAsAttribute(UnmanagedType.LPStr)] String name, float value);
 
         [DllImportAttribute(AssimpDLL, EntryPoint = "aiSetImportPropertyString", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void SetImportPropertyString([InAttribute()] [MarshalAsAttribute(UnmanagedType.LPStr)] String name, ref AiString value);
+        private static extern void SetImportPropertyString([InAttribute()] [MarshalAsAttribute(UnmanagedType.LPStr)] String name, ref AiString value);
+
+        public static void SetImportPropertyString(String name, String value) {
+            AiString str = new AiString();
+            str.Data = value;
+            str.Length = (uint) System.Text.UTF8Encoding.UTF8.GetByteCount(value);
+            SetImportPropertyString(name, ref str);
+        }
 
         #endregion
 
