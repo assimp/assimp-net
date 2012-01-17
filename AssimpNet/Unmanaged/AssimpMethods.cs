@@ -133,6 +133,7 @@ namespace Assimp.Unmanaged {
         public static void SetImportPropertyString(String name, String value) {
             AiString str = new AiString();
             str.Data = value;
+            //Note: aiTypes.h specifies aiString is UTF-8 encoded string.
             str.Length = (uint) System.Text.UTF8Encoding.UTF8.GetByteCount(value);
             SetImportPropertyString(name, ref str);
         }
