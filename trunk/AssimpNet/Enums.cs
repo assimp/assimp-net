@@ -80,7 +80,7 @@ namespace Assimp {
         /// </para>
         /// <list type="number">
         /// <item>
-        /// <description>Specify both <see cref="Assimp.PostProcessSteps.Triangulate"/> and <see cref="Assimp.PostProcessSteps.SortByPrimitiveType"/>.</description>
+        /// <description>Specify both <see cref="PostProcessSteps.Triangulate"/> and <see cref="PostProcessSteps.SortByPrimitiveType"/>.</description>
         /// </item>
         /// <item>
         /// <description>Ignore all point and line meshes when you process Assimp's output</description>
@@ -109,21 +109,21 @@ namespace Assimp {
 
         /// <summary>
         /// Generates normals for all faces of all meshes. It may not be
-        /// specified together with <see cref="Assimp.PostProcessSteps.GenerateSmoothNormals"/>.
+        /// specified together with <see cref="PostProcessSteps.GenerateSmoothNormals"/>.
         /// <para>
         /// This is ignored if normals are already there at the time where this
         /// flag is evaluated. Model importers try to load them from the source file,
         /// so they're usually already there. Face normals are shared between all
         /// points of a single face, so a single point can have multiple normals,
         /// which in other words, forces the library to duplicate vertices in
-        /// some cases. This makes <see cref="Assimp.PostProcessSteps.JoinIdenticalVertices"/> senseless then.
+        /// some cases. This makes <see cref="PostProcessSteps.JoinIdenticalVertices"/> senseless then.
         /// </para>
         /// </summary>
         GenerateNormals = 0x20,
 
         /// <summary>
         /// Generates smooth normals for all vertices of all meshes. It
-        /// may not be specified together with <see cref="Assimp.PostProcessSteps.GenerateNormals"/>.
+        /// may not be specified together with <see cref="PostProcessSteps.GenerateNormals"/>.
         /// <para>
         /// This is ignored if normals are already there at the time where
         /// this flag is evaluated. Model importers try to load them from the
@@ -272,7 +272,7 @@ namespace Assimp {
         /// This step searches all meshes for degenerated primitives and
         /// converts them to proper lines or points. A face is 'degenerated' if one or more of its points are identical.
         /// <para>
-        /// To have degenerated primitives removed, specify the <see cref="Assimp.PostProcessSteps.FindDegenerates"/> flag
+        /// To have degenerated primitives removed, specify the <see cref="PostProcessSteps.FindDegenerates"/> flag
         /// try one of the following procedures:
         /// </para>
         /// <list type="numbers">
@@ -282,9 +282,9 @@ namespace Assimp {
         /// soon as they are detected. They won't pass any further pipeline steps.</description>
         /// </item>
         /// <item>
-        /// <description>If you don't support lines and points: Specify <see cref="Assimp.PostProcessSteps.SortByPrimitiveType"/> flag, which
+        /// <description>If you don't support lines and points: Specify <see cref="PostProcessSteps.SortByPrimitiveType"/> flag, which
         /// will move line and point primitives to separate meshes.  Then set the AI_CONFIG_PP_SBP_REMOVE
-        /// option to <see cref="Assimp.PrimitiveType.Point"/> and <see cref="Assimp.PrimitiveType.Line"/> to cause <see cref="Assimp.PostProcessSteps.SortByPrimitiveType"/> step
+        /// option to <see cref="PrimitiveType.Point"/> and <see cref="PrimitiveType.Line"/> to cause <see cref="PostProcessSteps.SortByPrimitiveType"/> step
         /// to reject point and line meshes from the scene.</description>
         /// </item>
         /// </list>
@@ -357,8 +357,8 @@ namespace Assimp {
         /// <summary>
         /// Attempts to reduce the number of meshes (and draw calls). 
         /// <para>
-        /// This is recommended to be used together with <see cref="Assimp.PostProcessSteps.OptimizeGraph"/>
-        /// and is fully compatible with both <see cref="Assimp.PostProcessSteps.SplitLargeMeshes"/> and <see cref="Assimp.PostProcessSteps.SortByPrimitiveType"/>.
+        /// This is recommended to be used together with <see cref="PostProcessSteps.OptimizeGraph"/>
+        /// and is fully compatible with both <see cref="PostProcessSteps.SplitLargeMeshes"/> and <see cref="PostProcessSteps.SortByPrimitiveType"/>.
         /// </para>
         /// </summary>
         OptimizeMeshes = 0x200000,
@@ -377,12 +377,12 @@ namespace Assimp {
         /// optimization if you just want to get the model data, convert it to your
         /// own format and render it as fast as possible. </para>
         /// 
-        /// <para>This flag is designed to be used with <see cref="Assimp.PostProcessSteps.OptimizeMeshes"/> for best
+        /// <para>This flag is designed to be used with <see cref="PostProcessSteps.OptimizeMeshes"/> for best
         /// results.</para>
         /// 
         /// <para>Scenes with thousands of extremely small meshes packed
         /// in deeply nested nodes exist for almost all file formats.
-        /// Usage of this and <see cref="Assimp.PostProcessSteps.OptimizeMeshes"/> usually fixes them all and
+        /// Usage of this and <see cref="PostProcessSteps.OptimizeMeshes"/> usually fixes them all and
         /// makes them renderable.</para>
         /// </summary>
         OptimizeGraph = 0x400000,
@@ -405,7 +405,7 @@ namespace Assimp {
     /// RemoveComponent.
     /// </summary>
     [Flags]
-    public enum ExcludeComponent : uint {
+    public enum ExcludeComponent {
         /// <summary>
         /// Removes normal vectors
         /// </summary>
@@ -653,7 +653,7 @@ namespace Assimp {
 
         /// <summary>
         /// Explicit request to the application to process the alpha channel of the texture. This is mutually
-        /// exclusive with <see cref="Assimp.TextureFlags.IgnoreAlpha"/>. These flags are
+        /// exclusive with <see cref="TextureFlags.IgnoreAlpha"/>. These flags are
         /// set if the library can say for sure that the alpha channel is used/is not used.
         /// If the model format does not define this, iti s left to the application to decide
         /// whether the texture alpha channel - if any - is evaluated or not.
@@ -662,7 +662,7 @@ namespace Assimp {
 
         /// <summary>
         /// Explicit request to the application to ignore the alpha channel of the texture. This is mutually
-        /// exclusive with <see cref="Assimp.TextureFlags.UseAlpha"/>.
+        /// exclusive with <see cref="TextureFlags.UseAlpha"/>.
         /// </summary>
         IgnoreAlpha = 0x4
     }
@@ -699,7 +699,7 @@ namespace Assimp {
     /// Defines how texture coordinates are generated
     /// <para>
     /// Real-time applications typically require full UV coordinates. So the use
-    /// of <see cref="Assimp.PostProcessSteps.GenerateUVCoords"/> step is highly recommended.
+    /// of <see cref="PostProcessSteps.GenerateUVCoords"/> step is highly recommended.
     /// It generates proper UV channels for non-UV mapped objects, as long as an accurate
     /// description of how the mapping should look like is given.
     /// </para>
@@ -890,14 +890,14 @@ namespace Assimp {
         Incomplete = 0x1,
 
         /// <summary>
-        /// This flag is set by the <see cref="Assimp.PostProcessSteps.ValidateDataStructure"/>
+        /// This flag is set by the <see cref="PostProcessSteps.ValidateDataStructure"/>
         /// post process step if validation is successful. In a validated scene you can be sure that any
         /// cross references in the data structure (e.g. vertex indices) are valid.
         /// </summary>
         Validated = 0x2,
 
         /// <summary>
-        /// This flag is set by the <see cref="Assimp.PostProcessSteps.ValidateDataStructure"/>
+        /// This flag is set by the <see cref="PostProcessSteps.ValidateDataStructure"/>
         /// post process step if validation is successful, but some issues have been found. This can for example
         /// mean that a texture that does not exist is referenced by a material or that the bone weights for a vertex
         /// do not sum to 1.0. In most cases you should still be able to use the import. This flag can be useful
@@ -906,7 +906,7 @@ namespace Assimp {
         ValidationWarning = 0x4,
 
         /// <summary>
-        /// This flag is set by the <see cref="Assimp.PostProcessSteps.JoinIdenticalVertices"/> post process step.
+        /// This flag is set by the <see cref="PostProcessSteps.JoinIdenticalVertices"/> post process step.
         /// It indicates that the vertices of the output mesh are not in the internal verbose format anymore. In the
         /// verbose format, all vertices are unique where no vertex is ever referenced by more than one face.
         /// </summary>
@@ -990,91 +990,79 @@ namespace Assimp {
         Debugger = 0x8
     }
 
+    /// <summary>
+    /// Defines material property types.
+    /// </summary>
     public enum PropertyTypeInfo {
+        /// <summary>
+        /// Array of single-precision (32 bit) floats.
+        /// </summary>
         Float = 0x1,
+
+        /// <summary>
+        /// Property is a string.
+        /// </summary>
         String = 0x3,
+
+        /// <summary>
+        /// Array of 32 bit integers.
+        /// </summary>
         Integer = 0x4,
+
+        /// <summary>
+        /// Byte buffer where the content is undefined.
+        /// </summary>
         Buffer = 0x5
     }
 
     /// <summary>
-    /// Static class containing preset properties for post processing options.
+    /// Enumerates how the native Assimp DLL was compiled
     /// </summary>
-    public static class PostProcessPreset {
+    public enum CompileFlags : uint {
+        /// <summary>
+        /// Assimp compiled as a shared object (Windows: DLL);
+        /// </summary>
+        Shared = 0x1,
 
         /// <summary>
-        /// PostProcess configuration for (some) Direct3D conventions,
-        /// left handed geometry, upper left origin for UV coordinates,
-        /// and clockwise face order, suitable for CCW culling.
+        /// Assimp was compiled against STLport
         /// </summary>
-        public static PostProcessSteps ConvertToLeftHanded {
-            get {
-                return PostProcessSteps.MakeLeftHanded |
-                    PostProcessSteps.FlipUVs |
-                    PostProcessSteps.FlipWindingOrder;
-            }
-        }
+        STLport = 0x2,
 
         /// <summary>
-        /// PostProcess configuration for optimizing data for real-time.
-        /// Does the following steps:
-        /// 
-        /// <see cref="Assimp.PostProcessSteps.CalculateTangentSpace"/>, <see cref="Assimp.PostProcessSteps.GenerateNormals"/>, 
-        /// <see cref="Assimp.PostProcessSteps.JoinIdenticalVertices"/>, <see cref="Assimp.PostProcessSteps.Triangulate"/>,
-        /// <see cref="Assimp.PostProcessSteps.GenerateUVCoords"/>, and <see cref="Assimp.PostProcessSteps.SortByPrimitiveType"/>
+        /// Assimp was compiled as a debug build
         /// </summary>
-        public static PostProcessSteps TargetRealTimeFast {
-            get {
-                return PostProcessSteps.CalculateTangentSpace |
-                    PostProcessSteps.GenerateNormals |
-                    PostProcessSteps.JoinIdenticalVertices |
-                    PostProcessSteps.Triangulate |
-                    PostProcessSteps.GenerateUVCoords |
-                    PostProcessSteps.SortByPrimitiveType;
-            }
-        }
+        Debug = 0x4,
 
         /// <summary>
-        /// PostProcess configuration for optimizing
-        /// data for real-time rendering. Does the following steps:
-        /// 
-        /// <see cref="Assimp.PostProcessSteps.CalculateTangentSpace"/>, <see cref="Assimp.PostProcessSteps.GenerateSmoothNormals"/>, 
-        /// <see cref="Assimp.PostProcessSteps.JoinIdenticalVertices"/>, <see cref="Assimp.PostProcessSteps.Triangulate"/>,
-        /// <see cref="Assimp.PostProcessSteps.GenerateUVCoords"/>, <see cref="Assimp.PostProcessSteps.SortByPrimitiveType"/>
-        /// <see cref="Assimp.PostProcessSteps.LimitBoneWeights"/>, <see cref="Assimp.PostProcessSteps.RemoveRedundantMaterials"/>,
-        /// <see cref="Assimp.PostProcessSteps.SplitLargeMeshes"/>, <see cref="Assimp.PostProcessSteps.FindDegenerates"/>, and
-        /// <see cref="Assimp.PostProcessSteps.FindInvalidData"/>
+        /// Assimp was compiled with the boost work around.
         /// </summary>
-        public static PostProcessSteps TargetRealTimeQuality {
-            get {
-                return PostProcessSteps.CalculateTangentSpace |
-                    PostProcessSteps.GenerateSmoothNormals |
-                    PostProcessSteps.JoinIdenticalVertices |
-                    PostProcessSteps.LimitBoneWeights |
-                    PostProcessSteps.RemoveRedundantMaterials |
-                    PostProcessSteps.SplitLargeMeshes |
-                    PostProcessSteps.Triangulate |
-                    PostProcessSteps.GenerateUVCoords |
-                    PostProcessSteps.SortByPrimitiveType |
-                    PostProcessSteps.FindDegenerates |
-                    PostProcessSteps.FindInvalidData;
-            }
-        }
+        NoBoost = 0x8,
 
         /// <summary>
-        /// PostProcess configuration for heavily optimizing the data
-        /// for real-time rendering. Includes all flags in
-        /// <see cref="Assimp.PostProcessPreset.TargetRealTimeQuality"/> as well as 
-        /// <see cref="Assimp.PostProcessSteps.FindInstances"/>, <see cref="Assimp.PostProcessSteps.ValidateDataStructure"/>, and
-        /// <see cref="Assimp.PostProcessSteps.OptimizeMeshes"/>
+        /// Assimp was compiled built to run single threaded.
         /// </summary>
-        public static PostProcessSteps TargetRealTimeMaximumQuality {
-            get {
-                return TargetRealTimeQuality |
-                    PostProcessSteps.FindInstances |
-                    PostProcessSteps.ValidateDataStructure |
-                    PostProcessSteps.OptimizeMeshes;
-            }
-        }
+        SingleThreaded = 0x10
+    }
+
+    /// <summary>
+    /// Defines how UV coordinates should be transformed.
+    /// </summary>
+    [Flags]
+    public enum UVTransformFlags {
+        /// <summary>
+        /// Scaling is evaluated.
+        /// </summary>
+        Scaling = 0x1,
+
+        /// <summary>
+        /// Rotation is evaluated.
+        /// </summary>
+        Rotation = 0x2,
+
+        /// <summary>
+        /// Translation is evaluated.
+        /// </summary>
+        Translation = 0x4
     }
 }

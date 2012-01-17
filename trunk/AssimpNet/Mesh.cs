@@ -61,7 +61,7 @@ namespace Assimp {
 
         /// <summary>
         /// Gets the primitive type. This may contain more than one
-        /// type unless if <see cref="Assimp.PostProcessStep.SortByPrimitiveType"/>
+        /// type unless if <see cref="PostProcessStep.SortByPrimitiveType"/>
         /// option is not set.
         /// </summary>
         public PrimitiveType PrimitiveType {

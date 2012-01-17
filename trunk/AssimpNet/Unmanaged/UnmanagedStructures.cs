@@ -88,13 +88,13 @@ namespace Assimp.Unmanaged {
 
         public IntPtr BiTangents;
 
-        [MarshalAsAttribute(UnmanagedType.ByValArray, SizeConst=4, ArraySubType = UnmanagedType.SysUInt)]
+        [MarshalAsAttribute(UnmanagedType.ByValArray, SizeConst = AiDefines.AI_MAX_NUMBER_OF_COLOR_SETS, ArraySubType = UnmanagedType.SysUInt)]
         public IntPtr[] Colors;
 
-        [MarshalAsAttribute(UnmanagedType.ByValArray, SizeConst=4, ArraySubType = UnmanagedType.SysUInt)]
+        [MarshalAsAttribute(UnmanagedType.ByValArray, SizeConst = AiDefines.AI_MAX_NUMBER_OF_TEXTURECOORDS, ArraySubType = UnmanagedType.SysUInt)]
         public IntPtr[] TextureCoords;
 
-        [MarshalAsAttribute(UnmanagedType.ByValArray, SizeConst=4, ArraySubType = UnmanagedType.U4)]
+        [MarshalAsAttribute(UnmanagedType.ByValArray, SizeConst = AiDefines.AI_MAX_NUMBER_OF_TEXTURECOORDS, ArraySubType = UnmanagedType.U4)]
         public uint[] NumUVComponents;
 
         public IntPtr Faces;
@@ -132,13 +132,6 @@ namespace Assimp.Unmanaged {
     }
 
     [StructLayoutAttribute(LayoutKind.Sequential)]
-    public struct AiVertexWeight {
-        public uint NumIndices;
-
-        public IntPtr Indices;
-    }
-
-    [StructLayoutAttribute(LayoutKind.Sequential)]
     public struct AiBone {
         public AiString Name;
 
@@ -147,25 +140,6 @@ namespace Assimp.Unmanaged {
         public IntPtr Weights;
 
         public Matrix4x4 OffsetMatrix;
-    }
-
-    [StructLayoutAttribute(LayoutKind.Sequential)]
-    public struct AiAnimMesh {
-        public IntPtr Vertices;
-
-        public IntPtr Normals;
-
-        public IntPtr Tangents;
-
-        public IntPtr BiTangents;
-
-        [MarshalAsAttribute(UnmanagedType.ByValArray, SizeConst = 4, ArraySubType = UnmanagedType.SysUInt)]
-        public IntPtr[] Colors;
-
-        [MarshalAsAttribute(UnmanagedType.ByValArray, SizeConst = 4, ArraySubType = UnmanagedType.SysUInt)]
-        public IntPtr[] TextureCoords;
-
-        public uint NumVertices;
     }
 
     [StructLayoutAttribute(LayoutKind.Sequential)]
@@ -180,9 +154,7 @@ namespace Assimp.Unmanaged {
 
         public PropertyTypeInfo Type;
 
-        //This seems wrong
-        [MarshalAsAttribute(UnmanagedType.LPStr)]
-        public String Data;
+        public IntPtr Data;
     }
 
     [StructLayoutAttribute(LayoutKind.Sequential)]
@@ -292,7 +264,7 @@ namespace Assimp.Unmanaged {
     public struct AiString {
         public uint Length;
 
-        [MarshalAsAttribute(UnmanagedType.ByValTStr, SizeConst = 1024)]
+        [MarshalAsAttribute(UnmanagedType.ByValTStr, SizeConst = AiDefines.MAX_LENGTH)]
         public String Data;
     }
 

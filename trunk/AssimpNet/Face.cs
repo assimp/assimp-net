@@ -29,7 +29,7 @@ namespace Assimp {
     /// if the index count is equal to three, or a polygon if the count is greater than three.
     /// 
     /// Since multiple primitive types can be contained in a single mesh, this approach
-    /// allows you to better examine how the mesh is constructed. If you use the <see cref="Assimp.PostProcessSteps.SortByPrimitiveType"/>
+    /// allows you to better examine how the mesh is constructed. If you use the <see cref=".PostProcessSteps.SortByPrimitiveType"/>
     /// post process step flag during import, then each mesh will be homogenous where primitive type is concerned.
     /// </summary>
     public class Face {

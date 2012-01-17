@@ -114,4 +114,11 @@ namespace Assimp {
 
         public byte A;
     }
+
+    [StructLayoutAttribute(LayoutKind.Sequential)]
+    public struct VertexWeight {
+        public uint VertexID;
+
+        public float Weight;
+    }
 }

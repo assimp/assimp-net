@@ -132,6 +132,20 @@ namespace Assimp.Unmanaged {
 
         #endregion
 
+        #region Material getters
+
+        [DllImportAttribute(AssimpDLL, EntryPoint = "aiGetMaterialProperty", CallingConvention = CallingConvention.Cdecl)]
+        private static extern ReturnCode aiGetMaterialProperty(ref AiMaterial mat, [InAttribute()] [MarshalAsAttribute(UnmanagedType.LPStr)] String key, uint type, uint index, ref IntPtr propertyOut);
+
+        public static AiMaterialProperty GetMaterialProperty(ref AiMaterial mat, String key, uint type, uint index) {
+            IntPtr ptr = new IntPtr();
+            aiGetMaterialProperty(ref mat, key, type, index, ref ptr);
+            return MemoryHelper.MarshalStructure<AiMaterialProperty>(Marshal.ReadIntPtr(ptr));
+        }
+
+
+        #endregion
+
         #region Math methods
 
         [DllImportAttribute(AssimpDLL, EntryPoint="aiCreateQuaternionFromMatrix", CallingConvention = CallingConvention.Cdecl)]
@@ -163,6 +177,33 @@ namespace Assimp.Unmanaged {
 
         [DllImportAttribute(AssimpDLL, EntryPoint="aiIdentityMatrix4", CallingConvention = CallingConvention.Cdecl)]
         public static extern void IdentityMatrix4(ref Matrix4x4 mat);
+
+        #endregion
+
+        #region Version info
+
+        [DllImport(AssimpDLL, EntryPoint="aiGetLegalString", CallingConvention = CallingConvention.Cdecl)]
+        private static extern IntPtr aiGetLegalString();
+
+        public static String GetLegalString() {
+            return Marshal.PtrToStringAnsi(aiGetLegalString());
+        }
+
+        [DllImport(AssimpDLL, EntryPoint="aiGetVersionMinor", CallingConvention = CallingConvention.Cdecl)]
+        public static extern uint GetVersionMinor();
+
+        [DllImport(AssimpDLL, EntryPoint="aiGetVersionMajor", CallingConvention = CallingConvention.Cdecl)]
+        public static extern uint GetVersionMajor();
+
+        [DllImport(AssimpDLL, EntryPoint="aiGetVersionRevision", CallingConvention = CallingConvention.Cdecl)]
+        public static extern uint GetVersionRevision();
+
+        [DllImport(AssimpDLL, EntryPoint="aiGetCompileFlags", CallingConvention = CallingConvention.Cdecl)]
+        private static extern uint aiGetCompileFlags();
+
+        public static CompileFlags GetCompileFlags() {
+            return (CompileFlags) aiGetCompileFlags();
+        }
 
         #endregion
     }
