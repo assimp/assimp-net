@@ -25,7 +25,9 @@ using System.Runtime.InteropServices;
 
 namespace Assimp {
     /// <summary>
-    /// Represents a 3x3 row-major matrix.
+    /// Represents a 3x3 matrix. Assimp docs say their matrices are always row-major,
+    /// and it looks like they're only describing the memory layout. Matrices are treated
+    /// as column vectors however (X base in the first column, Y base the second, and Z base the third)
     /// </summary>
     [Serializable]
     [StructLayout(LayoutKind.Sequential)]
@@ -33,51 +35,51 @@ namespace Assimp {
         /// <summary>
         /// Value at row 1, column 1 of the matrix
         /// </summary>
-        public float M11;
+        public float A1;
 
         /// <summary>
         /// Value at row 1, column 2 of the matrix
         /// </summary>
-        public float M12;
+        public float A2;
 
         /// <summary>
         /// Value at row 1, column 3 of the matrix
         /// </summary>
-        public float M13;
+        public float A3;
 
         /// <summary>
         /// Value at row 2, column 1 of the matrix
         /// </summary>
-        public float M21;
+        public float B1;
 
         /// <summary>
         /// Value at row 2, column 2 of the matrix
         /// </summary>
-        public float M22;
+        public float B2;
 
         /// <summary>
         /// Value at row 2, column 3 of the matrix
         /// </summary>
-        public float M23;
+        public float B3;
 
         /// <summary>
         /// Value at row 3, column 1 of the matrix
         /// </summary>
-        public float M31;
+        public float C1;
 
         /// <summary>
         /// Value at row 3, column 2 of the matrix
         /// </summary>
-        public float M32;
+        public float C2;
 
         /// <summary>
         /// Value at row 3, column 3 of the matrix
         /// </summary>
-        public float M33;
+        public float C3;
 
         /// <summary>
         /// Gets or sets the value at the specific one-based row, column
-        /// index. E.g. i = 1, j = 2 gets the value in row 1, column 2 (M12). Indices
+        /// index. E.g. i = 1, j = 2 gets the value in row 1, column 2 (MA2). Indices
         /// out of range return a value of zero.
         /// 
         /// </summary>
@@ -90,33 +92,33 @@ namespace Assimp {
                     case 1:
                         switch(j) {
                             case 1:
-                                return M11;
+                                return A1;
                             case 2:
-                                return M12;
+                                return A2;
                             case 3:
-                                return M13;
+                                return A3;
                             default:
                                 return 0;
                         }
                     case 2:
                         switch(j) {
                             case 1:
-                                return M21;
+                                return B1;
                             case 2:
-                                return M22;
+                                return B2;
                             case 3:
-                                return M23;
+                                return B3;
                             default:
                                 return 0;
                         }
                     case 3:
                         switch(j) {
                             case 1:
-                                return M31;
+                                return C1;
                             case 2:
-                                return M32;
+                                return C2;
                             case 3:
-                                return M33;
+                                return C3;
                             default:
                                 return 0;
                         }
@@ -129,39 +131,39 @@ namespace Assimp {
                     case 1:
                         switch(j) {
                             case 1:
-                                M11 = value;
+                                A1 = value;
                                 break;
                             case 2:
-                                M12 = value;
+                                A2 = value;
                                 break;
                             case 3:
-                                M13 = value;
+                                A3 = value;
                                 break;
                         }
                         break;
                     case 2:
                         switch(j) {
                             case 1:
-                                M21 = value;
+                                B1 = value;
                                 break;
                             case 2:
-                                M22 = value;
+                                B2 = value;
                                 break;
                             case 3:
-                                M23 = value;
+                                B3 = value;
                                 break;
                         }
                         break;
                     case 3:
                         switch(j) {
                             case 1:
-                                M31 = value;
+                                C1 = value;
                                 break;
                             case 2:
-                                M32 = value;
+                                C2 = value;
                                 break;
                             case 3:
-                                M33 = value;
+                                C3 = value;
                                 break;
                         }
                         break;
@@ -182,15 +184,15 @@ namespace Assimp {
         /// <param name="m32">Element at row 3, column 2</param>
         /// <param name="m33">Element at row 3, column 3</param>
         public Matrix3x3(float m11, float m12, float m13, float m21, float m22, float m23, float m31, float m32, float m33) {
-                this.M11 = m11;
-                this.M12 = m12;
-                this.M13 = m13;
-                this.M21 = m21;
-                this.M22 = m22;
-                this.M23 = m23;
-                this.M31 = m31;
-                this.M32 = m32;
-                this.M33 = m33;
+                this.A1 = m11;
+                this.A2 = m12;
+                this.A3 = m13;
+                this.B1 = m21;
+                this.B2 = m22;
+                this.B3 = m23;
+                this.C1 = m31;
+                this.C2 = m32;
+                this.C3 = m33;
         }
     }
 }

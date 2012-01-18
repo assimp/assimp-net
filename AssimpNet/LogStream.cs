@@ -61,11 +61,20 @@ namespace Assimp {
             }
         }
 
+        /// <summary>
+        /// Constructs a new LogStream.
+        /// </summary>
+        /// <param name="callback">Callback called when messages are logged.</param>
         public LogStream(LogStreamCallback callback) {
             _callback = callback;
             _userData = null;
         }
 
+        /// <summary>
+        /// Constructs a new LogStream.
+        /// </summary>
+        /// <param name="callback">Callback called when messages are logged.</param>
+        /// <param name="userData">User-supplied data</param>
         public LogStream(LogStreamCallback callback, String userData) {
             _callback = callback;
             _userData = userData;

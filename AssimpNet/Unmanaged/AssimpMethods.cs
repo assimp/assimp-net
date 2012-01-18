@@ -107,10 +107,10 @@ namespace Assimp.Unmanaged {
         }
 
         [DllImport(AssimpDLL, EntryPoint = "aiGetMemoryRequirements", CallingConvention = CallingConvention.Cdecl)]
-        private static extern void GetMemoryRequirements(IntPtr scene, ref MemoryInfo memoryInfo);
+        private static extern void GetMemoryRequirements(IntPtr scene, ref AiMemoryInfo memoryInfo);
 
-        public static MemoryInfo GetMemoryRequirements(IntPtr scene) {
-            MemoryInfo info = new MemoryInfo();
+        public static AiMemoryInfo GetMemoryRequirements(IntPtr scene) {
+            AiMemoryInfo info = new AiMemoryInfo();
             if(scene != IntPtr.Zero) {
                 GetMemoryRequirements(scene, ref info);
             }

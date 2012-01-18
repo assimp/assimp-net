@@ -22,6 +22,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using Assimp.Unmanaged;
 
 namespace Assimp {
@@ -41,10 +42,7 @@ namespace Assimp {
         private List<Color4D[]> _colors;
         private List<Vector3D[]> _texCoords;
         private List<uint> _texComponentNumber;
-
-        //TODO:
-        //Bones
-        //AnimMeshes
+        private Bone[] _bones;
 
         /// <summary>
         /// Gets the mesh name. This tends to be used
@@ -61,7 +59,7 @@ namespace Assimp {
 
         /// <summary>
         /// Gets the primitive type. This may contain more than one
-        /// type unless if <see cref="PostProcessStep.SortByPrimitiveType"/>
+        /// type unless if <see cref="PostProcessSteps.SortByPrimitiveType"/>
         /// option is not set.
         /// </summary>
         public PrimitiveType PrimitiveType {
@@ -203,12 +201,44 @@ namespace Assimp {
             }
         }
 
+        /// <summary>
+        /// Gets the number of bones that influence this mesh.
+        /// </summary>
+        public int BoneCount {
+            get {
+                return (_bones == null) ? 0 : _bones.Length;
+            }
+        }
+
+        /// <summary>
+        /// Gets if this mesh has bones.
+        /// </summary>
+        public bool HasBones {
+            get {
+                return _bones != null;
+            }
+        }
+
+        /// <summary>
+        /// Gets the bones that influence this mesh.
+        /// </summary>
+        public Bone[] Bones {
+            get {
+                return _bones;
+            }
+        }
+
+        /// <summary>
+        /// Constructs a new Mesh.
+        /// </summary>
+        /// <param name="mesh">Unmanaged AiMesh struct.</param>
         internal Mesh(AiMesh mesh) {
             _name = mesh.Name.Data;
             _primitiveType = mesh.PrimitiveTypes;
             _vertexCount = (int) mesh.NumVertices;
             _materialIndex = (int) mesh.MaterialIndex;
 
+            //Load per-vertex arrays
             if(mesh.NumVertices > 0) {
                 if(mesh.Vertices != IntPtr.Zero) {
                     _vertices = MemoryHelper.MarshalArray<Vector3D>(mesh.Vertices, _vertexCount);
@@ -224,6 +254,7 @@ namespace Assimp {
                 }
             }
 
+            //Load faces
             if(mesh.NumFaces > 0 && mesh.Faces != IntPtr.Zero) {
                 AiFace[] faces = MemoryHelper.MarshalArray<AiFace>(mesh.Faces, (int) mesh.NumFaces);
                 _faces = new Face[faces.Length];
@@ -232,6 +263,7 @@ namespace Assimp {
                 }
             }
 
+            //Load UVW components - this should match the texture coordinate channels
             uint[] components = mesh.NumUVComponents;
             if(components != null) {
                 _texComponentNumber = new List<uint>();
@@ -242,6 +274,7 @@ namespace Assimp {
                 }
             }
 
+            //Load texture coordinate channels
             IntPtr[] texCoords = mesh.TextureCoords;
             if(texCoords != null) {
                 _texCoords = new List<Vector3D[]>();
@@ -252,6 +285,7 @@ namespace Assimp {
                 }
             }
 
+            //Load vertex color channels
             IntPtr[] vertexColors = mesh.Colors;
             if(vertexColors != null) {
                 _colors = new List<Color4D[]>();
@@ -261,10 +295,26 @@ namespace Assimp {
                     }
                 }
             }
-            
-            //TODO: Bones, Animations
+
+            //Load bones
+            if(mesh.NumBones > 0 && mesh.Bones != IntPtr.Zero) {
+                AiBone[] bones = MemoryHelper.MarshalArray<AiBone>(Marshal.ReadIntPtr(mesh.Bones), (int) mesh.NumBones);
+                _bones = new Bone[bones.Length];
+                for(int i = 0; i < _faces.Length; i++) {
+                    _bones[i] = new Bone(bones[i]);
+                }
+            }
+
+            //Ignore AnimMesh: NOT CURRENTLY USED!
         }
 
+        /// <summary>
+        /// Checks if the mesh has vertex colors for the specified channel. If
+        /// this returns true, you can be confident that the channel contains
+        /// the same number of vertex colors as there are vertices in this mesh.
+        /// </summary>
+        /// <param name="channelIndex">Channel index</param>
+        /// <returns>True if vertex colors are present in the channel.</returns>
         public bool HasVertexColors(int channelIndex) {
             if(_colors != null) {
                 if(channelIndex >= _colors.Count || channelIndex < 0) {
@@ -275,6 +325,13 @@ namespace Assimp {
             return false;
         }
 
+        /// <summary>
+        /// Checks if the mesh has texture coordinates for the specified channel.
+        /// If this returns true, you can be confident that the channel contains the same
+        /// number of texture coordinates as there are vertices in this mesh.
+        /// </summary>
+        /// <param name="channelIndex">Channel index</param>
+        /// <returns>True if texture coordinates are present in the channel.</returns>
         public bool HasTextureCoords(int channelIndex) {
             if(_texCoords != null) {
                 if(channelIndex >= _texCoords.Count || channelIndex < 0) {
@@ -285,6 +342,11 @@ namespace Assimp {
             return false;
         }
 
+        /// <summary>
+        /// Gets the array of vertex colors from the specified vertex color channel.
+        /// </summary>
+        /// <param name="channelIndex">Channel index</param>
+        /// <returns>The vertex color array, or null if it does not exist.</returns>
         public Color4D[] GetVertexColors(int channelIndex) {
             if(HasVertexColors(channelIndex)) {
                 return _colors[channelIndex];
@@ -292,6 +354,12 @@ namespace Assimp {
             return null;
         }
 
+        /// <summary>
+        /// Gets the array of texture coordinates from the specified texture coordinate
+        /// channel.
+        /// </summary>
+        /// <param name="channelIndex">Channel index</param>
+        /// <returns>The texture coordinate array, or null if it does not exist.</returns>
         public Vector3D[] GetTextureCoords(int channelIndex) {
             if(HasTextureCoords(channelIndex)) {
                 return _texCoords[channelIndex];
@@ -299,6 +367,13 @@ namespace Assimp {
             return null;
         }
 
+        /// <summary>
+        /// Gets the number of UV(W) components for the texture coordinate channel, this
+        /// usually either 2 (UV) or 3 (UVW). No components mean the texture coordinate channel
+        /// does not exist. The channel index matches the texture coordinate channel index.
+        /// </summary>
+        /// <param name="channelIndex">Channel index</param>
+        /// <returns>The number of UV(W) components the texture coordinate channel contains</returns>
         public int GetUVComponentCount(int channelIndex) {
             if(HasTextureCoords(channelIndex)) {
                 if(_texComponentNumber != null) {
@@ -308,6 +383,11 @@ namespace Assimp {
             return 0;
         }
 
+        /// <summary>
+        /// Convienence method for accumulating all face indices into a single
+        /// index array.
+        /// </summary>
+        /// <returns>uint index array</returns>
         public uint[] GetIndices() {
             if(HasFaces) {
                 List<uint> indices = new List<uint>();
@@ -321,10 +401,16 @@ namespace Assimp {
             return null;
         }
 
+        /// <summary>
+        /// Convienence method for accumulating all face indices into a single
+        /// index array.
+        /// </summary>
+        /// <returns>int index array</returns>
         public int[] GetIntIndices() {
             if(HasFaces) {
                 List<int> indices = new List<int>();
                 foreach(Face face in _faces) {
+                    //Behind the scenes each Face also holds onto an int array...
                     if(face.IndexCount > 0 && face.Indices != null) {
                         indices.AddRange(face.IntIndices);
                     }
@@ -334,6 +420,11 @@ namespace Assimp {
             return null;
         }
 
+        /// <summary>
+        /// Convienence method for accumulating all face indices into a single
+        /// index array.
+        /// </summary>
+        /// <returns>short index array</returns>
         public short[] GetShortIndices() {
             //We could use a dirty hack here to do a conversion...but may as well be
             //safe just in case

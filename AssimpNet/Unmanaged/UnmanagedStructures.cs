@@ -251,7 +251,9 @@ namespace Assimp.Unmanaged {
         /// </summary>
         public uint Height;
 
-        //char[4], format extension hint.
+        /// <summary>
+        /// char[4], format extension hint.
+        /// </summary>
         [MarshalAsAttribute(UnmanagedType.ByValTStr, SizeConst=4)]
         public String FormatHint;
 
@@ -608,6 +610,55 @@ namespace Assimp.Unmanaged {
         /// </summary>
         [MarshalAsAttribute(UnmanagedType.ByValTStr, SizeConst = AiDefines.MAX_LENGTH)]
         public String Data;
+    }
+
+    /// <summary>
+    /// Represents the memory requirements for the different components of an imported
+    /// scene. All sizes in in bytes.
+    /// </summary>
+    [Serializable]
+    [StructLayoutAttribute(LayoutKind.Sequential)]
+    public struct AiMemoryInfo {
+
+        /// <summary>
+        /// Size of the storage allocated for texture data, in bytes.
+        /// </summary>
+        public uint Textures;
+
+        /// <summary>
+        /// Size of the storage allocated for material data, in bytes.
+        /// </summary>
+        public uint Materials;
+
+        /// <summary>
+        /// Size of the storage allocated for mesh data, in bytes.
+        /// </summary>
+        public uint Meshes;
+
+        /// <summary>
+        /// Size of the storage allocated for node data, in bytes.
+        /// </summary>
+        public uint Nodes;
+
+        /// <summary>
+        /// Size of the storage allocated for animation data, in bytes.
+        /// </summary>
+        public uint Animations;
+
+        /// <summary>
+        /// Size of the storage allocated for camera data, in bytes.
+        /// </summary>
+        public uint Cameras;
+
+        /// <summary>
+        /// Size of the storage allocated for light data, in bytes.
+        /// </summary>
+        public uint Lights;
+
+        /// <summary>
+        /// Total storage allocated for the imported scene, in bytes.
+        /// </summary>
+        public uint Total;
     }
 
 }

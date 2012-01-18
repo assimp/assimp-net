@@ -231,11 +231,11 @@ namespace Assimp.Test {
             Matrix3x3 m = new Matrix3x3(m11, m12, m13, m21, m22, m23, m31, m32, m33);
             Vector3D v = new Vector3D(x1, y1, z1);
 
-            Vector3D transformedV = v * m;
+            Vector3D transformedV = m * v;
 
-            float x = (x1 * m11) + (y1 * m21) + (z1 * m31);
-            float y = (x1 * m12) + (y1 * m22) + (z1 * m32);
-            float z = (x1 * m13) + (y1 * m23) + (z1 * m33);
+            float x = (x1 * m11) + (y1 * m12) + (z1 * m13);
+            float y = (x1 * m21) + (y1 * m22) + (z1 * m23);
+            float z = (x1 * m31) + (y1 * m32) + (z1 * m33);
 
             TestHelper.AssertEquals(x, y, z, transformedV, "Testing vector transform by Matrix 3x3");
         }
@@ -252,11 +252,11 @@ namespace Assimp.Test {
             Matrix4x4 m = new Matrix4x4(m11, m12, m13, m14, m21, m22, m23, m24, m31, m32, m33, m34, m41, m42, m43, m44);
             Vector3D v = new Vector3D(x1, y1, z1);
 
-            Vector3D transformedV = v * m;
+            Vector3D transformedV = m * v;
 
-            float x = (x1 * m11) + (y1 * m21) + (z1 * m31) + m41;
-            float y = (x1 * m12) + (y1 * m22) + (z1 * m32) + m42;
-            float z = (x1 * m13) + (y1 * m23) + (z1 * m33) + m43;
+            float x = (x1 * m11) + (y1 * m12) + (z1 * m13) + m14;
+            float y = (x1 * m21) + (y1 * m22) + (z1 * m23) + m24;
+            float z = (x1 * m31) + (y1 * m32) + (z1 * m33) + m34;
 
             TestHelper.AssertEquals(x, y, z, transformedV, "Testing vector transform by Matrix 4x4");
         }

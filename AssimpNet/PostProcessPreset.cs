@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
+﻿
 namespace Assimp {
     /// <summary>
     /// Static class containing preset properties for post processing options.

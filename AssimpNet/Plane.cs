@@ -1,4 +1,5 @@
-﻿/*
+﻿using System;
+/*
 * Copyright (c) 2012 Nicholas Woodfield
 * 
 * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -19,17 +20,50 @@
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 * THE SOFTWARE.
 */
-
+using System.Runtime.InteropServices;
 
 namespace Assimp {
+    /// <summary>
+    /// Represents a plane in three-dimensional euclidean space where
+    /// A, B, C are components of the plane normal and D is the distance along the
+    /// normal from the origin to the plane.
+    /// </summary>
+    [Serializable]
+    [StructLayout(LayoutKind.Sequential)]
     public struct Plane {
 
+        /// <summary>
+        /// X component of the normal vector.
+        /// </summary>
         public float A;
 
+        /// <summary>
+        /// Y component of the normal vector.
+        /// </summary>
         public float B;
 
+        /// <summary>
+        /// Z component of the normal vector.
+        /// </summary>
         public float C;
 
+        /// <summary>
+        /// Distance from the origin to the plane along the normal vector.
+        /// </summary>
         public float D;
+
+        /// <summary>
+        /// Constructs a new Plane.
+        /// </summary>
+        /// <param name="a">X component of the normal vector.</param>
+        /// <param name="b">Y component of the normal vector.</param>
+        /// <param name="c">Z component of the normal vector.</param>
+        /// <param name="d">Distance from the origin to the plane along the normal vector.</param>
+        public Plane(float a, float b, float c, float d) {
+            A = a;
+            B = b;
+            C = c;
+            D = d;
+        }
     }
 }

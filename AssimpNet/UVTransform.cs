@@ -24,32 +24,27 @@ using System;
 using System.Runtime.InteropServices;
 
 namespace Assimp {
-
     /// <summary>
-    /// Defines a 3D ray with a point of origin and a direction.
+    /// Defines how an UV channel is transformed.
     /// </summary>
     [Serializable]
-    [StructLayout(LayoutKind.Sequential)]
-    public struct Ray {
+    [StructLayoutAttribute(LayoutKind.Sequential)]
+    public struct UVTransform {
+        /// <summary>
+        /// Translation on the U and V axes. Default is 0|0
+        /// </summary>
+        public Vector2D Translation;
 
         /// <summary>
-        /// Origin of the ray in space.
+        /// Scaling on the U and V axes. Default is 1|1.
         /// </summary>
-        public Vector3D Position;
+        public Vector2D Scaling;
 
         /// <summary>
-        /// Direction of the ray.
+        /// Rotation in counter-clockwise direction, specfied in
+        /// radians. The rotation center is 0.5f|0.5f and the
+        /// default value is zero.
         /// </summary>
-        public Vector3D Direction;
-
-        /// <summary>
-        /// Constructs a new Ray.
-        /// </summary>
-        /// <param name="pos"></param>
-        /// <param name="dir"></param>
-        public Ray(Vector3D pos, Vector3D dir) {
-            Position = pos;
-            Direction = dir;
-        }
+        public float Rotation;
     }
 }

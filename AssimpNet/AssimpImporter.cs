@@ -69,9 +69,8 @@ namespace Assimp {
                 if((scene.Flags & SceneFlags.Incomplete) == SceneFlags.Incomplete) {
                     throw new AssimpException("Error importing file: Imported scene is incomplete. " + AssimpMethods.GetErrorString());
                 }
-                MemoryInfo memInfo = AssimpMethods.GetMemoryRequirements(ptr);
 
-                return new Scene(scene, memInfo);
+                return new Scene(scene);
             } finally {
                 if(ptr != IntPtr.Zero) {
                     AssimpMethods.ReleaseImport(ptr);

@@ -258,30 +258,30 @@ namespace Assimp {
         }
 
         /// <summary>
-        /// Transforms this vector by a 3x3 matrix.
+        /// Transforms this vector by a 3x3 matrix. This "post-multiplies" the two.
         /// </summary>
-        /// <param name="vector">Source vector</param>
         /// <param name="matrix">Source matrix</param>
+        /// <param name="vector">Source vector</param>
         /// <returns>Transformed vector</returns>
-        public static Vector3D operator*(Vector3D vector, Matrix3x3 matrix) {
+        public static Vector3D operator*(Matrix3x3 matrix, Vector3D vector) {
             Vector3D v;
-            v.X = (vector.X * matrix.M11) + (vector.Y * matrix.M21) + (vector.Z * matrix.M31);
-            v.Y = (vector.X * matrix.M12) + (vector.Y * matrix.M22) + (vector.Z * matrix.M32);
-            v.Z = (vector.X * matrix.M13) + (vector.Y * matrix.M23) + (vector.Z * matrix.M33);
+            v.X = (vector.X * matrix.A1) + (vector.Y * matrix.A2) + (vector.Z * matrix.A3);
+            v.Y = (vector.X * matrix.B1) + (vector.Y * matrix.B2) + (vector.Z * matrix.B3);
+            v.Z = (vector.X * matrix.C1) + (vector.Y * matrix.C2) + (vector.Z * matrix.C3);
             return v;
         }
 
         /// <summary>
-        /// Transforms this vector by a 4x4 matrix.
+        /// Transforms this vector by a 4x4 matrix. This "post-multiplies" the two.
         /// </summary>
-        /// <param name="vector">Source vector</param>
         /// <param name="matrix">Source matrix</param>
+        /// <param name="vector">Source vector</param>
         /// <returns>Transformed vector</returns>
-        public static Vector3D operator*(Vector3D vector, Matrix4x4 matrix) {
+        public static Vector3D operator*(Matrix4x4 matrix, Vector3D vector) {
             Vector3D v;
-            v.X = (vector.X * matrix.M11) + (vector.Y * matrix.M21) + (vector.Z * matrix.M31) + matrix.M41;
-            v.Y = (vector.X * matrix.M12) + (vector.Y * matrix.M22) + (vector.Z * matrix.M32) + matrix.M42;
-            v.Z = (vector.X * matrix.M13) + (vector.Y * matrix.M23) + (vector.Z * matrix.M33) + matrix.M43;
+            v.X = (vector.X * matrix.A1) + (vector.Y * matrix.A2) + (vector.Z * matrix.A3) + matrix.A4;
+            v.Y = (vector.X * matrix.B1) + (vector.Y * matrix.B2) + (vector.Z * matrix.B3) + matrix.B4;
+            v.Z = (vector.X * matrix.C1) + (vector.Y * matrix.C2) + (vector.Z * matrix.C3) + matrix.C4;
             return v;
         }
 

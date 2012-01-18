@@ -25,54 +25,61 @@ using Assimp.Unmanaged;
 
 namespace Assimp {
     /// <summary>
-    /// A single face in a mesh, referring to multiple vertices. This can be a triangle
-    /// if the index count is equal to three, or a polygon if the count is greater than three.
-    /// 
-    /// Since multiple primitive types can be contained in a single mesh, this approach
-    /// allows you to better examine how the mesh is constructed. If you use the <see cref="PostProcessSteps.SortByPrimitiveType"/>
-    /// post process step flag during import, then each mesh will be homogenous where primitive type is concerned.
+    /// Represents a single bone of a mesh. A bone has a name which allows it to be found in the frame
+    /// hierarchy and by which it can be addressed by animations. In addition it has a number of
+    /// influences on vertices.
     /// </summary>
-    public class Face {
-        private uint _numIndices;
-        private uint[] _indices;
-        private int[] _intIndices;
+    public class Bone {
+        private String _name;
+        private VertexWeight[] _weights;
+        private Matrix4x4 _offsetMatrix;
 
         /// <summary>
-        /// Gets the number of indices defined in the face.
+        /// Gets the name of the bone.
         /// </summary>
-        public uint IndexCount {
+        public String Name {
             get {
-                return _numIndices;
+                return _name;
             }
         }
 
         /// <summary>
-        /// Gets the indices that refer to positions of vertex data in the mesh's vertex 
-        /// arrays.
+        /// Gets the number of vertex influences the bone contains.
         /// </summary>
-        public uint[] Indices {
+        public int VertexWeightCount {
             get {
-                return _indices;
-            }
-        }
-
-        //Internal use only
-        internal int[] IntIndices {
-            get {
-                return _intIndices;
+                return (_weights == null) ? 0 : _weights.Length;
             }
         }
 
         /// <summary>
-        /// Constructs a new Face.
+        /// Gets if the bone has vertex weights - this should always be true.
         /// </summary>
-        /// <param name="face">Unmanaged AiFace structure</param>
-        internal Face(AiFace face) {
-            _numIndices = face.NumIndices;
+        public bool HasVertexWeights {
+            get {
+                return _weights != null;
+            }
+        }
 
-            if(_numIndices > 0 && face.Indices != IntPtr.Zero) {
-                _indices = MemoryHelper.MarshalArray<uint>(face.Indices, (int)_numIndices);
-                _intIndices = MemoryHelper.MarshalArray<int>(face.Indices, (int) _numIndices);
+        /// <summary>
+        /// Gets the vertex weights owned by the bone.
+        /// </summary>
+        public VertexWeight[] VertexWeights {
+            get {
+                return _weights;
+            }
+        }
+
+        /// <summary>
+        /// Constructs a new Bone.
+        /// </summary>
+        /// <param name="bone">Unmanaged AiBone struct.</param>
+        internal Bone(AiBone bone) {
+            _name = bone.Name.Data;
+            _offsetMatrix = bone.OffsetMatrix;
+
+            if(bone.NumWeights > 0 && bone.Weights != IntPtr.Zero) {
+                _weights = MemoryHelper.MarshalArray<VertexWeight>(bone.Weights, (int) bone.NumWeights);
             }
         }
     }
