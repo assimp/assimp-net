@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Assimp.Unmanaged {
     /// <summary>
@@ -93,7 +90,7 @@ namespace Assimp.Unmanaged {
         public const String AI_CONFIG_PP_PTV_NORMALIZE = "PP_PTV_NORMALIZE";
 
         /// <summary>
-        /// Configures the <see cref="Post.ProcessSteps.FindDegenerates"/> step
+        /// Configures the <see cref="PostProcessSteps.FindDegenerates"/> step
         /// to remove degenerated primitives from the import immediately.
         /// <para>The default behavior converts degenerated triangles to lines and
         /// degenerated lines to points.</para>
@@ -114,7 +111,7 @@ namespace Assimp.Unmanaged {
 
         /// <summary>
         /// Sets the maximum number of triangles a mesh can contain. This is used by the
-        /// <see cref="PostProcessStep.SplitLargeMeshes"/> step to determine
+        /// <see cref="PostProcessSteps.SplitLargeMeshes"/> step to determine
         /// whether a mesh must be split or not.
         /// <para>Type: int. Default: AiDefines.AI_SLM_DEFAULT_MAX_TRIANGLES</para>
         /// </summary>
@@ -122,7 +119,7 @@ namespace Assimp.Unmanaged {
 
         /// <summary>
         /// Sets the maximum number of vertices in a mesh. This is used by the
-        /// <see cref="PostProcessStep.SplitLargeMeshes"/> step to determine
+        /// <see cref="PostProcessSteps.SplitLargeMeshes"/> step to determine
         /// whether a mesh must be split or not.
         /// <para>Type: integer. Default: AiDefines.AI_SLM_DEFAULT_MAX_VERTICES</para>
         /// </summary>
@@ -130,14 +127,14 @@ namespace Assimp.Unmanaged {
 
         /// <summary>
         /// Sets the maximum number of bones that can affect a single vertex. This is used
-        /// by the <see cref="PostProcessStep.LimitBoneWeights"/> step.
+        /// by the <see cref="PostProcessSteps.LimitBoneWeights"/> step.
         /// <para>Type: integer. Default: AiDefines.AI_LBW_MAX_WEIGHTS</para>
         /// </summary>
         public const String AI_CONFIG_PP_LBW_MAX_WEIGHTS = "PP_LBW_MAX_WEIGHTS";
 
         /// <summary>
         /// Sets the size of the post-transform vertex cace to optimize vertices for. This is
-        /// for the <see cref="PostProcessStep.ImproveCacheLocality"/> step. The size
+        /// for the <see cref="PostProcessSteps.ImproveCacheLocality"/> step. The size
         /// is given in vertices. Of course you can't know how the vertex format will exactly look
         /// like after the import returns, but you can still guess what your meshes will
         /// probably have. The default value *has* resulted in slight performance improvements
@@ -147,7 +144,7 @@ namespace Assimp.Unmanaged {
         public const String AI_CONFIG_PP_ICL_PTCACHE_SIZE = "PP_ICL_PTCACHE_SIZE";
 
         /// <summary>
-        /// Input parameter to the <see cref="PostProcessStep.RemoveComponent"/> step. 
+        /// Input parameter to the <see cref="PostProcessSteps.RemoveComponent"/> step. 
         /// It specifies the parts of the data structure to be removed.
         /// <para>This is a bitwise combination of the <see cref="ExcludeComponent"/> flag. If no valid mesh is remaining after
         /// the step is executed, the import FAILS.</para>
@@ -156,7 +153,7 @@ namespace Assimp.Unmanaged {
         public const String AI_CONFIG_PP_RVC_FLAGS = "PP_RVC_FLAGS";
 
         /// <summary>
-        /// Input parameter to the <see cref="PostProcessStep.SortByPrimitiveType"/> step.
+        /// Input parameter to the <see cref="PostProcessSteps.SortByPrimitiveType"/> step.
         /// It specifies which primitive types are to be removed by the step.
         /// <para>This is a bitwise combination of the <see cref="PrimitiveType"/> flag.
         /// Specifying ALL types is illegal.</para>
@@ -165,7 +162,7 @@ namespace Assimp.Unmanaged {
         public const String AI_CONFIG_PP_SBP_REMOVE = "PP_SBP_REMOVE";
 
         /// <summary>
-        /// Input parameter to the <see cref="PostProcessStep.FindInvalidData"/> step.
+        /// Input parameter to the <see cref="PostProcessSteps.FindInvalidData"/> step.
         /// It specifies the floating point accuracy for animation values, specifically the epislon
         /// during the comparison. The step checks for animation tracks where all frame values are absolutely equal 
         /// and removes them. Two floats are considered equal if the invariant <c>abs(n0-n1) > epislon</c> holds
@@ -175,7 +172,7 @@ namespace Assimp.Unmanaged {
         public const String AI_CONFIG_PP_FID_ANIM_ACCURACY = "PP_FID_ANIM_ACCURACY";
 
         /// <summary>
-        /// Input parameter to the <see cref="PostProcessStep.TransformUVCoords"/> step.
+        /// Input parameter to the <see cref="PostProcessSteps.TransformUVCoords"/> step.
         /// It specifies which UV transformations are to be evaluated.
         /// <para>This is bitwise combination of the <see cref="UVTransformFlags"/> flag.</para>
         /// <para>Type: integer. Default: AiDefines.AI_UV_TRAFO_ALL (All combinations)</para>
@@ -208,32 +205,32 @@ namespace Assimp.Unmanaged {
         public const String AI_CONFIG_IMPORT_GLOBAL_KEYFRAME = "IMPORT_GLOBAL_KEYFRAME";
 
         /// <summary>
-        /// See the documentation for <see cref="AiConfig.AI_CONFIG_IMPORT_GLOBAL_KEYFRAME"/>.
+        /// See the documentation for <see cref="AiConfigs.AI_CONFIG_IMPORT_GLOBAL_KEYFRAME"/>.
         /// </summary>
         public const String AI_CONFIG_IMPORT_MD3_KEYFRAME = "IMPORT_MD3_KEYFRAME";
 
         /// <summary>
-        /// See the documentation for <see cref="AiConfig.AI_CONFIG_IMPORT_GLOBAL_KEYFRAME"/>.
+        /// See the documentation for <see cref="AiConfigs.AI_CONFIG_IMPORT_GLOBAL_KEYFRAME"/>.
         /// </summary>
         public const String AI_CONFIG_IMPORT_MD2_KEYFRAME = "IMPORT_MD3_KEYFRAME";
 
         /// <summary>
-        /// See the documentation for <see cref="AiConfig.AI_CONFIG_IMPORT_GLOBAL_KEYFRAME"/>.
+        /// See the documentation for <see cref="AiConfigs.AI_CONFIG_IMPORT_GLOBAL_KEYFRAME"/>.
         /// </summary>
         public const String AI_CONFIG_IMPORT_MDL_KEYFRAME = "IMPORT_MDL_KEYFRAME";
 
         /// <summary>
-        /// See the documentation for <see cref="AiConfig.AI_CONFIG_IMPORT_GLOBAL_KEYFRAME"/>.
+        /// See the documentation for <see cref="AiConfigs.AI_CONFIG_IMPORT_GLOBAL_KEYFRAME"/>.
         /// </summary>
         public const String AI_CONFIG_IMPORT_MDC_KEYFRAME = "IMPORT_MDC_KEYFRAME";
 
         /// <summary>
-        /// See the documentation for <see cref="AiConfig.AI_CONFIG_IMPORT_GLOBAL_KEYFRAME"/>.
+        /// See the documentation for <see cref="AiConfigs.AI_CONFIG_IMPORT_GLOBAL_KEYFRAME"/>.
         /// </summary>
         public const String AI_CONFIG_IMPORT_SMD_KEYFRAME = "IMPORT_SMD_KEYFRAME";
 
         /// <summary>
-        /// See the documentation for <see cref="AiConfig.AI_CONFIG_IMPORT_GLOBAL_KEYFRAME"/>.
+        /// See the documentation for <see cref="AiConfigs.AI_CONFIG_IMPORT_GLOBAL_KEYFRAME"/>.
         /// </summary>
         public const String AI_CONFIG_IMPORT_UNREAL_KEYFRAME = "IMPORT_UNREAL_KEYFRAME";
 

@@ -103,11 +103,18 @@
   <ItemGroup>
     <Compile Include="AssimpException.cs" />
     <Compile Include="AssimpImporter.cs" />
+    <Compile Include="Bone.cs" />
     <Compile Include="Camera.cs" />
     <Compile Include="Color3D.cs" />
     <Compile Include="Color4D.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="Face.cs" />
+    <Compile Include="MeshKey.cs" />
+    <Compile Include="QuaternionKey.cs" />
+    <Compile Include="Texel.cs" />
+    <Compile Include="Texture.cs" />
+    <Compile Include="UVTransform.cs" />
+    <Compile Include="VectorKey.cs" />
     <Compile Include="Light.cs" />
     <Compile Include="LogStream.cs" />
     <Compile Include="Matrix3x3.cs" />
@@ -117,7 +124,6 @@
     <Compile Include="Node.cs" />
     <Compile Include="PostProcessPreset.cs" />
     <Compile Include="Scene.cs" />
-    <Compile Include="Structures.cs" />
     <Compile Include="Unmanaged\AssimpMethods.cs" />
     <Compile Include="Plane.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -128,6 +134,7 @@
     <Compile Include="Unmanaged\UnmanagedStructures.cs" />
     <Compile Include="Vector2D.cs" />
     <Compile Include="Vector3D.cs" />
+    <Compile Include="VertexWeight.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assimp32.dll">

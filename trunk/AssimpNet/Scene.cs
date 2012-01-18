@@ -25,93 +25,158 @@ using System.Runtime.InteropServices;
 using Assimp.Unmanaged;
 
 namespace Assimp {
+    /// <summary>
+    /// Represents a completely imported model or scene. Everything that was imported from the given file can be
+    /// accessed from here. Once the scene is loaded from unmanaged memory, it resides solely in managed memory
+    /// and Assimp's read only copy is released.
+    /// </summary>
     public class Scene {
         private SceneFlags _flags;
-        private MemoryInfo _memInfo;
         private Node _rootNode;
         private Mesh[] _meshes;
         private Light[] _lights;
         private Camera[] _cameras;
+        private Texture[] _textures;
 
         //TODO:
         //Animations
         //Materials
-        //Textures
 
+        /// <summary>
+        /// Gets the state of the imported scene. By default no flags are set, but
+        /// issues can arise if the flag is set to incomplete.
+        /// </summary>
         public SceneFlags SceneFlags {
             get {
                 return _flags;
             }
         }
 
-        public MemoryInfo MemoryInfo {
-            get {
-                return _memInfo;
-            }
-        }
-
+        /// <summary>
+        /// Gets the root node of the scene graph. There will always be at least the root node
+        /// if the import was successful and no special flags have been set. Presence of further nodes
+        /// depends on the format and content of the imported file.
+        /// </summary>
         public Node RootNode {
             get {
                 return _rootNode;
             }
         }
 
+        /// <summary>
+        /// Gets the number of meshes in the scene.
+        /// </summary>
         public int MeshCount {
             get {
                 return (_meshes == null) ? 0 : _meshes.Length;
             }
         }
 
+        /// <summary>
+        /// Checks if the scene contains meshes. Unless if no special scene flags are set
+        /// this should always be true.
+        /// </summary>
         public bool HasMeshes {
             get {
                 return _meshes != null;
             }
         }
 
+        /// <summary>
+        /// Gets the meshes contained in the scene, if any.
+        /// </summary>
         public Mesh[] Meshes {
             get {
                 return _meshes;
             }
         }
 
+        /// <summary>
+        /// Gets the number of lights in the scene.
+        /// </summary>
         public int LightCount {
             get {
                 return (_lights == null) ? 0 : _lights.Length;
             }
         }
 
+        /// <summary>
+        /// Checks if the scene contains any lights.
+        /// </summary>
         public bool HasLights {
             get {
                 return _lights != null;
             }
         }
 
+        /// <summary>
+        /// Gets the lights in the scene, if any.
+        /// </summary>
         public Light[] Lights {
             get {
                 return _lights;
             }
         }
 
+        /// <summary>
+        /// Gets the number of cameras in the scene.
+        /// </summary>
         public int CameraCount {
             get {
                 return (_cameras == null) ? 0 : _cameras.Length;
             }
         }
 
+        /// <summary>
+        /// Checks if the scene contains any cameras.
+        /// </summary>
         public bool HasCameras {
             get {
                 return _cameras != null;
             }
         }
 
+        /// <summary>
+        /// Gets the cameras in the scene, if any.
+        /// </summary>
         public Camera[] Cameras {
             get {
                 return _cameras;
             }
         }
 
-        internal Scene(AiScene scene, MemoryInfo memInfo) {
-            _memInfo = memInfo;
+        /// <summary>
+        /// Gets the number of embedded textures in the scene.
+        /// </summary>
+        public int TextureCount {
+            get {
+                return (_textures == null) ? 0 : _textures.Length;
+            }
+        }
+
+        /// <summary>
+        /// Checks if the scene contains embedded textures.
+        /// </summary>
+        public bool HasTextures {
+            get {
+                return _textures != null;
+            }
+        }
+
+        /// <summary>
+        /// Gets the embedded textures in the scene, if any.
+        /// </summary>
+        public Texture[] Textures {
+            get {
+                return _textures;
+            }
+        }
+
+        /// <summary>
+        /// Constructs a new Scene.
+        /// </summary>
+        /// <param name="scene">Unmanaged AiScene struct.</param>
+        internal Scene(AiScene scene) {
             _flags = scene.Flags;
 
             //Read scenegraph
@@ -143,6 +208,15 @@ namespace Assimp {
                 _cameras = new Camera[cameras.Length];
                 for(int i = 0; i < _cameras.Length; i++) {
                     _cameras[i] = new Camera(cameras[i]);
+                }
+            }
+
+            //Read Textures
+            if(scene.NumTextures > 0 && scene.Textures != IntPtr.Zero) {
+                AiTexture[] textures = MemoryHelper.MarshalArray<AiTexture>(Marshal.ReadIntPtr(scene.Textures), (int) scene.NumTextures);
+                _textures = new Texture[textures.Length];
+                for(int i = 0; i < _textures.Length; i++) {
+                    _textures[i] = Texture.CreateTexture(textures[i]);
                 }
             }
         }
