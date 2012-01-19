@@ -32,7 +32,7 @@ namespace Assimp {
     /// allows you to better examine how the mesh is constructed. If you use the <see cref="PostProcessSteps.SortByPrimitiveType"/>
     /// post process step flag during import, then each mesh will be homogenous where primitive type is concerned.
     /// </summary>
-    public class Face {
+    public sealed class Face {
         private uint _numIndices;
         private uint[] _indices;
         private int[] _intIndices;

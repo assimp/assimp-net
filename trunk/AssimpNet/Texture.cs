@@ -59,7 +59,7 @@ namespace Assimp {
     /// Represents a compressed embedded texture. See <see cref="Texture"/> for a complete
     /// description.
     /// </summary>
-    public class CompressedTexture : Texture {
+    public sealed class CompressedTexture : Texture {
         private byte[] _data;
         private String _formatHint;
 
@@ -122,7 +122,7 @@ namespace Assimp {
     /// Represents an uncompressed embedded texture. See <see cref="Texture"/> for a complete
     /// description.
     /// </summary>
-    public class UncompressedTexture : Texture {
+    public sealed class UncompressedTexture : Texture {
         private int _width;
         private int _height;
         private Texel[] _data;

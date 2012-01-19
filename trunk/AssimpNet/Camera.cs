@@ -9,7 +9,7 @@ namespace Assimp {
     /// system defined by the node which corresponds to the camera. This allows for camera
     /// animations.
     /// </summary>
-    public class Camera {
+    public sealed class Camera {
         private String _name;
         private Vector3D _position;
         private Vector3D _up;

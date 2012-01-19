@@ -21,65 +21,69 @@
 */
 
 using System;
+using System.Globalization;
+using System.Runtime.InteropServices;
 using Assimp.Unmanaged;
 
 namespace Assimp {
     /// <summary>
-    /// Represents a single bone of a mesh. A bone has a name which allows it to be found in the frame
-    /// hierarchy and by which it can be addressed by animations. In addition it has a number of
-    /// influences on vertices.
+    /// Describes vertex-based animations for a single mesh or a group of meshes. Meshes
+    /// carry the animation data for each frame. The purpose of this object is to define
+    /// keyframes, linking each mesh attachment to a particular point in a time.
     /// </summary>
-    public sealed class Bone {
+    public sealed class MeshAnimationChannel {
         private String _name;
-        private VertexWeight[] _weights;
-        private Matrix4x4 _offsetMatrix;
+        private MeshKey[] _meshKeys;
 
         /// <summary>
-        /// Gets the name of the bone.
+        /// Gets the name of the mesh to be animated. Empty strings are not allowed,
+        /// animation meshes need to be named (not necessarily uniquely, the name can basically
+        /// serve as a wildcard to select a group of meshes with similar animation setup).
         /// </summary>
-        public String Name {
+        public String MeshName {
             get {
                 return _name;
             }
         }
 
         /// <summary>
-        /// Gets the number of vertex influences the bone contains.
+        /// Gets the number of meshkeys in this animation channel. There will always
+        /// be at least one key.
         /// </summary>
-        public int VertexWeightCount {
+        public int MeshKeyCount {
             get {
-                return (_weights == null) ? 0 : _weights.Length;
+                return (_meshKeys == null) ? 0 : _meshKeys.Length;
             }
         }
 
         /// <summary>
-        /// Gets if the bone has vertex weights - this should always be true.
+        /// Checks if this animation channel has mesh keys - this should always be true.
         /// </summary>
-        public bool HasVertexWeights {
+        public bool HasMeshKeys {
             get {
-                return _weights != null;
+                return _meshKeys != null;
             }
         }
 
         /// <summary>
-        /// Gets the vertex weights owned by the bone.
+        /// Gets the mesh keyframes of the animation. This should not be null.
         /// </summary>
-        public VertexWeight[] VertexWeights {
+        public MeshKey[] MeshKeys {
             get {
-                return _weights;
+                return _meshKeys;
             }
         }
 
         /// <summary>
-        /// Constructs a new Bone.
+        /// Construct a new MeshAnimation.
         /// </summary>
-        /// <param name="bone">Unmanaged AiBone struct.</param>
-        internal Bone(AiBone bone) {
-            _name = bone.Name.Data;
-            _offsetMatrix = bone.OffsetMatrix;
-
-            if(bone.NumWeights > 0 && bone.Weights != IntPtr.Zero) {
-                _weights = MemoryHelper.MarshalArray<VertexWeight>(bone.Weights, (int) bone.NumWeights);
+        /// <param name="meshAnim">Unmanaged AiMeshAnim struct.</param>
+        internal MeshAnimationChannel(AiMeshAnim meshAnim) {
+            _name = meshAnim.Name.Data;
+            
+            //Load mesh keys
+            if(meshAnim.NumKeys > 0 && meshAnim.Keys != IntPtr.Zero) {
+                _meshKeys = MemoryHelper.MarshalArray<MeshKey>(meshAnim.Keys, (int) meshAnim.NumKeys);
             }
         }
     }

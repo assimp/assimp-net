@@ -29,7 +29,7 @@ namespace Assimp {
     /// <summary>
     /// A mesh represents geometry with a single material.
     /// </summary>
-    public class Mesh {
+    public sealed class Mesh {
         private String _name;
         private PrimitiveType _primitiveType;
         private int _materialIndex;
