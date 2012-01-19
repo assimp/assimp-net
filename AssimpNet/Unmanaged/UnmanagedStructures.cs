@@ -677,7 +677,7 @@ namespace Assimp.Unmanaged {
         public IntPtr Tangents;
 
         /// aiVector3D*, replacement bitangent array.
-        public IntPtr Bitangents;
+        public IntPtr BiTangents;
 
         /// aiColor4D*[4], replacement vertex colors.
         [MarshalAsAttribute(UnmanagedType.ByValArray, SizeConst = AiDefines.AI_MAX_NUMBER_OF_COLOR_SETS, ArraySubType = UnmanagedType.SysUInt)]
