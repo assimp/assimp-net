@@ -101,6 +101,7 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Animation.cs" />
     <Compile Include="AssimpException.cs" />
     <Compile Include="AssimpImporter.cs" />
     <Compile Include="Bone.cs" />
@@ -109,7 +110,10 @@
     <Compile Include="Color4D.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="Face.cs" />
+    <Compile Include="MeshAnimationChannel.cs" />
+    <Compile Include="MeshAttachment.cs" />
     <Compile Include="MeshKey.cs" />
+    <Compile Include="NodeAnimationChannel.cs" />
     <Compile Include="QuaternionKey.cs" />
     <Compile Include="Texel.cs" />
     <Compile Include="Texture.cs" />

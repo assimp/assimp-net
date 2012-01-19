@@ -33,7 +33,7 @@ namespace Assimp {
     /// of a spotlight's main node called "spotName.Target". However, this is just additional information
     /// then, the transform tracks of the main node make the spot light already point in the right direction.</para>
     /// </summary>
-    public class Light {
+    public sealed class Light {
         private String _name;
         private LightSourceType _lightType;
         private float _angleInnerCone;

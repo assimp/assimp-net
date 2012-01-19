@@ -661,4 +661,33 @@ namespace Assimp.Unmanaged {
         public uint Total;
     }
 
+    /// <summary>
+    /// Represents an aiAnimMesh struct.
+    /// </summary>
+    [StructLayoutAttribute(LayoutKind.Sequential)]
+    public struct AiAnimMesh {
+
+        /// aiVector3D*, replacement position array.
+        public IntPtr Vertices;
+
+        /// aiVector3D*, replacement normal array.
+        public IntPtr Normals;
+
+        /// aiVector3D*, replacement tangent array.
+        public IntPtr Tangents;
+
+        /// aiVector3D*, replacement bitangent array.
+        public IntPtr Bitangents;
+
+        /// aiColor4D*[4], replacement vertex colors.
+        [MarshalAsAttribute(UnmanagedType.ByValArray, SizeConst = AiDefines.AI_MAX_NUMBER_OF_COLOR_SETS, ArraySubType = UnmanagedType.SysUInt)]
+        public IntPtr[] Colors;
+
+        /// aiVector3D*[4], replacement texture coordinates.
+        [MarshalAsAttribute(UnmanagedType.ByValArray, SizeConst = AiDefines.AI_MAX_NUMBER_OF_TEXTURECOORDS, ArraySubType = UnmanagedType.SysUInt)]
+        public IntPtr[] TextureCoords;
+
+        /// unsigned int, number of vertices.
+        public uint NumVertices;
+    }
 }

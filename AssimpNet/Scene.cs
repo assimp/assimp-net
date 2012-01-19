@@ -30,16 +30,16 @@ namespace Assimp {
     /// accessed from here. Once the scene is loaded from unmanaged memory, it resides solely in managed memory
     /// and Assimp's read only copy is released.
     /// </summary>
-    public class Scene {
+    public sealed class Scene {
         private SceneFlags _flags;
         private Node _rootNode;
         private Mesh[] _meshes;
         private Light[] _lights;
         private Camera[] _cameras;
         private Texture[] _textures;
+        private Animation[] _animations;
 
         //TODO:
-        //Animations
         //Materials
 
         /// <summary>
@@ -173,6 +173,33 @@ namespace Assimp {
         }
 
         /// <summary>
+        /// Gets the number of animations in the scene.
+        /// </summary>
+        public int AnimationCount {
+            get {
+                return (_animations == null) ? 0 : _animations.Length;
+            }
+        }
+
+        /// <summary>
+        /// Checks if the contains any animations.
+        /// </summary>
+        public bool HasAnimations {
+            get {
+                return _animations != null;
+            }
+        }
+
+        /// <summary>
+        /// Gets the animations in the scene, if any.
+        /// </summary>
+        public Animation[] Animations {
+            get {
+                return _animations;
+            }
+        }
+
+        /// <summary>
         /// Constructs a new Scene.
         /// </summary>
         /// <param name="scene">Unmanaged AiScene struct.</param>
@@ -217,6 +244,15 @@ namespace Assimp {
                 _textures = new Texture[textures.Length];
                 for(int i = 0; i < _textures.Length; i++) {
                     _textures[i] = Texture.CreateTexture(textures[i]);
+                }
+            }
+
+            //Read animations
+            if(scene.NumAnimations > 0 && scene.Animations != IntPtr.Zero) {
+                AiAnimation[] animations = MemoryHelper.MarshalArray<AiAnimation>(Marshal.ReadIntPtr(scene.Animations), (int) scene.NumAnimations);
+                _animations = new Animation[animations.Length];
+                for(int i = 0; i < _animations.Length; i++) {
+                    _animations[i] = new Animation(animations[i]);
                 }
             }
         }

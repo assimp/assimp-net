@@ -28,7 +28,7 @@ namespace Assimp {
     /// <summary>
     /// A node in the imported model hierarchy.
     /// </summary>
-    public class Node {
+    public sealed class Node {
         private String _name;
         private Matrix4x4 _transform;
         private Node _parent;
