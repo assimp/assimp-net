@@ -43,6 +43,7 @@ namespace Assimp {
         private List<Vector3D[]> _texCoords;
         private List<uint> _texComponentNumber;
         private Bone[] _bones;
+        private MeshAttachment[] _meshAttachments;
 
         /// <summary>
         /// Gets the mesh name. This tends to be used
@@ -305,7 +306,14 @@ namespace Assimp {
                 }
             }
 
-            //Ignore AnimMesh: NOT CURRENTLY USED!
+            //Load anim meshes (attachment meshes)
+            if(mesh.NumAnimMeshes > 0 && mesh.AnimMeshes != IntPtr.Zero) {
+                AiAnimMesh[] animMeshes = MemoryHelper.MarshalArray<AiAnimMesh>(Marshal.ReadIntPtr(mesh.AnimMeshes), (int) mesh.NumAnimMeshes);
+                _meshAttachments = new MeshAttachment[animMeshes.Length];
+                for(int i = 0; i < _meshAttachments.Length; i++) {
+                    _meshAttachments[i] = new MeshAttachment(animMeshes[i]);
+                }
+            }
         }
 
         /// <summary>
