@@ -21,10 +21,10 @@
 */
 
 using System;
-using System.IO;
 using System.Collections.Generic;
-using Assimp.Unmanaged;
+using System.IO;
 using Assimp.Configs;
+using Assimp.Unmanaged;
 
 namespace Assimp {
     /// <summary>
