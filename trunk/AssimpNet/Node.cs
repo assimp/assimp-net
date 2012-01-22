@@ -124,7 +124,7 @@ namespace Assimp {
         /// <param name="aiNode">Unmanaged AiNode structure</param>
         /// <param name="parent">Parent of this node or null</param>
         internal Node(AiNode aiNode, Node parent) {
-            _name = aiNode.Name.Data;
+            _name = aiNode.Name.GetString();
             _transform = aiNode.Transformation;
             _parent = parent;
 

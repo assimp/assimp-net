@@ -22,6 +22,7 @@
 
 using System;
 using System.Runtime.InteropServices;
+using Assimp;
 
 namespace Assimp.Unmanaged {
     /// <summary>
@@ -610,6 +611,68 @@ namespace Assimp.Unmanaged {
         /// </summary>
         [MarshalAsAttribute(UnmanagedType.ByValTStr, SizeConst = AiDefines.MAX_LENGTH)]
         public String Data;
+
+        /// <summary>
+        /// Convienence method for getting the AiString string - if the length is not greater than zero, it returns
+        /// an empty string rather than garbage.
+        /// </summary>
+        /// <returns></returns>
+        public String GetString() {
+            if(Length > 0) {
+                return Data;
+            } else {
+                return String.Empty;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Represents a log stream, which receives all log messages and
+    /// streams them somewhere.
+    /// </summary>
+    [StructLayoutAttribute(LayoutKind.Sequential)]
+    public struct AiLogStream {
+        private LogStreamCallback _callback;
+
+        [MarshalAs(UnmanagedType.LPStr)]
+        private String _userData;
+
+        /// <summary>
+        /// Callback that is called when a message is logged.
+        /// </summary>
+        public LogStreamCallback Callback {
+            get {
+                return _callback;
+            }
+        }
+
+        /// <summary>
+        /// User data to be passed to the callback.
+        /// </summary>
+        public String UserData {
+            get {
+                return _userData;
+            }
+        }
+
+        /// <summary>
+        /// Constructs a new AiLogStream.
+        /// </summary>
+        /// <param name="callback">Callback called when messages are logged.</param>
+        public AiLogStream(LogStreamCallback callback) {
+            _callback = callback;
+            _userData = null;
+        }
+
+        /// <summary>
+        /// Constructs a new LogStream.
+        /// </summary>
+        /// <param name="callback">Callback called when messages are logged.</param>
+        /// <param name="userData">User-supplied data</param>
+        public AiLogStream(LogStreamCallback callback, String userData) {
+            _callback = callback;
+            _userData = userData;
+        }
     }
 
     /// <summary>

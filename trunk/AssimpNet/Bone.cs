@@ -75,7 +75,7 @@ namespace Assimp {
         /// </summary>
         /// <param name="bone">Unmanaged AiBone struct.</param>
         internal Bone(AiBone bone) {
-            _name = bone.Name.Data;
+            _name = bone.Name.GetString();
             _offsetMatrix = bone.OffsetMatrix;
 
             if(bone.NumWeights > 0 && bone.Weights != IntPtr.Zero) {

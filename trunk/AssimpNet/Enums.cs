@@ -31,6 +31,10 @@ namespace Assimp {
     /// </summary>
     [Flags]
     public enum PostProcessSteps {
+        /// <summary>
+        /// No flags enabled.
+        /// </summary>
+        None = 0x0,
 
         /// <summary>
         /// Calculates the tangents and binormals (bitangents)
@@ -406,6 +410,11 @@ namespace Assimp {
     /// </summary>
     [Flags]
     public enum ExcludeComponent {
+        /// <summary>
+        /// No components to be excluded.
+        /// </summary>
+        None = 0x0,
+
         /// <summary>
         /// Removes normal vectors
         /// </summary>

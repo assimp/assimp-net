@@ -127,7 +127,7 @@ namespace Assimp {
         /// </summary>
         /// <param name="animation">Unmanaged AiAnimation.</param>
         internal Animation(AiAnimation animation) {
-            _name = animation.Name.Data;
+            _name = animation.Name.GetString();
             _duration = animation.Duration;
             _ticksPerSecond = animation.TicksPerSecond;
 

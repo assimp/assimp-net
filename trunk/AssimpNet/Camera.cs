@@ -149,7 +149,7 @@ namespace Assimp {
         /// </summary>
         /// <param name="camera">Unmanaged aiCamera</param>
         internal Camera(AiCamera camera) {
-            _name = camera.Name.Data;
+            _name = camera.Name.GetString();
             _position = camera.Position;
             _direction = camera.LookAt;
             _up = camera.Up;

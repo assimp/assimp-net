@@ -108,6 +108,7 @@
     <Compile Include="Camera.cs" />
     <Compile Include="Color3D.cs" />
     <Compile Include="Color4D.cs" />
+    <Compile Include="Configs\PropertyConfig.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="Face.cs" />
     <Compile Include="MeshAnimationChannel.cs" />

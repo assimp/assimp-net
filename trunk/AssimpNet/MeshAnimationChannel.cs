@@ -79,7 +79,7 @@ namespace Assimp {
         /// </summary>
         /// <param name="meshAnim">Unmanaged AiMeshAnim struct.</param>
         internal MeshAnimationChannel(AiMeshAnim meshAnim) {
-            _name = meshAnim.Name.Data;
+            _name = meshAnim.Name.GetString();
             
             //Load mesh keys
             if(meshAnim.NumKeys > 0 && meshAnim.Keys != IntPtr.Zero) {
