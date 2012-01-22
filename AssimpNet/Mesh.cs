@@ -234,7 +234,7 @@ namespace Assimp {
         /// </summary>
         /// <param name="mesh">Unmanaged AiMesh struct.</param>
         internal Mesh(AiMesh mesh) {
-            _name = mesh.Name.Data;
+            _name = mesh.Name.GetString();
             _primitiveType = mesh.PrimitiveTypes;
             _vertexCount = (int) mesh.NumVertices;
             _materialIndex = (int) mesh.MaterialIndex;
@@ -301,7 +301,7 @@ namespace Assimp {
             if(mesh.NumBones > 0 && mesh.Bones != IntPtr.Zero) {
                 AiBone[] bones = MemoryHelper.MarshalArray<AiBone>(Marshal.ReadIntPtr(mesh.Bones), (int) mesh.NumBones);
                 _bones = new Bone[bones.Length];
-                for(int i = 0; i < _faces.Length; i++) {
+                for(int i = 0; i < _bones.Length; i++) {
                     _bones[i] = new Bone(bones[i]);
                 }
             }

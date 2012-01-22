@@ -33,7 +33,7 @@ namespace Assimp.Unmanaged {
         /// <summary>
         /// Specifies the maximum angle that may be between two vertex tangents that their tangents
         /// and bitangents are smoothed during the step to calculate the tangent basis. The angle specified 
-        /// is in degrees.
+        /// is in degrees. The maximum value is 175 degrees.
         /// <para>Type: float. Default: 45 degrees</para>
         /// </summary>
         public const String AI_CONFIG_PP_CT_MAX_SMOOTHING_ANGLE = "PP_CT_MAX_SMOOTHING_ANGLE";
@@ -133,7 +133,7 @@ namespace Assimp.Unmanaged {
         public const String AI_CONFIG_PP_LBW_MAX_WEIGHTS = "PP_LBW_MAX_WEIGHTS";
 
         /// <summary>
-        /// Sets the size of the post-transform vertex cace to optimize vertices for. This is
+        /// Sets the size of the post-transform vertex cache to optimize vertices for. This is
         /// for the <see cref="PostProcessSteps.ImproveCacheLocality"/> step. The size
         /// is given in vertices. Of course you can't know how the vertex format will exactly look
         /// like after the import returns, but you can still guess what your meshes will

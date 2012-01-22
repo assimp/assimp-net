@@ -146,7 +146,7 @@ namespace Assimp {
         /// </summary>
         /// <param name="nodeAnim">Unmanaged AiNodeAnim struct</param>
         internal NodeAnimationChannel(AiNodeAnim nodeAnim) {
-            _nodeName = nodeAnim.NodeName.Data;
+            _nodeName = nodeAnim.NodeName.GetString();
             _preState = nodeAnim.Prestate;
             _postState = nodeAnim.PostState;
 

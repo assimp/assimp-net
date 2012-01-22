@@ -22,6 +22,7 @@
 
 using System;
 using System.Runtime.InteropServices;
+using Assimp.Unmanaged;
 
 namespace Assimp {
 
@@ -36,19 +37,15 @@ namespace Assimp {
     /// Represents a log stream, which receives all log messages and
     /// streams them somewhere.
     /// </summary>
-    [StructLayoutAttribute(LayoutKind.Sequential)]
-    public struct LogStream {
-        private LogStreamCallback _callback;
-
-        [MarshalAs(UnmanagedType.LPStr)]
-        private String _userData;
+    public class LogStream {
+        internal AiLogStream _logStream;
 
         /// <summary>
         /// Callback that is called when a message is logged.
         /// </summary>
         public LogStreamCallback Callback {
             get {
-                return _callback;
+                return _logStream.Callback;
             }
         }
 
@@ -57,7 +54,7 @@ namespace Assimp {
         /// </summary>
         public String UserData {
             get {
-                return _userData;
+                return _logStream.UserData;
             }
         }
 
@@ -66,8 +63,7 @@ namespace Assimp {
         /// </summary>
         /// <param name="callback">Callback called when messages are logged.</param>
         public LogStream(LogStreamCallback callback) {
-            _callback = callback;
-            _userData = null;
+            _logStream = new AiLogStream(callback);
         }
 
         /// <summary>
@@ -76,8 +72,7 @@ namespace Assimp {
         /// <param name="callback">Callback called when messages are logged.</param>
         /// <param name="userData">User-supplied data</param>
         public LogStream(LogStreamCallback callback, String userData) {
-            _callback = callback;
-            _userData = userData;
+            _logStream = new AiLogStream(callback, userData);
         }
     }
 }

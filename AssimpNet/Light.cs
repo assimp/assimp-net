@@ -176,7 +176,7 @@ namespace Assimp {
         /// </summary>
         /// <param name="light">Unmanaged AiLight struct</param>
         internal Light(AiLight light) {
-            _name = light.Name.Data;
+            _name = light.Name.GetString();
             _lightType = light.Type;
             _angleInnerCone = light.AngleInnerCone;
             _angleOuterCone = light.AngleOuterCone;

@@ -21,6 +21,7 @@
 */
 
 using System;
+using System.Globalization;
 using System.Runtime.InteropServices;
 
 namespace Assimp {
@@ -49,6 +50,18 @@ namespace Assimp {
         public VertexWeight(uint vertID, float weight) {
             VertexID = vertID;
             Weight = weight;
+        }
+
+        /// <summary>
+        /// Returns a <see cref="System.String"/> that represents this instance.
+        /// </summary>
+        /// <returns>
+        /// A <see cref="System.String"/> that represents this instance.
+        /// </returns>
+        public override string ToString() {
+            CultureInfo info = CultureInfo.CurrentCulture;
+            return String.Format(info, "{{VertexID:{0} Weight:{1}}}",
+                new Object[] { VertexID.ToString(info), Weight.ToString(info) });
         }
     }
 }

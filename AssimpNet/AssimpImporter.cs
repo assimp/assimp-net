@@ -22,13 +22,32 @@
 
 using System;
 using System.IO;
+using System.Collections.Generic;
 using Assimp.Unmanaged;
+using Assimp.Configs;
 
 namespace Assimp {
+    /// <summary>
+    /// Assimp importer that will use Assimp to load a model into managed memory.
+    /// </summary>
     public class AssimpImporter : IDisposable {
-        private bool _verboseEnabled;
         private bool _isDisposed;
+        private bool _verboseEnabled;
+        private Dictionary<String, IPropertyConfig> _configs;
+        private List<LogStream> _logStreams;
 
+        /// <summary>
+        /// Gets if the importer has been disposed.
+        /// </summary>
+        public bool IsDisposed {
+            get {
+                return _isDisposed;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets if verbose logging should be enabled.
+        /// </summary>
         public bool VerboseLoggingEnabled {
             get {
                 return _verboseEnabled;
@@ -39,19 +58,48 @@ namespace Assimp {
             }
         }
 
-        public bool IsDisposed {
+        /// <summary>
+        /// Gets the property configurations set to this importer.
+        /// </summary>
+        public Dictionary<String, IPropertyConfig> PropertyConfigurations {
             get {
-                return _isDisposed;
+                return _configs;
             }
         }
 
-        public AssimpImporter() {
+        /// <summary>
+        /// Gets the logstreams attached to this importer.
+        /// </summary>
+        public List<LogStream> LogStreams {
+            get {
+                return _logStreams;
+            }
         }
 
+        /// <summary>
+        /// Constructs a new AssimpImporter.
+        /// </summary>
+        public AssimpImporter() {
+            _configs = new Dictionary<String, IPropertyConfig>();
+            _logStreams = new List<LogStream>();
+        }
+
+        /// <summary>
+        /// Releases unmanaged resources and performs other cleanup operations before the
+        /// <see cref="AssimpImporter"/> is reclaimed by garbage collection.
+        /// </summary>
         ~AssimpImporter() {
             Dispose(false);
         }
 
+        /// <summary>
+        /// Importers a model from the specified file. The importer sets configurations
+        /// and loads the model into managed memory, releasing the unmanaged memory used by Assimp.
+        /// </summary>
+        /// <param name="file">Full path to the file</param>
+        /// <param name="postProcessFlags">Post processing flags, if any</param>
+        /// <returns>The imported scene</returns>
+        /// <exception cref="AssimpException">Thrown if the file is valid or there was a general error in importing the model.</exception>
         public Scene ImportFile(String file, PostProcessSteps postProcessFlags) {
             if(String.IsNullOrEmpty(file) || !File.Exists(file)) {
                 throw new AssimpException("file", "Filename is null or not valid.");
@@ -59,7 +107,11 @@ namespace Assimp {
 
             IntPtr ptr = IntPtr.Zero;
             try {
+                ApplyConfigs();
+
                 ptr = AssimpMethods.ImportFile(file, postProcessFlags);
+
+                ApplyConfigsDefault();
 
                 if(ptr == IntPtr.Zero) {
                     throw new AssimpException("Error importing file: " + AssimpMethods.GetErrorString());
@@ -78,38 +130,131 @@ namespace Assimp {
             }
         }
 
-        public void AttachLogStream(ref LogStream logstream) {
-            AssimpMethods.AttachLogStream(ref logstream);
+        /// <summary>
+        /// Attaches a logging stream to the importer.
+        /// </summary>
+        /// <param name="logstream"></param>
+        public void AttachLogStream(LogStream logstream) {
+            if(logstream == null || _logStreams.Contains(logstream)) {
+                return;
+            }
+            _logStreams.Add(logstream);
+            AssimpMethods.AttachLogStream(ref logstream._logStream);
         }
 
-        public void DetachLogStream(ref LogStream logStream) {
-            AssimpMethods.DetachLogStream(ref logStream);
+        /// <summary>
+        /// Detaches a logging stream from the importer.
+        /// </summary>
+        /// <param name="logStream"></param>
+        public void DetachLogStream(LogStream logStream) {
+            if(logStream == null) {
+                return;
+            }
+            AssimpMethods.DetachLogStream(ref logStream._logStream);
         }
 
-        public void DetachAllLogStreams() {
-            AssimpMethods.DetachAllLogStreams();
+        /// <summary>
+        /// Detaches all logging streams that are currently attached to the importer.
+        /// </summary>
+        public void DetachLogStreams() {
+            foreach(LogStream stream in _logStreams) {
+                AssimpMethods.DetachLogStream(ref stream._logStream);
+            }
         }
 
+        /// <summary>
+        /// Gets the model formats that are supported by Assimp. Each
+        /// format should follow this example: ".3ds"
+        /// </summary>
+        /// <returns>The format extensions that are supported</returns>
         public String[] GetSupportedFormats() {
             return AssimpMethods.GetExtensionList();
         }
 
+        /// <summary>
+        /// Checks of the format extension is supported. Example: ".3ds"
+        /// </summary>
+        /// <param name="formatExtension">Format extension</param>
+        /// <returns></returns>
         public bool IsFormatSupported(String formatExtension) {
             return AssimpMethods.IsExtensionSupported(formatExtension);
         }
 
+        /// <summary>
+        /// Sets a configuration property to the importer.
+        /// </summary>
+        /// <param name="config">Config to set</param>
+        public void SetConfig(IPropertyConfig config) {
+            if(config == null) {
+                return;
+            }
+            String name = config.Name;
+            if(!_configs.ContainsKey(name)) {
+                _configs[name] = config;
+            } else {
+                _configs.Add(name, config);
+            }
+        }
+
+        /// <summary>
+        /// Removes a set configuration property by name.
+        /// </summary>
+        /// <param name="configName">Name of the config property</param>
+        public void RemoveConfig(String configName) {
+            if(String.IsNullOrEmpty(configName)) {
+                return;
+            }
+            IPropertyConfig oldConfig;
+            if(!_configs.TryGetValue(configName, out oldConfig)) {
+                _configs.Remove(configName);
+            }
+        }
+
+        /// <summary>
+        /// Checks if the importer has a config set by the specified name.
+        /// </summary>
+        /// <param name="configName">Name of the config property</param>
+        /// <returns>True if the config is present, false otherwise</returns>
+        public bool ContainsConfig(String configName) {
+            if(String.IsNullOrEmpty(configName)) {
+                return false;
+            }
+            return _configs.ContainsKey(configName);
+        }
+
+        //Sets all config properties to Assimp
+        private void ApplyConfigs() {
+            foreach(KeyValuePair<String, IPropertyConfig> config in _configs) {
+                config.Value.ApplyValue();
+            }
+        }
+
+        //Sets all default config properties to Assimp
+        private void ApplyConfigsDefault() {
+            foreach(KeyValuePair<String, IPropertyConfig> config in _configs) {
+                config.Value.ApplyDefaultValue();
+            }
+        }
+
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
         public void Dispose() {
             Dispose(true);
             GC.SuppressFinalize(this);
         }
 
+        /// <summary>
+        /// Releases unmanaged and - optionally - managed resources
+        /// </summary>
+        /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
         protected void Dispose(bool disposing) {
 
             if(!_isDisposed) {
                 if(disposing) {
                     //Dispose of managed resources
                 }
-                AssimpMethods.DetachAllLogStreams();
+                DetachLogStreams();
                 _isDisposed = true;
             }
         }
