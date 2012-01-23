@@ -129,7 +129,7 @@ namespace Assimp {
             _parent = parent;
 
             if(aiNode.NumChildren > 0 && aiNode.Children != IntPtr.Zero) {
-                AiNode[] childNodes = MemoryHelper.MarshalArray<AiNode>(Marshal.ReadIntPtr(aiNode.Children), (int) aiNode.NumChildren);
+                AiNode[] childNodes = MemoryHelper.MarshalArray<AiNode>(aiNode.Children, (int) aiNode.NumChildren, true);
                 _children = new Node[childNodes.Length];
                 for(int i = 0; i < _children.Length; i++) {
                     _children[i] = new Node(childNodes[i], this);

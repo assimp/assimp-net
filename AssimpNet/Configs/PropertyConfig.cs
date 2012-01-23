@@ -374,7 +374,7 @@ namespace Assimp.Configs {
     /// Configuration to enable time measurements. If enabled, each
     /// part of the loading process is timed and logged.
     /// </summary>
-    public class MeasureTimeConfig : BooleanPropertyConfig {
+    public sealed class MeasureTimeConfig : BooleanPropertyConfig {
 
         /// <summary>
         /// Gets the string name used by MeasureTimeConfig.
@@ -399,7 +399,7 @@ namespace Assimp.Configs {
     /// any number larger than zero to force a specific number of threads. This
     /// is only a hint and may be ignored by Assimp.
     /// </summary>
-    public class MultithreadingConfig : IntegerPropertyConfig {
+    public sealed class MultithreadingConfig : IntegerPropertyConfig {
 
         /// <summary>
         /// Gets the string name used by MultithreadingConfig.
@@ -429,7 +429,7 @@ namespace Assimp.Configs {
     /// when they are smoothed during the step to calculate the tangent basis. The default
     /// value is 45 degrees.
     /// </summary>
-    public class TangentSmoothingAngleConfig : FloatPropertyConfig {
+    public sealed class TangentSmoothingAngleConfig : FloatPropertyConfig {
 
         /// <summary>
         /// Gets the string name used by TangentSmoothingAngleConfig.
@@ -453,7 +453,7 @@ namespace Assimp.Configs {
     /// they are smoothed during the step to calculate smooth normals. This is frequently
     /// called the "crease angle". The maximum and default value is 175 degrees.
     /// </summary>
-    public class NormalSmoothingAngleConfig : FloatPropertyConfig {
+    public sealed class NormalSmoothingAngleConfig : FloatPropertyConfig {
 
         /// <summary>
         /// Gets the string name used by NormalSmoothingAngleConfig.
@@ -477,7 +477,7 @@ namespace Assimp.Configs {
     /// RGB triplets for each of the 256 palette entries. If the file is not found, a
     /// default palette (from Quake 1) is used. The default value is "colormap.lmp".
     /// </summary>
-    public class MDLColorMapConfig : StringPropertyConfig {
+    public sealed class MDLColorMapConfig : StringPropertyConfig {
 
         /// <summary>
         /// Gets the string name used by MDLColorMapConfig.
@@ -501,7 +501,7 @@ namespace Assimp.Configs {
     /// to determine what materials to keep. If a material matches one of these names it will not
     /// be modified or removed by the post processing step. Default is an empty string.
     /// </summary>
-    public class MaterialExcludeListConfig : StringPropertyConfig {
+    public sealed class MaterialExcludeListConfig : StringPropertyConfig {
 
         /// <summary>
         /// Gets the string name used by MaterialExcludeListConfig.
@@ -528,7 +528,7 @@ namespace Assimp.Configs {
     /// if you have a scene hierarchy that contains important additional information
     /// which you intend to parse. The default value is false.
     /// </summary>
-    public class KeepSceneHierarchyConfig : BooleanPropertyConfig {
+    public sealed class KeepSceneHierarchyConfig : BooleanPropertyConfig {
 
         /// <summary>
         /// Gets the string name used by KeepSceneHierarchyConfig.
@@ -552,7 +552,7 @@ namespace Assimp.Configs {
     /// to normalize all vertex components into the -1...1 range. The default value is
     /// false.
     /// </summary>
-    public class NormalizeVertexComponentsConfig : BooleanPropertyConfig {
+    public sealed class NormalizeVertexComponentsConfig : BooleanPropertyConfig {
 
         /// <summary>
         /// Gets the string name used by NormalizeVertexComponentsConfig.
@@ -576,7 +576,7 @@ namespace Assimp.Configs {
     /// remove degenerted primitives from the import immediately. The default value is false,
     /// where degenerated triangles are converted to lines, and degenerated lines to points.
     /// </summary>
-    public class RemoveDegeneratePrimitivesConfig : BooleanPropertyConfig {
+    public sealed class RemoveDegeneratePrimitivesConfig : BooleanPropertyConfig {
 
         /// <summary>
         /// Gets the string name used by RemoveDegeneratePrimitivesConfig.
@@ -602,7 +602,7 @@ namespace Assimp.Configs {
     /// <c>must</c> be enclosed in single quotation marks. The default value is an
     /// empty string.
     /// </summary>
-    public class NodeExcludeListConfig : StringPropertyConfig {
+    public sealed class NodeExcludeListConfig : StringPropertyConfig {
 
         /// <summary>
         /// Gets the string name used by NodeExcludeListConfig.
@@ -626,7 +626,7 @@ namespace Assimp.Configs {
     /// that specifies the maximum number of triangles a mesh can contain. The
     /// default value is MeshTriangleLimitConfigDefaultValue.
     /// </summary>
-    public class MeshTriangleLimitConfig : IntegerPropertyConfig {
+    public sealed class MeshTriangleLimitConfig : IntegerPropertyConfig {
 
         /// <summary>
         /// Gets the string name used by MeshTriangleLimitConfig.
@@ -660,7 +660,7 @@ namespace Assimp.Configs {
     /// that specifies the maximum number of vertices a mesh can contain. The
     /// default value is MeshVertexLimitConfigDefaultValue.
     /// </summary>
-    public class MeshVertexLimitConfig : IntegerPropertyConfig {
+    public sealed class MeshVertexLimitConfig : IntegerPropertyConfig {
 
         /// <summary>
         /// Gets the string name used by MeshVertexLimitConfig.
@@ -694,7 +694,7 @@ namespace Assimp.Configs {
     /// that specifies the maximum number of bone weights per vertex. The default
     /// value is VertexBoneWeightLimitConfigDefaultValue.
     /// </summary>
-    public class VertexBoneWeightLimitConfig : IntegerPropertyConfig {
+    public sealed class VertexBoneWeightLimitConfig : IntegerPropertyConfig {
 
         /// <summary>
         /// gets the string name used by VertexBoneWeightLimitConfig.
@@ -728,7 +728,7 @@ namespace Assimp.Configs {
     /// that specifies the size of the post-transform vertex cache. The size is
     /// given in number of vertices and the default value is VertexCacheSizeConfigDefaultValue.
     /// </summary>
-    public class VertexCacheSizeConfig : IntegerPropertyConfig {
+    public sealed class VertexCacheSizeConfig : IntegerPropertyConfig {
         
         /// <summary>
         /// Gets the string name used by VertexCacheConfig.
@@ -762,7 +762,7 @@ namespace Assimp.Configs {
     /// specifies which parts of the data structure is to be removed. If no valid mesh
     /// remains after the step, the import fails. The default value i <see cref="ExcludeComponent.None"/>.
     /// </summary>
-    public class RemoveComponentConfig : IntegerPropertyConfig {
+    public sealed class RemoveComponentConfig : IntegerPropertyConfig {
 
         /// <summary>
         /// Gets the string name used by RemoveComponentConfig.
@@ -786,7 +786,7 @@ namespace Assimp.Configs {
     /// specifies which primitive types are to be removed by the step. Specifying all
     /// primitive types is illegal. The default value is zero specifying none.
     /// </summary>
-    public class SortByPrimitiveTypeConfig : IntegerPropertyConfig {
+    public sealed class SortByPrimitiveTypeConfig : IntegerPropertyConfig {
 
         /// <summary>
         /// Gets the string name used by SortByPrimitiveTypeConfig.
@@ -810,7 +810,7 @@ namespace Assimp.Configs {
     /// specifies the floating point accuracy for animation values, specifically
     /// the episilon during comparisons. The default value is 0.0f.
     /// </summary>
-    public class AnimationAccuracyConfig : FloatPropertyConfig {
+    public sealed class AnimationAccuracyConfig : FloatPropertyConfig {
 
         /// <summary>
         /// Gets the string name used by AnimationAccuracyConfig.
@@ -834,7 +834,7 @@ namespace Assimp.Configs {
     /// specifies which UV transformations are to be evaluated. The default value
     /// is for all combinations (scaling, rotation, translation).
     /// </summary>
-    public class TransformUVConfig : IntegerPropertyConfig {
+    public sealed class TransformUVConfig : IntegerPropertyConfig {
 
         /// <summary>
         /// Gets the string name used by TransformUVConfig.
@@ -858,7 +858,7 @@ namespace Assimp.Configs {
     /// option may result in faster loading, or it may not. It is just a hint to loaders
     /// and post-process steps to use faster code paths if possible. The default value is false.
     /// </summary>
-    public class FavorSpeedConfig : BooleanPropertyConfig {
+    public sealed class FavorSpeedConfig : BooleanPropertyConfig {
 
         /// <summary>
         /// Gets the string name used by FavorSpeedConfig.

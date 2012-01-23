@@ -132,7 +132,7 @@ namespace Assimp {
 
             //Load node animations
             if(animation.NumChannels > 0 && animation.Channels != IntPtr.Zero) {
-                AiNodeAnim[] nodeAnims = MemoryHelper.MarshalArray<AiNodeAnim>(Marshal.ReadIntPtr(animation.Channels), (int) animation.NumChannels);
+                AiNodeAnim[] nodeAnims = MemoryHelper.MarshalArray<AiNodeAnim>(animation.Channels, (int) animation.NumChannels, true);
                 _channels = new NodeAnimationChannel[nodeAnims.Length];
                 for(int i = 0; i < _channels.Length; i++) {
                     _channels[i] = new NodeAnimationChannel(nodeAnims[i]);
@@ -141,7 +141,7 @@ namespace Assimp {
 
             //Load mesh animations
             if(animation.NumMeshChannels > 0 && animation.MeshChannels != IntPtr.Zero) {
-                AiMeshAnim[] meshAnims = MemoryHelper.MarshalArray<AiMeshAnim>(Marshal.ReadIntPtr(animation.MeshChannels), (int) animation.NumMeshChannels);
+                AiMeshAnim[] meshAnims = MemoryHelper.MarshalArray<AiMeshAnim>(animation.MeshChannels, (int) animation.NumMeshChannels, true);
                 _meshChannels = new MeshAnimationChannel[meshAnims.Length];
                 for(int i = 0; i < _meshChannels.Length; i++) {
                     _meshChannels[i] = new MeshAnimationChannel(meshAnims[i]);

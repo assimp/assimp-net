@@ -299,7 +299,7 @@ namespace Assimp {
 
             //Load bones
             if(mesh.NumBones > 0 && mesh.Bones != IntPtr.Zero) {
-                AiBone[] bones = MemoryHelper.MarshalArray<AiBone>(Marshal.ReadIntPtr(mesh.Bones), (int) mesh.NumBones);
+                AiBone[] bones = MemoryHelper.MarshalArray<AiBone>(mesh.Bones, (int) mesh.NumBones, true);
                 _bones = new Bone[bones.Length];
                 for(int i = 0; i < _bones.Length; i++) {
                     _bones[i] = new Bone(bones[i]);
@@ -308,7 +308,7 @@ namespace Assimp {
 
             //Load anim meshes (attachment meshes)
             if(mesh.NumAnimMeshes > 0 && mesh.AnimMeshes != IntPtr.Zero) {
-                AiAnimMesh[] animMeshes = MemoryHelper.MarshalArray<AiAnimMesh>(Marshal.ReadIntPtr(mesh.AnimMeshes), (int) mesh.NumAnimMeshes);
+                AiAnimMesh[] animMeshes = MemoryHelper.MarshalArray<AiAnimMesh>(mesh.AnimMeshes, (int) mesh.NumAnimMeshes, true);
                 _meshAttachments = new MeshAttachment[animMeshes.Length];
                 for(int i = 0; i < _meshAttachments.Length; i++) {
                     _meshAttachments[i] = new MeshAttachment(animMeshes[i]);

@@ -38,9 +38,7 @@ namespace Assimp {
         private Camera[] _cameras;
         private Texture[] _textures;
         private Animation[] _animations;
-
-        //TODO:
-        //Materials
+        private Material[] _materials;
 
         /// <summary>
         /// Gets the state of the imported scene. By default no flags are set, but
@@ -182,7 +180,7 @@ namespace Assimp {
         }
 
         /// <summary>
-        /// Checks if the contains any animations.
+        /// Checks if the scene contains any animations.
         /// </summary>
         public bool HasAnimations {
             get {
@@ -200,11 +198,49 @@ namespace Assimp {
         }
 
         /// <summary>
+        /// Gets the number of materials in the scene. There should always be at least the
+        /// default Assimp material if no materials were loaded.
+        /// </summary>
+        public int MaterialCount {
+            get {
+                return (_materials == null) ? 0 : _materials.Length;
+            }
+        }
+
+        /// <summary>
+        /// Checks if the scene contains any materials. There should always be at least the
+        /// default Assimp material if no materials were loaded.
+        /// </summary>
+        public bool HasMaterials {
+            get {
+                return _materials != null;
+            }
+        }
+
+        /// <summary>
+        /// Gets the materials in the scene.
+        /// </summary>
+        public Material[] Materials {
+            get {
+                return _materials;
+            }
+        }
+
+        /// <summary>
         /// Constructs a new Scene.
         /// </summary>
         /// <param name="scene">Unmanaged AiScene struct.</param>
         internal Scene(AiScene scene) {
             _flags = scene.Flags;
+
+            //Read materials
+            if(scene.NumMaterials > 0 && scene.Materials != IntPtr.Zero) {
+                AiMaterial[] materials = MemoryHelper.MarshalArray<AiMaterial>(scene.Materials, (int) scene.NumMaterials, true);
+                _materials = new Material[materials.Length];
+                for(int i = 0; i < _materials.Length; i++) {
+                    _materials[i] = new Material(materials[i]);
+                }
+            }
 
             //Read scenegraph
             if(scene.RootNode != IntPtr.Zero) {
@@ -213,7 +249,7 @@ namespace Assimp {
 
             //Read meshes
             if(scene.NumMeshes > 0 && scene.Meshes != IntPtr.Zero) {
-                AiMesh[] meshes = MemoryHelper.MarshalArray<AiMesh>(Marshal.ReadIntPtr(scene.Meshes), (int) scene.NumMeshes);
+                AiMesh[] meshes = MemoryHelper.MarshalArray<AiMesh>(scene.Meshes, (int) scene.NumMeshes, true);
                 _meshes = new Mesh[meshes.Length];
                 for(int i = 0; i < _meshes.Length; i++) {
                     _meshes[i] = new Mesh(meshes[i]);
@@ -222,7 +258,7 @@ namespace Assimp {
 
             //Read lights
             if(scene.NumLights > 0 && scene.Lights != IntPtr.Zero) {
-                AiLight[] lights = MemoryHelper.MarshalArray<AiLight>(Marshal.ReadIntPtr(scene.Lights), (int) scene.NumLights);
+                AiLight[] lights = MemoryHelper.MarshalArray<AiLight>(scene.Lights, (int) scene.NumLights, true);
                 _lights = new Light[lights.Length];
                 for(int i = 0; i < _lights.Length; i++) {
                     _lights[i] = new Light(lights[i]);
@@ -231,7 +267,7 @@ namespace Assimp {
 
             //Read cameras
             if(scene.NumCameras > 0 && scene.Cameras != IntPtr.Zero) {
-                AiCamera[] cameras = MemoryHelper.MarshalArray<AiCamera>(Marshal.ReadIntPtr(scene.Cameras), (int) scene.NumCameras);
+                AiCamera[] cameras = MemoryHelper.MarshalArray<AiCamera>(scene.Cameras, (int) scene.NumCameras, true);
                 _cameras = new Camera[cameras.Length];
                 for(int i = 0; i < _cameras.Length; i++) {
                     _cameras[i] = new Camera(cameras[i]);
@@ -240,7 +276,7 @@ namespace Assimp {
 
             //Read Textures
             if(scene.NumTextures > 0 && scene.Textures != IntPtr.Zero) {
-                AiTexture[] textures = MemoryHelper.MarshalArray<AiTexture>(Marshal.ReadIntPtr(scene.Textures), (int) scene.NumTextures);
+                AiTexture[] textures = MemoryHelper.MarshalArray<AiTexture>(scene.Textures, (int) scene.NumTextures, true);
                 _textures = new Texture[textures.Length];
                 for(int i = 0; i < _textures.Length; i++) {
                     _textures[i] = Texture.CreateTexture(textures[i]);
@@ -249,7 +285,7 @@ namespace Assimp {
 
             //Read animations
             if(scene.NumAnimations > 0 && scene.Animations != IntPtr.Zero) {
-                AiAnimation[] animations = MemoryHelper.MarshalArray<AiAnimation>(Marshal.ReadIntPtr(scene.Animations), (int) scene.NumAnimations);
+                AiAnimation[] animations = MemoryHelper.MarshalArray<AiAnimation>(scene.Animations, (int) scene.NumAnimations, true);
                 _animations = new Animation[animations.Length];
                 for(int i = 0; i < _animations.Length; i++) {
                     _animations[i] = new Animation(animations[i]);
