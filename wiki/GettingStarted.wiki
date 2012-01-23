@@ -1,0 +1,58 @@
+#summary Getting started with Assimp .NET
+#labels Featured
+
+= Overview =
+
+Using Assimp .NET is really easy, you can download the source and build it yourself, or download the latest binaries (Downloads page). Assimp .NET uses P/Invoke to communicate with the native Assimp library, so there are no special instructions for compiling/usage.
+
+The API is divided into two categories:
+
+  # A "low-level" set of functions that exposes the Assimp C-API. This is the P/Invoke layer and will require you to marshal the model data from unmanageable memory. These exist in the *Assimp.Unmanaged* namespace.
+  # A "high-level" more .NET API that loads a model, marshals all the data to managed memory, and provides access to that data. This data structure closely resembles the Assimp data structure in naming conventions and organization, but provides convenient access to the data that .NET developers will appreciate.
+
+= Importing a model =
+
+The main object you'll be using in Assimp .NET is the Assimp Importer. Each importer instance can be considered separate - all the configurations or logging streams you attach to each one will persist only for that specific instance. This is done by treating an import as essentially an atomic call. Configs/logging streams are set before the model is imported, removed afterwards, and after the model is loaded into managed memory is the unmanaged Assimp data structure released. Therefore the user doesn't have to worry about these details.
+
+The returned data structure is very similar to the Assimp data structure as it's read-only. Its organization and documentation closely resembles the native Assimp data structure as well.
+
+Some example code is provided below. This is all that is required to use the API to load up a model. Of course, the hard part now would be to translate the Assimp model data structure into your own model structure (or you could use it directly if you wish).
+
+{{{
+using System;
+using System.IO;
+using System.Reflection;
+using Assimp;
+using Assimp.Configs;
+
+namespace Example {
+    class Program {
+        static void Main(string[] args) {
+            //Filepath to our model
+            String fileName = Path.Combine(Assembly.GetExecutingAssembly().Location, "Seymour.dae");
+
+            //Create a new importer
+            AssimpImporter importer = new AssimpImporter();
+
+            //This is how we add a configuration (each config is its own class)
+            NormalSmoothingAngleConfig config = new NormalSmoothingAngleConfig(66.0f);
+            importer.SetConfig(config);
+
+            //This is how we add a logging callback 
+            LogStream logstream = new LogStream(delegate(String msg, IntPtr userData) {
+                Console.WriteLine(msg);
+            });
+            importer.AttachLogStream(logstream);
+
+            //Import the model - this is considered a single atomic call. All configs are set, all logstreams attached. The model
+            //is imported, loaded into managed memory. Then the unmanaged memory is released, and everything is reset.
+            Scene model = importer.ImportFile(fileName, PostProcessPreset.TargetRealTimeMaximumQuality);
+
+            //Load the model data into your own structures
+
+            //End of example
+            importer.Dispose();
+        }
+    }
+}
+}}}
