@@ -180,7 +180,7 @@ namespace Assimp {
         /// </summary>
         public void DetachLogStreams() {
             foreach(LogStream stream in _logStreams) {
-                AssimpMethods.DetachLogStream(ref stream._logStream);
+                stream.Detach();
             }
         }
 
@@ -261,14 +261,14 @@ namespace Assimp {
         //Attachs all logstreams to Assimp
         private void AttachLogs() {
             foreach(LogStream log in _logStreams) {
-                AssimpMethods.AttachLogStream(ref log._logStream);
+                log.Attach();
             }
         }
 
         //Detatches all logstreams from Assimp
         private void DetatachLogs() {
             foreach(LogStream log in _logStreams) {
-                AssimpMethods.DetachLogStream(ref log._logStream);
+                log.Detach();
             }
         }
 

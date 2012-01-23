@@ -38,7 +38,7 @@ namespace Assimp {
     /// streams them somewhere.
     /// </summary>
     public sealed class LogStream {
-        internal AiLogStream _logStream;
+        private AiLogStream _logStream;
 
         /// <summary>
         /// Callback that is called when a message is logged.
@@ -73,6 +73,14 @@ namespace Assimp {
         /// <param name="userData">User-supplied data</param>
         public LogStream(LogStreamCallback callback, String userData) {
             _logStream = new AiLogStream(callback, userData);
+        }
+
+        internal void Attach() {
+            AssimpMethods.AttachLogStream(ref _logStream);
+        }
+
+        internal void Detach() {
+            AssimpMethods.DetachLogStream(ref _logStream);
         }
     }
 }
