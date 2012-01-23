@@ -31,7 +31,7 @@ namespace Assimp {
     /// <summary>
     /// Assimp importer that will use Assimp to load a model into managed memory.
     /// </summary>
-    public sealed class AssimpImporter : IDisposable {
+    public class AssimpImporter : IDisposable {
         private bool _isDisposed;
         private bool _verboseEnabled;
         private Dictionary<String, IPropertyConfig> _configs;
@@ -102,8 +102,12 @@ namespace Assimp {
         /// <param name="postProcessFlags">Post processing flags, if any</param>
         /// <returns>The imported scene</returns>
         /// <exception cref="AssimpException">Thrown if the file is valid or there was a general error in importing the model.</exception>
+        /// <exception cref="System.ObjectDisposedException">Thrown if attempting to import a model if the importer has been disposed of</exception>
         public Scene ImportFile(String file, PostProcessSteps postProcessFlags) {
             lock(sync) {
+                if(_isDisposed) {
+                    throw new ObjectDisposedException("Importer has been disposed.");
+                }
                 if(String.IsNullOrEmpty(file) || !File.Exists(file)) {
                     throw new AssimpException("file", "Filename is null or not valid.");
                 }
@@ -111,11 +115,13 @@ namespace Assimp {
                 IntPtr ptr = IntPtr.Zero;
                 try {
 
+                    AttachLogs();
                     ApplyConfigs();
-
+                    
                     ptr = AssimpMethods.ImportFile(file, postProcessFlags);
                     
                     ApplyConfigsDefault();
+                    DetatachLogs();
 
                     if(ptr == IntPtr.Zero) {
                         throw new AssimpException("Error importing file: " + AssimpMethods.GetErrorString());
@@ -144,7 +150,6 @@ namespace Assimp {
                 return;
             }
             _logStreams.Add(logstream);
-            AssimpMethods.AttachLogStream(ref logstream._logStream);
         }
 
         /// <summary>
@@ -155,7 +160,7 @@ namespace Assimp {
             if(logStream == null) {
                 return;
             }
-            AssimpMethods.DetachLogStream(ref logStream._logStream);
+            _logStreams.Remove(logStream);
         }
 
         /// <summary>
@@ -241,6 +246,20 @@ namespace Assimp {
             }
         }
 
+        //Attachs all logstreams to Assimp
+        private void AttachLogs() {
+            foreach(LogStream log in _logStreams) {
+                AssimpMethods.AttachLogStream(ref log._logStream);
+            }
+        }
+
+        //Detatches all logstreams from Assimp
+        private void DetatachLogs() {
+            foreach(LogStream log in _logStreams) {
+                AssimpMethods.DetachLogStream(ref log._logStream);
+            }
+        }
+
         /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>
@@ -253,13 +272,12 @@ namespace Assimp {
         /// Releases unmanaged and - optionally - managed resources
         /// </summary>
         /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
-        private void Dispose(bool disposing) {
+        protected void Dispose(bool disposing) {
 
             if(!_isDisposed) {
                 if(disposing) {
                     //Dispose of managed resources
                 }
-                DetachLogStreams();
                 _isDisposed = true;
             }
         }
