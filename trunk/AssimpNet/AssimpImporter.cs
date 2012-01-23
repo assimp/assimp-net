@@ -95,6 +95,18 @@ namespace Assimp {
         }
 
         /// <summary>
+        /// Importers a model from the specified file without running any post-process steps. The importer sets configurations
+        /// and loads the model into managed memory, releasing the unmanaged memory used by Assimp.
+        /// </summary>
+        /// <param name="file">Full path to the file</param>
+        /// <returns>The imported scene</returns>
+        /// <exception cref="AssimpException">Thrown if the file is valid or there was a general error in importing the model.</exception>
+        /// <exception cref="System.ObjectDisposedException">Thrown if attempting to import a model if the importer has been disposed of</exception>
+        public Scene ImportFile(String file) {
+            return ImportFile(file, PostProcessSteps.None);
+        }
+
+        /// <summary>
         /// Importers a model from the specified file. The importer sets configurations
         /// and loads the model into managed memory, releasing the unmanaged memory used by Assimp.
         /// </summary>
