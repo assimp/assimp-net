@@ -24,17 +24,19 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using Assimp.Configs;
+using System.Runtime.InteropServices;
 using Assimp.Unmanaged;
 
 namespace Assimp {
     /// <summary>
     /// Assimp importer that will use Assimp to load a model into managed memory.
     /// </summary>
-    public class AssimpImporter : IDisposable {
+    public sealed class AssimpImporter : IDisposable {
         private bool _isDisposed;
         private bool _verboseEnabled;
         private Dictionary<String, IPropertyConfig> _configs;
         private List<LogStream> _logStreams;
+        private Object sync = new Object();
 
         /// <summary>
         /// Gets if the importer has been disposed.
@@ -101,31 +103,34 @@ namespace Assimp {
         /// <returns>The imported scene</returns>
         /// <exception cref="AssimpException">Thrown if the file is valid or there was a general error in importing the model.</exception>
         public Scene ImportFile(String file, PostProcessSteps postProcessFlags) {
-            if(String.IsNullOrEmpty(file) || !File.Exists(file)) {
-                throw new AssimpException("file", "Filename is null or not valid.");
-            }
-
-            IntPtr ptr = IntPtr.Zero;
-            try {
-                ApplyConfigs();
-
-                ptr = AssimpMethods.ImportFile(file, postProcessFlags);
-
-                ApplyConfigsDefault();
-
-                if(ptr == IntPtr.Zero) {
-                    throw new AssimpException("Error importing file: " + AssimpMethods.GetErrorString());
+            lock(sync) {
+                if(String.IsNullOrEmpty(file) || !File.Exists(file)) {
+                    throw new AssimpException("file", "Filename is null or not valid.");
                 }
 
-                AiScene scene = MemoryHelper.MarshalStructure<AiScene>(ptr);
-                if((scene.Flags & SceneFlags.Incomplete) == SceneFlags.Incomplete) {
-                    throw new AssimpException("Error importing file: Imported scene is incomplete. " + AssimpMethods.GetErrorString());
-                }
+                IntPtr ptr = IntPtr.Zero;
+                try {
 
-                return new Scene(scene);
-            } finally {
-                if(ptr != IntPtr.Zero) {
-                    AssimpMethods.ReleaseImport(ptr);
+                    ApplyConfigs();
+
+                    ptr = AssimpMethods.ImportFile(file, postProcessFlags);
+                    
+                    ApplyConfigsDefault();
+
+                    if(ptr == IntPtr.Zero) {
+                        throw new AssimpException("Error importing file: " + AssimpMethods.GetErrorString());
+                    }
+
+                    AiScene scene = MemoryHelper.MarshalStructure<AiScene>(ptr);
+                    if((scene.Flags & SceneFlags.Incomplete) == SceneFlags.Incomplete) {
+                        throw new AssimpException("Error importing file: Imported scene is incomplete. " + AssimpMethods.GetErrorString());
+                    }
+
+                    return new Scene(scene);
+                } finally {
+                    if(ptr != IntPtr.Zero) {
+                        AssimpMethods.ReleaseImport(ptr);
+                    }
                 }
             }
         }
@@ -248,7 +253,7 @@ namespace Assimp {
         /// Releases unmanaged and - optionally - managed resources
         /// </summary>
         /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
-        protected void Dispose(bool disposing) {
+        private void Dispose(bool disposing) {
 
             if(!_isDisposed) {
                 if(disposing) {

@@ -37,7 +37,7 @@ namespace Assimp {
     /// Represents a log stream, which receives all log messages and
     /// streams them somewhere.
     /// </summary>
-    public class LogStream {
+    public sealed class LogStream {
         internal AiLogStream _logStream;
 
         /// <summary>

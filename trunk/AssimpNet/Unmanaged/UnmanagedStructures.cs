@@ -323,8 +323,8 @@ namespace Assimp.Unmanaged {
         public TextureType Semantic;
 
         /// <summary>
-        /// Textures: Specifies the index of the (embedded) texture. For non-texture properties
-        /// this is always one.
+        /// Textures: Specifies the index of the texture. For non-texture properties
+        /// this is always zero.
         /// </summary>
         public uint Index;
 
@@ -336,7 +336,7 @@ namespace Assimp.Unmanaged {
         /// <summary>
         /// Type of value contained in the buffer.
         /// </summary>
-        public PropertyTypeInfo Type;
+        public PropertyType Type;
 
         /// <summary>
         /// char*, byte buffer to hold the property's value.

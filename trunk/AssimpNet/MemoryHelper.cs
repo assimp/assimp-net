@@ -39,17 +39,36 @@ namespace Assimp {
         /// <param name="length">Number of elements to marshal</param>
         /// <returns>Managed array, or null if the pointer was not valid</returns>
         public static T[] MarshalArray<T>(IntPtr pointer, int length) where T : struct {
+            return MarshalArray<T>(pointer, length, false);
+        }
+
+        /// <summary>
+        /// Marshals a c-style pointer array to a manged array of structs. Takes in a parameter denoting if the
+        /// pointer is a "pointer to a pointer" (void**) which requires some extra care. This will read from the start of
+        /// the IntPtr and care should be taken in esnuring that the number of elements to read is correct.
+        /// </summary>
+        /// <typeparam name="T">Struct type</typeparam>
+        /// <param name="pointer">Pointer to unmanaged memory</param>
+        /// <param name="length">Number of elements to marshal</param>
+        /// <param name="pointerToPointer">True if the unmanaged pointer is void** or not.</param>
+        /// <returns>Managed array, or null if the pointer was not valid</returns>
+        public static T[] MarshalArray<T>(IntPtr pointer, int length, bool pointerToPointer) where T : struct {
             if(pointer == IntPtr.Zero) {
                 return null;
             }
 
             try {
                 Type type = typeof(T);
-                int typeSize = Marshal.SizeOf(type);
+                //If the pointer is a void** we need to step by the pointer size, otherwise it's just a void* and step by the type size.
+                int stride = (pointerToPointer) ? IntPtr.Size : Marshal.SizeOf(typeof(T));
                 T[] array = new T[length];
 
                 for(int i = 0; i < length; i++) {
-                    IntPtr currPos = pointer + (typeSize * i); //This will take care of any 32/64 bit size concerns.
+                    IntPtr currPos = pointer + (stride * i);
+                    //If pointer is a void**, read the current position to get the proper pointer
+                    if(pointerToPointer) {
+                        currPos = Marshal.ReadIntPtr(currPos);
+                    }
                     array[i] = (T) Marshal.PtrToStructure(currPos, type);
                 }
                 return array;

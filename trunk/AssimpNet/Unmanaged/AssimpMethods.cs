@@ -22,6 +22,7 @@
 
 using System;
 using System.Runtime.InteropServices;
+using System.Security;
 
 namespace Assimp.Unmanaged {
     /// <summary>
@@ -55,15 +56,7 @@ namespace Assimp.Unmanaged {
         }
 
         //TODO : ImportFileEx
-
-        /*
-        [DllImport(AssimpDLL, EntryPoint = "aiImportFileFromMemory", CallingConvention = CallingConvention.Cdecl)]
-        private static extern IntPtr aiImportFileFromMemory(byte[] buffer, uint length, uint flags, [InAttribute()] [MarshalAs(UnmanagedType.LPStr)] String fileHint);
-
-        public static IntPtr ImportFileFromMemory(byte[] fileContents, PostProcessSteps flags, String fileExtensionHint) {
-            return aiImportFileFromMemory(fileContents, (uint) fileContents.Length, (uint) flags, fileExtensionHint);
-        }
-        */
+        //TODO: ImporterFileFromMemory
 
         /// <summary>
         /// Releases the unmanaged scene data structure.
@@ -210,16 +203,191 @@ namespace Assimp.Unmanaged {
 
         #region Material getters
 
-        /*
+        
         [DllImportAttribute(AssimpDLL, EntryPoint = "aiGetMaterialProperty", CallingConvention = CallingConvention.Cdecl)]
-        private static extern ReturnCode aiGetMaterialProperty(ref AiMaterial mat, [InAttribute()] [MarshalAsAttribute(UnmanagedType.LPStr)] String key, uint type, uint index, ref IntPtr propertyOut);
+        private static extern ReturnCode aiGetMaterialProperty(ref AiMaterial mat, [InAttribute()] [MarshalAsAttribute(UnmanagedType.LPStr)] String key, uint texType, uint texIndex, out IntPtr propertyOut);
 
-        public static AiMaterialProperty GetMaterialProperty(ref AiMaterial mat, String key, uint type, uint index) {
-            IntPtr ptr = new IntPtr();
-            aiGetMaterialProperty(ref mat, key, type, index, ref ptr);
-            return MemoryHelper.MarshalStructure<AiMaterialProperty>(Marshal.ReadIntPtr(ptr));
+        /// <summary>
+        /// Retrieves a material property with the specific key from the material.
+        /// </summary>
+        /// <param name="mat">Material to retrieve the property from</param>
+        /// <param name="key">Ai mat key (base) name to search for</param>
+        /// <param name="texType">Texture Type semantic, always zero for non-texture properties</param>
+        /// <param name="texIndex">Texture index, always zero for non-texture properties</param>
+        /// <returns>The material property, if found.</returns>
+        public static AiMaterialProperty GetMaterialProperty(ref AiMaterial mat, String key, TextureType texType, uint texIndex) {
+            IntPtr ptr;
+            ReturnCode code = aiGetMaterialProperty(ref mat, key, (uint)texType, texIndex, out ptr);
+            AiMaterialProperty prop = new AiMaterialProperty();
+            if(code == ReturnCode.Success && ptr != IntPtr.Zero) {
+                prop = MemoryHelper.MarshalStructure<AiMaterialProperty>(ptr);
+            }
+            return prop;
         }
-        */
+
+        [DllImportAttribute(AssimpDLL, EntryPoint="aiGetMaterialFloatArray", CallingConvention = CallingConvention.Cdecl)]
+        private static extern ReturnCode aiGetMaterialFloatArray(ref AiMaterial mat, [InAttribute()] [MarshalAsAttribute(UnmanagedType.LPStr)] String key, uint texType, uint texIndex, IntPtr ptrOut, ref uint valueCount);
+
+        /// <summary>
+        /// Retrieves an array of float values with the specific key from the material.
+        /// </summary>
+        /// <param name="mat">Material to retrieve the data from</param>
+        /// <param name="key">Ai mat key (base) name to search for</param>
+        /// <param name="texType">Texture Type semantic, always zero for non-texture properties</param>
+        /// <param name="texIndex">Texture index, always zero for non-texture properties</param>
+        /// <param name="floatCount">The maximum number of floats to read. This may not accurately describe the data returned, as it may not exist or be smaller. If this value is less than
+        /// the available floats, then only the requested number is returned (e.g. 1 or 2 out of a 4 float array).</param>
+        /// <returns>The float array, if it exists</returns>
+        public static float[] GetMaterialFloatArray(ref AiMaterial mat, String key, TextureType texType, uint texIndex, uint floatCount) {
+            IntPtr ptr = IntPtr.Zero;
+            try {
+                ptr = Marshal.AllocHGlobal(IntPtr.Size);
+                ReturnCode code = aiGetMaterialFloatArray(ref mat, key, (uint) texType, texIndex, ptr, ref floatCount);
+                float[] array = null;
+                if(code == ReturnCode.Success && floatCount > 0) {
+                    array = new float[floatCount];
+                    Marshal.Copy(ptr, array, 0, (int) floatCount);
+                }
+                return array;
+            } finally {
+                if(ptr != IntPtr.Zero) {
+                    Marshal.FreeHGlobal(ptr);
+                }
+            }
+        }
+
+        [DllImportAttribute(AssimpDLL, EntryPoint="aiGetMaterialIntegerArray", CallingConvention = CallingConvention.Cdecl)]
+        private static extern ReturnCode aiGetMaterialIntegerArray(ref AiMaterial mat, [InAttribute()] [MarshalAsAttribute(UnmanagedType.LPStr)] String key, uint texType, uint texIndex, IntPtr ptrOut, ref uint valueCount);
+
+        /// <summary>
+        /// Retrieves an array of integer values with the specific key from the material.
+        /// </summary>
+        /// <param name="mat">Material to retrieve the data from</param>
+        /// <param name="key">Ai mat key (base) name to search for</param>
+        /// <param name="texType">Texture Type semantic, always zero for non-texture properties</param>
+        /// <param name="texIndex">Texture index, always zero for non-texture properties</param>
+        /// <param name="intCount">The maximum number of integers to read. This may not accurately describe the data returned, as it may not exist or be smaller. If this value is less than
+        /// the available integers, then only the requested number is returned (e.g. 1 or 2 out of a 4 float array).</param>
+        /// <returns>The integer array, if it exists</returns>
+        public static int[] GetMaterialIntegerArray(ref AiMaterial mat, String key, TextureType texType, uint texIndex, uint intCount) {
+            IntPtr ptr = IntPtr.Zero;
+            try {
+                ptr = Marshal.AllocHGlobal(IntPtr.Size);
+                ReturnCode code = aiGetMaterialIntegerArray(ref mat, key, (uint) texType, texIndex, ptr, ref intCount);
+                int[] array = null;
+                if(code == ReturnCode.Success && intCount > 0) {
+                    array = new int[intCount];
+                    Marshal.Copy(ptr, array, 0, (int) intCount);
+                }
+                return array;
+            } finally {
+                if(ptr != IntPtr.Zero) {
+                    Marshal.FreeHGlobal(ptr);
+                }
+            }
+        }
+
+        [DllImport(AssimpDLL, EntryPoint = "aiGetMaterialColor", CallingConvention = CallingConvention.Cdecl)]
+        private static extern ReturnCode aiGetMaterialColor(ref AiMaterial mat, [InAttribute()] [MarshalAsAttribute(UnmanagedType.LPStr)] String key, uint texType, uint texIndex, IntPtr colorOut);
+
+        /// <summary>
+        /// Retrieves a color value from the material property table.
+        /// </summary>
+        /// <param name="mat">Material to retrieve the data from</param>
+        /// <param name="key">Ai mat key (base) name to search for</param>
+        /// <param name="texType">Texture Type semantic, always zero for non-texture properties</param>
+        /// <param name="texIndex">Texture index, always zero for non-texture properties</param>
+        /// <returns>The color if it exists. If not, the default Color4D value is returned.</returns>
+        public static Color4D GetMaterialColor(ref AiMaterial mat, String key, TextureType texType, uint texIndex) {
+            IntPtr ptr = IntPtr.Zero;
+            try {
+                ptr = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(Color4D)));
+                aiGetMaterialColor(ref mat, key, (uint) texType, texIndex, ptr);
+                Color4D color = new Color4D();
+                if(ptr != IntPtr.Zero) {
+                    color = MemoryHelper.MarshalStructure<Color4D>(ptr);
+                }
+                return color;
+            } finally {
+                if(ptr != IntPtr.Zero) {
+                    Marshal.FreeHGlobal(ptr);
+                }
+            }
+        }
+
+        [DllImport(AssimpDLL, EntryPoint = "aiGetMaterialString", CallingConvention = CallingConvention.Cdecl)]
+        private static extern ReturnCode aiGetMaterialString(ref AiMaterial mat, [InAttribute()] [MarshalAsAttribute(UnmanagedType.LPStr)] String key, uint texType, uint texIndex, out AiString str);
+
+        /// <summary>
+        /// Retrieves a string from the material property table.
+        /// </summary>
+        /// <param name="mat">Material to retrieve the data from</param>
+        /// <param name="key">Ai mat key (base) name to search for</param>
+        /// <param name="texType">Texture Type semantic, always zero for non-texture properties</param>
+        /// <param name="texIndex">Texture index, always zero for non-texture properties</param>
+        /// <returns>The string, if it exists. If not, an empty string is returned.</returns>
+        public static String GetMaterialString(ref AiMaterial mat, String key, TextureType texType, uint texIndex) {
+            AiString str;
+            ReturnCode code = aiGetMaterialString(ref mat, key, (uint) texType, texIndex, out str);
+            if(code == ReturnCode.Success) {
+                return str.GetString();
+            }
+            return String.Empty;
+        }
+
+        /// <summary>
+        /// Gets the number of textures contained in the material for a particular texture type.
+        /// </summary>
+        /// <param name="mat">Material to retrieve the data from</param>
+        /// <param name="type">Texture Type semantic</param>
+        /// <returns>The number of textures for the type.</returns>
+        [DllImport(AssimpDLL, EntryPoint = "aiGetMaterialTextureCount", CallingConvention = CallingConvention.Cdecl)]
+        public static extern uint GetMaterialTextureCount(ref AiMaterial mat, TextureType type);
+
+        [DllImport(AssimpDLL, EntryPoint = "aiGetMaterialTexture", CallingConvention = CallingConvention.Cdecl)]
+        private static extern ReturnCode aiGetMaterialTexture(ref AiMaterial mat, TextureType type, uint index, out AiString path, out TextureMapping mapping, out uint uvIndex, out float blendFactor, out TextureOperation textureOp, out TextureWrapMode wrapMode, out uint flags);
+
+        /// <summary>
+        /// Gets the texture filepath contained in the material.
+        /// </summary>
+        /// <param name="mat">Material to retrieve the data from</param>
+        /// <param name="type">Texture type semantic</param>
+        /// <param name="index">Texture index</param>
+        /// <returns>The texture filepath, if it exists. If not an empty string is returned.</returns>
+        public static String GetMaterialTextureFilePath(ref AiMaterial mat, TextureType type, uint index) {
+            AiString str;
+            TextureMapping mapping;
+            uint uvIndex;
+            float blendFactor;
+            TextureOperation texOp;
+            TextureWrapMode wrapMode;
+            uint flags;
+            ReturnCode code = aiGetMaterialTexture(ref mat, type, index, out str, out mapping, out uvIndex, out blendFactor, out texOp, out wrapMode, out flags);
+            if(code == ReturnCode.Success) {
+                return str.GetString();
+            }
+            return String.Empty;
+        }
+
+        /// <summary>
+        /// Gets all values pertaining to a particular texture from a material.
+        /// </summary>
+        /// <param name="mat">Material to retrieve the data from</param>
+        /// <param name="type">Texture type semantic</param>
+        /// <param name="index">Texture index</param>
+        /// <returns>Returns the texture slot struct containing all the information.</returns>
+        public static TextureSlot GetMaterialTexture(ref AiMaterial mat, TextureType type, uint index) {
+            AiString str;
+            TextureMapping mapping;
+            uint uvIndex;
+            float blendFactor;
+            TextureOperation texOp;
+            TextureWrapMode wrapMode;
+            uint flags;
+            ReturnCode code = aiGetMaterialTexture(ref mat, type, index, out str, out mapping, out uvIndex, out blendFactor, out texOp, out wrapMode, out flags);
+            return new TextureSlot(str.GetString(), type, index, mapping, uvIndex, blendFactor, texOp, wrapMode, flags);
+        }
+        
         #endregion
 
         #region Math methods
@@ -229,7 +397,7 @@ namespace Assimp.Unmanaged {
         /// </summary>
         /// <param name="quat">Quaternion struct to fill</param>
         /// <param name="mat">Rotation matrix</param>
-        [DllImportAttribute(AssimpDLL, EntryPoint="aiCreateQuaternionFromMatrix", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(AssimpDLL, EntryPoint="aiCreateQuaternionFromMatrix", CallingConvention = CallingConvention.Cdecl)]
         public static extern void CreateQuaternionFromMatrix(ref Quaternion quat, ref Matrix3x3 mat);
 
         /// <summary>
@@ -239,7 +407,7 @@ namespace Assimp.Unmanaged {
         /// <param name="scaling">Scaling vector</param>
         /// <param name="rotation">Quaternion containing the rotation</param>
         /// <param name="position">Translation vector</param>
-        [DllImportAttribute(AssimpDLL, EntryPoint="aiDecomposeMatrix", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(AssimpDLL, EntryPoint="aiDecomposeMatrix", CallingConvention = CallingConvention.Cdecl)]
         public static extern void DecomposeMatrix(ref Matrix4x4 mat, ref Vector3D scaling, ref Quaternion rotation, ref Vector3D position);
 
         /// <summary>

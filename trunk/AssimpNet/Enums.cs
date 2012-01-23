@@ -596,10 +596,15 @@ namespace Assimp {
     /// </summary>
     public enum ShadingMode {
         /// <summary>
+        /// No shading mode defined.
+        /// </summary>
+        None = 0x0,
+
+        /// <summary>
         /// Flat shading. Shading is done on a per-face basis and is diffuse only. Also known
         /// as 'faceted shading'.
         /// </summary>
-        Float = 0x1,
+        Flat = 0x1,
         
         /// <summary>
         /// Simple Gouraud shading.
@@ -1002,7 +1007,7 @@ namespace Assimp {
     /// <summary>
     /// Defines material property types.
     /// </summary>
-    public enum PropertyTypeInfo {
+    public enum PropertyType {
         /// <summary>
         /// Array of single-precision (32 bit) floats.
         /// </summary>
