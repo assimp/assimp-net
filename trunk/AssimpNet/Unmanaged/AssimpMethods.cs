@@ -21,9 +21,8 @@
 */
 
 using System;
-using System.Runtime.InteropServices;
-using System.Security;
 using System.IO;
+using System.Runtime.InteropServices;
 
 namespace Assimp.Unmanaged {
     /// <summary>
