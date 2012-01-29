@@ -95,6 +95,72 @@ namespace Assimp {
         }
 
         /// <summary>
+        /// Importers a model from the stream without running any post-process steps. The importer sets configurations
+        /// and loads the model into managed memory, releasing the unmanaged memory used by Assimp. It is up to the caller to dispose of the stream.
+        /// </summary>
+        /// <param name="stream">Stream to read from</param>
+        /// <param name="formatHint">Format extension to serve as a hint to Assimp to choose which importer to use</param>
+        /// <returns>The imported scene</returns>
+        /// <exception cref="AssimpException">Thrown if the stream is not valid (null or write-only) or if the format hint is null or empty.</exception>
+        /// <exception cref="System.ObjectDisposedException">Thrown if attempting to import a model if the importer has been disposed of</exception>
+        public Scene ImportFileFromStream(Stream stream, String formatHint) {
+            return ImportFileFromStream(stream, PostProcessSteps.None, formatHint);
+        }
+
+        /// <summary>
+        /// Importers a model from the stream. The importer sets configurations
+        /// and loads the model into managed memory, releasing the unmanaged memory used by Assimp. It is up to the caller to dispose of the stream.
+        /// </summary>
+        /// <param name="stream">Stream to read from</param>
+        /// <param name="postProcessFlags">Post processing flags, if any</param>
+        /// <param name="formatHint">Format extension to serve as a hint to Assimp to choose which importer to use</param>
+        /// <returns>The imported scene</returns>
+        /// <exception cref="AssimpException">Thrown if the stream is not valid (null or write-only) or if the format hint is null or empty.</exception>
+        /// <exception cref="System.ObjectDisposedException">Thrown if attempting to import a model if the importer has been disposed of</exception>
+        public Scene ImportFileFromStream(Stream stream, PostProcessSteps postProcessFlags, String formatHint) {
+            lock(sync) {
+                if(_isDisposed) {
+                    throw new ObjectDisposedException("Importer has been disposed.");
+                }
+
+                if(stream == null || stream.CanRead != true) {
+                    throw new AssimpException("stream", "Can't read from the stream it's null or write-only");
+                }
+
+                if(String.IsNullOrEmpty(formatHint)) {
+                    throw new AssimpException("formatHint", "Format hint is null or empty");
+                }
+
+                IntPtr ptr = IntPtr.Zero;
+                try {
+
+                    AttachLogs();
+                    ApplyConfigs();
+
+                    ptr = AssimpMethods.ImportFileFromStream(stream, postProcessFlags, formatHint);
+
+                    ApplyConfigsDefault();
+                    DetatachLogs();
+
+                    if(ptr == IntPtr.Zero) {
+                        throw new AssimpException("Error importing file: " + AssimpMethods.GetErrorString());
+                    }
+
+                    AiScene scene = MemoryHelper.MarshalStructure<AiScene>(ptr);
+                    if((scene.Flags & SceneFlags.Incomplete) == SceneFlags.Incomplete) {
+                        throw new AssimpException("Error importing file: Imported scene is incomplete. " + AssimpMethods.GetErrorString());
+                    }
+
+                    return new Scene(scene);
+                } finally {
+                    if(ptr != IntPtr.Zero) {
+                        AssimpMethods.ReleaseImport(ptr);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
         /// Importers a model from the specified file without running any post-process steps. The importer sets configurations
         /// and loads the model into managed memory, releasing the unmanaged memory used by Assimp.
         /// </summary>

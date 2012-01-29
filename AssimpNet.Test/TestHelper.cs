@@ -21,6 +21,7 @@
 */
 
 using System;
+using TK = OpenTK;
 using NUnit.Framework;
 
 namespace Assimp.Test {
@@ -28,7 +29,7 @@ namespace Assimp.Test {
     /// Helper for Assimp.NET testing.
     /// </summary>
     public static class TestHelper {
-        public const float DEFAULT_TOLERANCE = 0.00000001f;
+        public const float DEFAULT_TOLERANCE = 0.000001f;
         public static float Tolerance = DEFAULT_TOLERANCE;
 
         public static void AssertEquals(float expected, float actual) {
@@ -45,8 +46,8 @@ namespace Assimp.Test {
         }
 
         public static void AssertEquals(float x, float y, Vector2D v, String msg) {
-            AssertEquals(x, v.X, msg + " : checking X component");
-            AssertEquals(y, v.Y, msg + " : checking Y component");
+            AssertEquals(x, v.X, msg + String.Format(" => checking X component ({0} == {1}", x, v.X));
+            AssertEquals(y, v.Y, msg + String.Format(" => checking Y component ({0} == {1}", y, v.Y));
         }
 
         public static void AssertEquals(float x, float y, float z, Vector3D v) {
@@ -56,9 +57,9 @@ namespace Assimp.Test {
         }
 
         public static void AssertEquals(float x, float y, float z, Vector3D v, String msg) {
-            AssertEquals(x, v.X, msg + " : checking X component");
-            AssertEquals(y, v.Y, msg + " : checking Y component");
-            AssertEquals(z, v.Z, msg + " : checking Z component");
+            AssertEquals(x, v.X, msg + String.Format(" => checking X component ({0} == {1}", x, v.X));
+            AssertEquals(y, v.Y, msg + String.Format(" => checking Y component ({0} == {1}", y, v.Y));
+            AssertEquals(z, v.Z, msg + String.Format(" => checking Z component ({0} == {1}", z, v.Z));
         }
 
         public static void AssertEquals(float r, float g, float b, float a, Color4D c) {
@@ -69,10 +70,10 @@ namespace Assimp.Test {
         }
 
         public static void AssertEquals(float r, float g, float b, float a, Color4D c, String msg) {
-            AssertEquals(r, c.R, msg + " : checking R component");
-            AssertEquals(g, c.G, msg + " : checking G component");
-            AssertEquals(b, c.B, msg + " : checking B component");
-            AssertEquals(a, c.A, msg + " : checking A component");
+            AssertEquals(r, c.R, msg + String.Format(" => checking R component ({0} == {1}", r, c.R));
+            AssertEquals(g, c.G, msg + String.Format(" => checking G component ({0} == {1}", g, c.G));
+            AssertEquals(b, c.B, msg + String.Format(" => checking B component ({0} == {1}", b, c.B));
+            AssertEquals(a, c.A, msg + String.Format(" => checking A component ({0} == {1}", a, c.A));
         }
 
         public static void AssertEquals(float r, float g, float b, Color3D c) {
@@ -82,9 +83,40 @@ namespace Assimp.Test {
         }
 
         public static void AssertEquals(float r, float g, float b, Color3D c, String msg) {
-            AssertEquals(r, c.R, msg + " : checking R component");
-            AssertEquals(g, c.G, msg + " : checking G component");
-            AssertEquals(b, c.B, msg + " : checking B component");
+            AssertEquals(r, c.R, msg + String.Format(" => checking R component ({0} == {1}", r, c.R));
+            AssertEquals(g, c.G, msg + String.Format(" => checking G component ({0} == {1}", g, c.G));
+            AssertEquals(b, c.B, msg + String.Format(" => checking B component ({0} == {1}", b, c.B));
+        }
+
+        public static void AssertEquals(float x, float y, float z, float w, Quaternion q, String msg) {
+            AssertEquals(x, q.X, msg + String.Format(" => checking X component ({0} == {1}", x, q.X));
+            AssertEquals(y, q.Y, msg + String.Format(" => checking Y component ({0} == {1}", y, q.Y));
+            AssertEquals(z, q.Z, msg + String.Format(" => checking Z component ({0} == {1}", z, q.Z));
+            AssertEquals(w, q.W, msg + String.Format(" => checking W component ({0} == {1}", w, q.W));
+        }
+
+        public static void AssertEquals(TK.Matrix4 tkM, Matrix3x3 mat, String msg) {
+            TK.Vector4 row0 = tkM.Row0;
+            TK.Vector4 row1 = tkM.Row1;
+            TK.Vector4 row2 = tkM.Row2;
+
+            AssertEquals(row0.X, row0.Y, row0.Z, new Vector3D(mat.A1, mat.A2, mat.A3), msg + " => checking first row vector");
+            AssertEquals(row1.X, row1.Y, row1.Z, new Vector3D(mat.B1, mat.B2, mat.B3), msg + " => checking second row vector");
+            AssertEquals(row2.X, row2.Y, row2.Z, new Vector3D(mat.C1, mat.C2, mat.C3), msg + " => checking third row vector");
+        }
+
+        public static void AssertEquals(TK.Vector4 v1, TK.Vector4 v2, String msg) {
+            AssertEquals(v1.X, v2.X, msg + String.Format(" => checking X component ({0} == {1}", v1.X, v2.X));
+            AssertEquals(v1.Y, v2.Y, msg + String.Format(" => checking Y component ({0} == {1}", v1.Y, v2.Y));
+            AssertEquals(v1.Z, v2.Z, msg + String.Format(" => checking Z component ({0} == {1}", v1.Z, v2.Z));
+            AssertEquals(v1.W, v2.W, msg + String.Format(" => checking W component ({0} == {1}", v1.W, v2.W));
+        }
+
+        public static void AssertEquals(TK.Matrix4 tkM, Matrix4x4 mat, String msg) {
+            AssertEquals(tkM.Column0, new TK.Vector4(mat.A1, mat.A2, mat.A3, mat.A4), msg + " => checking first row vector");
+            AssertEquals(tkM.Column1, new TK.Vector4(mat.B1, mat.B2, mat.B3, mat.B4), msg + " => checking second row vector");
+            AssertEquals(tkM.Column2, new TK.Vector4(mat.C1, mat.C2, mat.C3, mat.C4), msg + " => checking third row vector");
+            AssertEquals(tkM.Column3, new TK.Vector4(mat.D1, mat.D2, mat.D3, mat.D4), msg + " => checking third row vector");
         }
     }
 }

@@ -32,6 +32,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="nunit.framework, Version=2.5.10.11092, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL" />
+    <Reference Include="OpenTK, Version=1.0.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
+      <HintPath>..\AssimpNet.Sample\OpenTK.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -42,6 +45,9 @@
   <ItemGroup>
     <Compile Include="Color3DTestFixture.cs" />
     <Compile Include="Color4DTestFixture.cs" />
+    <Compile Include="Matrix3x3TestFixture.cs" />
+    <Compile Include="Matrix4x4TestFixture.cs" />
+    <Compile Include="QuaternionTestFixture.cs" />
     <Compile Include="TestHelper.cs" />
     <Compile Include="Vector2DTestFixture.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -278,7 +278,7 @@ namespace Assimp.Unmanaged {
         public const String AI_CONFIG_IMPORT_UNREAL_HANDLE_FLAGS = "UNREAL_HANDLE_FLAGS";
 
         /// <summary>
-        /// Configures the terragen import plugin to compuare UV's for terrains, if
+        /// Configures the terragen import plugin to compute UV's for terrains, if
         /// they are not given. Furthermore, a default texture is assigned.
         /// <para>UV coordinates for terrains are so simple to compute that you'll usually 
         /// want to compute them on your own, if you need them. This option is intended for model viewers which
@@ -297,7 +297,7 @@ namespace Assimp.Unmanaged {
         /// <summary>
         /// Configures the M3D loader to detect and process multi-part Quake player models. These models
         /// usually consit of three files, lower.md3, upper.md3 and head.md3. If this propery is
-        /// set to true, Assimp will trye to load and combine all three files if one of them is loaded.
+        /// set to true, Assimp will try to load and combine all three files if one of them is loaded.
         /// <para>Type: bool. Default: true</para>
         /// </summary>
         public const String AI_CONFIG_IMPORT_MD3_HANDLE_MULTIPART = "IMPORT_MD3_HANDLE_MULTIPART";
@@ -324,7 +324,7 @@ namespace Assimp.Unmanaged {
         /// This property can be either a string - which specifies the name of the layer - or an integer - the index
         /// of the layer. If the property is not set then the whole LWO model is loaded. Loading fails
         /// if the requested layer is not vailable. The layer index is zero-based and the layer name may not be empty</para>
-        /// <para>Type: integer. Default: All layers are loaded (TODO: But what is the value?)</para>
+        /// <para>Type: bool. Default: false (All layers are loaded)</para>
         /// </summary>
         public const String AI_CONFIG_IMPORT_LWO_ONE_LAYER_ONLY = "IMPORT_LWO_ONE_LAYER_ONLY";
 
@@ -376,7 +376,7 @@ namespace Assimp.Unmanaged {
         /// <summary>
         /// Ogre importer will try to load this MaterialFile. If a material file does not
         /// exist with the same name as a material to load, the ogre importer will try to load this file
-        /// and searches the material in it.
+        /// and searches for the material in it.
         /// <para>Type: string. Default: ""</para>
         /// </summary>
         public const String AI_CONFIG_IMPORT_OGRE_MATERIAL_FILE = "IMPORT_OGRE_MATERIAL_FILE";

@@ -235,12 +235,32 @@ namespace Assimp {
         /// <param name="quat">Quaternion representing the rotation</param>
         /// <returns></returns>
         public static Vector3D Rotate(Vector3D vec, Quaternion quat) {
-            Quaternion q2 = new Quaternion(0.0f, vec.X, vec.Y, vec.Z);
-            Quaternion q = quat;
-            q.Conjugate();
-            q = q * q2 * quat;
+            float x2 = quat.X + quat.X;
+            float y2 = quat.Y + quat.Y;
+            float z2 = quat.Z + quat.Z;
 
-            return new Vector3D(q.X, q.Y, q.Z);
+            float wx2 = quat.W * x2;
+            float wy2 = quat.W * y2;
+            float wz2 = quat.W * z2;
+
+            float xx2 = quat.X * x2;
+            float xy2 = quat.X * y2;
+            float xz2 = quat.X * z2;
+
+            float yy2 = quat.Y * y2;
+            float yz2 = quat.Y * z2;
+
+            float zz2 = quat.Z * z2;
+
+            float x = ((vec.X * ((1.0f - yy2) - zz2)) + (vec.Y * (xy2 - wz2))) + (vec.Z * (xz2 + wy2));
+            float y = ((vec.X * (xy2 + wz2)) + (vec.Y * ((1.0f - xx2) - zz2))) + (vec.Z * (yz2 - wx2));
+            float z = ((vec.X * (xz2 - wy2)) + (vec.Y * (yz2 + wx2))) + (vec.Z * ((1.0f - xx2) - yy2));
+
+            Vector3D v;
+            v.X = x;
+            v.Y = y;
+            v.Z = z;
+            return v;
         }
 
         /// <summary>
@@ -275,7 +295,7 @@ namespace Assimp {
         /// <param name="b">Second quaternion</param>
         /// <returns>True if the quaternions are not equal, false otherwise.</returns>
         public static bool operator!=(Quaternion a, Quaternion b) {
-            return (a.W != b.W) && (a.X != b.X) && (a.Y != b.Y) && (a.Z != b.Z);
+            return (a.W != b.W) || (a.X != b.X) || (a.Y != b.Y) || (a.Z != b.Z);
         }
 
         /// <summary>
