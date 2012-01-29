@@ -35,8 +35,8 @@ Global
 		{3415FF29-C0BE-44FC-AD34-94796118E690}.Debug|x86.Build.0 = Debug|x86
 		{3415FF29-C0BE-44FC-AD34-94796118E690}.Release|Any CPU.ActiveCfg = Release|x86
 		{3415FF29-C0BE-44FC-AD34-94796118E690}.Release|Any CPU.Build.0 = Release|x86
-		{3415FF29-C0BE-44FC-AD34-94796118E690}.Release|Mixed Platforms.ActiveCfg = Release|x64
-		{3415FF29-C0BE-44FC-AD34-94796118E690}.Release|Mixed Platforms.Build.0 = Release|x64
+		{3415FF29-C0BE-44FC-AD34-94796118E690}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{3415FF29-C0BE-44FC-AD34-94796118E690}.Release|Mixed Platforms.Build.0 = Release|x86
 		{3415FF29-C0BE-44FC-AD34-94796118E690}.Release|Win32.ActiveCfg = Release|x64
 		{3415FF29-C0BE-44FC-AD34-94796118E690}.Release|x86.ActiveCfg = Release|x86
 		{3415FF29-C0BE-44FC-AD34-94796118E690}.Release|x86.Build.0 = Release|x86
