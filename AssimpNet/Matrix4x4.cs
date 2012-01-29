@@ -494,6 +494,13 @@ namespace Assimp {
 			scaling.Y = row2.Length();
 			scaling.Z = row3.Length();
 
+			 //Handle negative scaling
+			if (Determinant() < 0) {
+				scaling.X = -scaling.X;
+				scaling.Y = -scaling.Y;
+				scaling.Z = -scaling.Z;
+			}
+
 			//Remove scaling from the matrix
 			if(scaling.X != 0) {
 				row1 /= scaling.X;
