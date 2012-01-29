@@ -21,6 +21,7 @@
 */
 
 using System;
+using System.Text;
 using System.Runtime.InteropServices;
 using Assimp;
 
@@ -609,19 +610,43 @@ namespace Assimp.Unmanaged {
         /// <summary>
         /// Actual string.
         /// </summary>
-        [MarshalAsAttribute(UnmanagedType.ByValTStr, SizeConst = AiDefines.MAX_LENGTH)]
-        public String Data;
+        [MarshalAsAttribute(UnmanagedType.ByValArray, SizeConst = AiDefines.MAX_LENGTH)]
+        public byte[] Data;
 
         /// <summary>
         /// Convienence method for getting the AiString string - if the length is not greater than zero, it returns
         /// an empty string rather than garbage.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>AiString string data</returns>
         public String GetString() {
             if(Length > 0) {
-                return Data;
+                byte[] copy = new byte[AiDefines.MAX_LENGTH];
+                int index = 0;
+                //Note: I've observed an issue with x64 where the byte data is scattered about in the array, so reading
+                //the byte array with the given length may not return all the data. It seems to work OK if we just 
+                //grab all those bytes in sequence (does not affect x86 whatsoever)
+                foreach(byte b in Data) {
+                    if(b != 0) {
+                        copy[index] = b;
+                        index++;
+                    }
+                }
+                return Encoding.UTF8.GetString(copy, 0, (int) Length);
             } else {
                 return String.Empty;
+            }
+        }
+
+        /// <summary>
+        /// Convienence method for setting the AiString string (and length).
+        /// </summary>
+        /// <param name="data">String data to set</param>
+        public void SetString(String data) {
+            if(!String.IsNullOrEmpty(data) && Encoding.UTF8.GetByteCount(data) <= AiDefines.MAX_LENGTH) {
+                byte[] copy = Encoding.UTF8.GetBytes(data);
+                Data = new byte[AiDefines.MAX_LENGTH];
+                Array.Copy(copy, Data, copy.Length);
+                Length = (uint) copy.Length;
             }
         }
     }

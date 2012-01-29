@@ -159,7 +159,7 @@ namespace Assimp.Unmanaged {
         public static String[] GetExtensionList() {
             AiString aiString = new AiString();
             aiGetExtensionList(ref aiString);
-            return aiString.Data.Split(new String[] { "*", ";*" }, StringSplitOptions.RemoveEmptyEntries);
+            return aiString.GetString().Split(new String[] { "*", ";*" }, StringSplitOptions.RemoveEmptyEntries);
         }
 
         [DllImport(AssimpDLL, EntryPoint = "aiGetMemoryRequirements", CallingConvention = CallingConvention.Cdecl)]
@@ -208,9 +208,9 @@ namespace Assimp.Unmanaged {
         /// <param name="value">Property value</param>
         public static void SetImportPropertyString(String name, String value) {
             AiString str = new AiString();
-            str.Data = value;
+            str.SetString(value);
             //Note: aiTypes.h specifies aiString is UTF-8 encoded string.
-            str.Length = (uint) System.Text.UTF8Encoding.UTF8.GetByteCount(value);
+            //str.Length = (uint) System.Text.UTF8Encoding.UTF8.GetByteCount(value);
             SetImportPropertyString(name, ref str);
         }
 
