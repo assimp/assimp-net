@@ -1,17 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
+using System.Reflection;
+using Assimp.Configs;
 using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
-using OpenTK.Platform;
-using System.Drawing;
-using System.Drawing.Imaging;
-using Assimp;
-using Assimp.Configs;
-using System.Reflection;
-using System.IO;
 
 namespace Assimp.Sample {
 	public class SimpleOpenGLSample : GameWindow {

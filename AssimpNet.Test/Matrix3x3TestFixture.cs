@@ -21,8 +21,8 @@
 */
 
 using System;
-using TK = OpenTK;
 using NUnit.Framework;
+using TK = OpenTK;
 
 namespace Assimp.Test {
     [TestFixture]
