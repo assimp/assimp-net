@@ -26,11 +26,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Assimp .Net")]
+[assembly: AssemblyTitle("Assimp.NET")]
 [assembly: AssemblyDescription("A .NET Wrapper for the Open Asset Import (Assimp) library.")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Tesla Engine Group")]
-[assembly: AssemblyProduct("Assimp .Net")]
+[assembly: AssemblyCompany("Nicholas Woodfield")]
+[assembly: AssemblyProduct("Assimp.NET")]
 [assembly: AssemblyCopyright("Copyright © Nicholas Woodfield 2012")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
