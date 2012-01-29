@@ -415,12 +415,15 @@ namespace Assimp {
         /// </summary>
         /// <returns>int index array</returns>
         public int[] GetIntIndices() {
+            //We could use a dirty hack here to do a conversion...but may as well be
+            //safe just in case
             if(HasFaces) {
                 List<int> indices = new List<int>();
                 foreach(Face face in _faces) {
-                    //Behind the scenes each Face also holds onto an int array...
                     if(face.IndexCount > 0 && face.Indices != null) {
-                        indices.AddRange(face.IntIndices);
+                        foreach(uint index in face.Indices) {
+                            indices.Add((int) index);
+                        }
                     }
                 }
                 return indices.ToArray();

@@ -35,7 +35,6 @@ namespace Assimp {
     public sealed class Face {
         private uint _numIndices;
         private uint[] _indices;
-        private int[] _intIndices;
 
         /// <summary>
         /// Gets the number of indices defined in the face.
@@ -56,13 +55,6 @@ namespace Assimp {
             }
         }
 
-        //Internal use only
-        internal int[] IntIndices {
-            get {
-                return _intIndices;
-            }
-        }
-
         /// <summary>
         /// Constructs a new Face.
         /// </summary>
@@ -72,7 +64,6 @@ namespace Assimp {
 
             if(_numIndices > 0 && face.Indices != IntPtr.Zero) {
                 _indices = MemoryHelper.MarshalArray<uint>(face.Indices, (int)_numIndices);
-                _intIndices = MemoryHelper.MarshalArray<int>(face.Indices, (int) _numIndices);
             }
         }
     }

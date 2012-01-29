@@ -23,6 +23,7 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Security;
+using System.IO;
 
 namespace Assimp.Unmanaged {
     /// <summary>
@@ -55,8 +56,22 @@ namespace Assimp.Unmanaged {
             return aiImportFile(file, (uint) flags);
         }
 
-        //TODO : ImportFileEx
-        //TODO: ImporterFileFromMemory
+        [DllImport(AssimpDLL, EntryPoint = "aiImportFileFromMemory", CallingConvention = CallingConvention.Cdecl)]
+        private static extern IntPtr aiImportFileFromMemory(byte[] buffer, uint bufferLength, uint flags, String formatHint);
+
+        /// <summary>
+        /// Imports a scene from a stream. This uses the "aiImportFileFromMemory" function. The stream can be from anyplace,
+        /// not just a memory stream. It is up to the caller to dispose of the stream.
+        /// </summary>
+        /// <param name="stream">Stream containing the scene data</param>
+        /// <param name="flags">Post processing flags</param>
+        /// <param name="formatHint">A hint to Assimp to decide which importer to use to process the data</param>
+        /// <returns></returns>
+        public static IntPtr ImportFileFromStream(Stream stream, PostProcessSteps flags, String formatHint) {
+            byte[] buffer = MemoryHelper.ReadStreamFully(stream, 0);
+
+            return aiImportFileFromMemory(buffer, (uint) buffer.Length, (uint) flags, formatHint);
+        }
 
         /// <summary>
         /// Releases the unmanaged scene data structure.
@@ -398,7 +413,7 @@ namespace Assimp.Unmanaged {
         /// <param name="quat">Quaternion struct to fill</param>
         /// <param name="mat">Rotation matrix</param>
         [DllImport(AssimpDLL, EntryPoint="aiCreateQuaternionFromMatrix", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void CreateQuaternionFromMatrix(ref Quaternion quat, ref Matrix3x3 mat);
+        public static extern void CreateQuaternionFromMatrix(out Quaternion quat, ref Matrix3x3 mat);
 
         /// <summary>
         /// Decomposes a 4x4 matrix into its scaling, rotation, and translation parts.
@@ -408,7 +423,7 @@ namespace Assimp.Unmanaged {
         /// <param name="rotation">Quaternion containing the rotation</param>
         /// <param name="position">Translation vector</param>
         [DllImport(AssimpDLL, EntryPoint="aiDecomposeMatrix", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void DecomposeMatrix(ref Matrix4x4 mat, ref Vector3D scaling, ref Quaternion rotation, ref Vector3D position);
+        public static extern void DecomposeMatrix(ref Matrix4x4 mat, out Vector3D scaling, out Quaternion rotation, out Vector3D position);
 
         /// <summary>
         /// Transposes the 4x4 matrix.
@@ -461,14 +476,14 @@ namespace Assimp.Unmanaged {
         /// </summary>
         /// <param name="mat">Matrix to hold the identity</param>
         [DllImportAttribute(AssimpDLL, EntryPoint="aiIdentityMatrix3", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void IdentityMatrix3(ref Matrix3x3 mat);
+        public static extern void IdentityMatrix3(out Matrix3x3 mat);
 
         /// <summary>
         /// Creates a 4x4 identity matrix.
         /// </summary>
         /// <param name="mat">Matrix to hold the identity</param>
         [DllImportAttribute(AssimpDLL, EntryPoint="aiIdentityMatrix4", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void IdentityMatrix4(ref Matrix4x4 mat);
+        public static extern void IdentityMatrix4(out Matrix4x4 mat);
 
         #endregion
 

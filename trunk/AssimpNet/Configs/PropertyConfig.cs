@@ -878,4 +878,507 @@ namespace Assimp.Configs {
     }
 
     #endregion
+
+    #region Importer Settings
+
+    /// <summary>
+    /// Sets the vertex animation keyframe to be imported. Assimp does not support vertex keyframes (only
+    /// bone animation is supported). the library reads only one keyframe with vertex animations. By default this is the
+    /// first frame. This config sets the "global" keyframe that will be imported. There are other configs
+    /// for specific importers that will override the global setting.
+    /// </summary>
+    public sealed class GlobalKeyFrameImportConfig : IntegerPropertyConfig {
+        
+        /// <summary>
+        /// Gets the string name used by GlobalKeyFrameImportConfig.
+        /// </summary>
+        public static String GlobalKeyFrameImportConfigName {
+            get {
+                return AiConfigs.AI_CONFIG_IMPORT_GLOBAL_KEYFRAME;
+            }
+        }
+
+        /// <summary>
+        /// Constructs a new GlobalKeyFrameImportConfig.
+        /// </summary>
+        /// <param name="keyFrame">Keyframe index</param>
+        public GlobalKeyFrameImportConfig(int keyFrame)
+            : base(GlobalKeyFrameImportConfigName, keyFrame, 0) { }
+    }
+
+    /// <summary>
+    /// Sets the vertex animation keyframe to be imported. Assimp does not support vertex keyframes (only
+    /// bone animation is supported). the library reads only one keyframe with vertex animations. By default this is the
+    /// first frame. This config sets the global override for the MD3 format.
+    /// </summary>
+    public sealed class MD3KeyFrameImportConfig : IntegerPropertyConfig {
+
+        /// <summary>
+        /// Gets the string name used by MD3KeyFrameImportConfig.
+        /// </summary>
+        public static String MD3KeyFrameImportConfigName {
+            get {
+                return AiConfigs.AI_CONFIG_IMPORT_MD3_KEYFRAME;
+            }
+        }
+
+        /// <summary>
+        /// Constructs a new MD3KeyFrameImportConfig.
+        /// </summary>
+        /// <param name="keyFrame">Keyframe index</param>
+        public MD3KeyFrameImportConfig(int keyFrame)
+            : base(MD3KeyFrameImportConfigName, keyFrame, 0) { }
+    }
+
+    /// <summary>
+    /// Sets the vertex animation keyframe to be imported. Assimp does not support vertex keyframes (only
+    /// bone animation is supported). the library reads only one keyframe with vertex animations. By default this is the
+    /// first frame. This config sets the global override for the MD2 format.
+    /// </summary>
+    public sealed class MD2KeyFrameImportConfig : IntegerPropertyConfig {
+
+        /// <summary>
+        /// Gets the string name used by MD2KeyFrameImportConfig.
+        /// </summary>
+        public static String MD2KeyFrameImportConfigName {
+            get {
+                return AiConfigs.AI_CONFIG_IMPORT_MD2_KEYFRAME;
+            }
+        }
+
+        /// <summary>
+        /// Constructs a new MD2KeyFrameImportConfig.
+        /// </summary>
+        /// <param name="keyFrame">Keyframe index</param>
+        public MD2KeyFrameImportConfig(int keyFrame)
+            : base(MD2KeyFrameImportConfigName, keyFrame, 0) { }
+    }
+
+    /// <summary>
+    /// Sets the vertex animation keyframe to be imported. Assimp does not support vertex keyframes (only
+    /// bone animation is supported). the library reads only one keyframe with vertex animations. By default this is the
+    /// first frame. This config sets the global override for the MDL format.
+    /// </summary>
+    public sealed class MDLKeyFrameImportConfig : IntegerPropertyConfig {
+
+        /// <summary>
+        /// Gets the string name used by MDLKeyFrameImportConfig.
+        /// </summary>
+        public static String MDLKeyFrameImportConfigName {
+            get {
+                return AiConfigs.AI_CONFIG_IMPORT_MDL_KEYFRAME;
+            }
+        }
+
+        /// <summary>
+        /// Constructs a new MDLKeyFrameImportConfig.
+        /// </summary>
+        /// <param name="keyFrame">Keyframe index</param>
+        public MDLKeyFrameImportConfig(int keyFrame)
+            : base(MDLKeyFrameImportConfigName, keyFrame, 0) { }
+    }
+
+    /// <summary>
+    /// Sets the vertex animation keyframe to be imported. Assimp does not support vertex keyframes (only
+    /// bone animation is supported). the library reads only one keyframe with vertex animations. By default this is the
+    /// first frame. This config sets the global override for the SMD format.
+    /// </summary>
+    public sealed class SMDKeyFrameImportConfig : IntegerPropertyConfig {
+
+        /// <summary>
+        /// Gets the string name used by SMDKeyFrameImportConfig.
+        /// </summary>
+        public static String SMDKeyFrameImportConfigName {
+            get {
+                return AiConfigs.AI_CONFIG_IMPORT_SMD_KEYFRAME;
+            }
+        }
+
+        /// <summary>
+        /// Constructs a new SMDKeyFrameImportConfig.
+        /// </summary>
+        /// <param name="keyFrame">Keyframe index</param>
+        public SMDKeyFrameImportConfig(int keyFrame)
+            : base(SMDKeyFrameImportConfigName, keyFrame, 0) { }
+    }
+
+    /// <summary>
+    /// Sets the vertex animation keyframe to be imported. Assimp does not support vertex keyframes (only
+    /// bone animation is supported). the library reads only one keyframe with vertex animations. By default this is the
+    /// first frame. This config sets the global override for the Unreal format.
+    /// </summary>
+    public sealed class UnrealKeyFrameImportConfig : IntegerPropertyConfig {
+
+        /// <summary>
+        /// Gets the string name used by UnrealKeyFrameImportConfig.
+        /// </summary>
+        public static String UnrealKeyFrameImportConfigName {
+            get {
+                return AiConfigs.AI_CONFIG_IMPORT_UNREAL_KEYFRAME;
+            }
+        }
+
+        /// <summary>
+        /// Constructs a new UnrealKeyFrameImportConfig.
+        /// </summary>
+        /// <param name="keyFrame">Keyframe index</param>
+        public UnrealKeyFrameImportConfig(int keyFrame)
+            : base(UnrealKeyFrameImportConfigName, keyFrame, 0) { }
+    }
+
+    /// <summary>
+    /// Configures the AC loader to collect all surfaces which have the "Backface cull" flag set in separate
+    /// meshes. The default value is true.
+    /// </summary>
+    public sealed class ACSeparateBackfaceCullConfig : BooleanPropertyConfig {
+
+        /// <summary>
+        /// Gets the string name used by ACSeparateBackfaceCullConfig.
+        /// </summary>
+        public static String ACSeparateBackfaceCullConfigName {
+            get {
+                return AiConfigs.AI_CONFIG_IMPORT_AC_SEPARATE_BFCULL;
+            }
+        }
+
+        /// <summary>
+        /// Constructs a new ACSeparateBackfaceCullConfig.
+        /// </summary>
+        /// <param name="separateBackfaces">True if all surfaces that have the "backface cull" flag set should be collected in separate meshes, false otherwise.</param>
+        public ACSeparateBackfaceCullConfig(bool separateBackfaces)
+            : base(ACSeparateBackfaceCullConfigName, separateBackfaces, true) { }
+    }
+
+    /// <summary>
+    /// Configures whether the AC loader evaluates subdivision surfaces (indicated by the presence
+    /// of the 'subdiv' attribute in the file). By default, Assimp performs
+    /// the subdivision using the standard Catmull-Clark algorithm. The default value is true.
+    /// </summary>
+    public sealed class ACEvaluateSubdivisionConfig : BooleanPropertyConfig {
+
+        /// <summary>
+        /// Gets the string name used by ACEvaluateSubdivisionConfig.
+        /// </summary>
+        public static String ACEvaluateSubdivisionConfigName {
+            get {
+                return AiConfigs.AI_CONFIG_IMPORT_AC_EVAL_SUBDIVISION;
+            }
+        }
+
+        /// <summary>
+        /// Constructs a new ACEvaluateSubdivisionConfig.
+        /// </summary>
+        /// <param name="evaluateSubdivision">True if the AC loader should evaluate subdivisions, false otherwise.</param>
+        public ACEvaluateSubdivisionConfig(bool evaluateSubdivision) 
+            : base(ACEvaluateSubdivisionConfigName, evaluateSubdivision, true) { }
+    }
+
+    /// <summary>
+    /// Configures the UNREAL 3D loader to separate faces with different surface flags (e.g. two-sided vs single-sided).
+    /// The default value is true.
+    /// </summary>
+    public sealed class UnrealHandleFlagsConfig : BooleanPropertyConfig {
+
+        /// <summary>
+        /// Gets the string name used by UnrealHandleFlagsConfig.
+        /// </summary>
+        public static String UnrealHandleFlagsConfigName {
+            get {
+                return AiConfigs.AI_CONFIG_IMPORT_UNREAL_HANDLE_FLAGS;
+            }
+        }
+
+        /// <summary>
+        /// Constructs a new UnrealHandleFlagsConfig.
+        /// </summary>
+        /// <param name="handleFlags">True if the unreal loader should separate faces with different surface flags, false otherwise.</param>
+        public UnrealHandleFlagsConfig(bool handleFlags) 
+            : base(UnrealHandleFlagsConfigName, handleFlags, true) { }
+    }
+
+    /// <summary>
+    /// Configures the terragen import plugin to compute UV's for terrains, if
+    /// they are not given. Furthermore, a default texture is assigned. The default value is false.
+    /// <para>UV coordinates for terrains are so simple to compute that you'll usually 
+    /// want to compute them on your own, if you need them. This option is intended for model viewers which
+    /// want to offer an easy way to apply textures to terrains.</para>
+    /// </summary>
+    public sealed class TerragenComputeTexCoordsConfig : BooleanPropertyConfig {
+
+        /// <summary>
+        /// Gets the string name used by TerragenComputeTexCoordsConfig.
+        /// </summary>
+        public static String TerragenComputeTexCoordsConfigName {
+            get {
+                return AiConfigs.AI_CONFIG_IMPORT_TER_MAKE_UVS;
+            }
+        }
+
+        /// <summary>
+        /// Constructs a new TerragenComputeTexCoordsConfig.
+        /// </summary>
+        /// <param name="computeTexCoords">True if terran UV coordinates should be computed, false otherwise.</param>
+        public TerragenComputeTexCoordsConfig(bool computeTexCoords) 
+            : base(TerragenComputeTexCoordsConfigName, computeTexCoords, false) { }
+    }
+
+    /// <summary>
+    /// Configures the ASE loader to always reconstruct normal vectors basing on the smoothing groups
+    /// loaded from the file. Some ASE files carry invalid normals, others don't. The default value is true.
+    /// </summary>
+    public sealed class ASEReconstructNormalsConfig : BooleanPropertyConfig {
+
+        /// <summary>
+        /// Gets the string name used by ASEReconstructNormalsConfig.
+        /// </summary>
+        public static String ASEReconstructNormalsConfigName {
+            get {
+                return AiConfigs.AI_CONFIG_IMPORT_ASE_RECONSTRUCT_NORMALS;
+            }
+        }
+
+        /// <summary>
+        /// Constructs a new ASEReconstructNormalsConfig.
+        /// </summary>
+        /// <param name="reconstructNormals">True if normals should be re-computed, false otherwise.</param>
+        public ASEReconstructNormalsConfig(bool reconstructNormals) 
+            : base(ASEReconstructNormalsConfigName, reconstructNormals, true) { }
+    }
+
+    /// <summary>
+    /// Configures the M3D loader to detect and process multi-part Quake player models. These models
+    /// usually consit of three files, lower.md3, upper.md3 and head.md3. If this propery is
+    /// set to true, Assimp will try to load and combine all three files if one of them is loaded. The
+    /// default value is true.
+    /// </summary>
+    public sealed class MD3HandleMultiPartConfig : BooleanPropertyConfig {
+
+        /// <summary>
+        /// Gets the string name used by MD3HandleMultiPartConfig.
+        /// </summary>
+        public static String MD3HandleMultiPartConfigName {
+            get {
+                return AiConfigs.AI_CONFIG_IMPORT_MD3_HANDLE_MULTIPART;
+            }
+        }
+
+        /// <summary>
+        /// Constructs a new MD3HandleMultiPartConfig.
+        /// </summary>
+        /// <param name="handleMultiParts">True if the split files should be loaded and combined, false otherwise.</param>
+        public MD3HandleMultiPartConfig(bool handleMultiParts) 
+            : base(MD3HandleMultiPartConfigName, handleMultiParts, true) { }
+    }
+
+    /// <summary>
+    /// Tells the MD3 loader which skin files to load. When loading MD3 files, Assimp checks
+    /// whether a file named "md3_file_name"_"skin_name".skin exists. These files are used by
+    /// Quake III to be able to assign different skins (e.g. red and blue team) to models. 'default', 'red', 'blue'
+    /// are typical skin names. The default string value is "default".
+    /// </summary>
+    public sealed class MD3SkinNameConfig : StringPropertyConfig {
+
+        /// <summary>
+        /// Gets the string name used by MD3SkinNameConfig.
+        /// </summary>
+        public static String MD3SkinNameConfigName {
+            get {
+                return AiConfigs.AI_CONFIG_IMPORT_MD3_SKIN_NAME;
+            }
+        }
+
+        /// <summary>
+        /// Constructs a new MD3SkinNameConfig.
+        /// </summary>
+        /// <param name="skinName">The skin name.</param>
+        public MD3SkinNameConfig(String skinName)
+            : base(MD3SkinNameConfigName, skinName, "default") { }
+    }
+
+    /// <summary>
+    /// Specifies the Quake 3 shader file to be used for a particular MD3 file. This can be a full path or
+    /// relative to where all MD3 shaders reside. the default string value is an empty string.
+    /// </summary>
+    public sealed class MD3ShaderSourceConfig : StringPropertyConfig {
+
+        /// <summary>
+        /// Gets the string name used by MD3ShaderSourceConfig.
+        /// </summary>
+        public static String MD3ShaderSourceConfigName {
+            get {
+                return AiConfigs.AI_CONFIG_IMPORT_MD3_SHADER_SRC;
+            }
+        }
+
+        /// <summary>
+        /// Constructs a new MD3ShaderSourceConfig.
+        /// </summary>
+        /// <param name="shaderFile">The shader file.</param>
+        public MD3ShaderSourceConfig(String shaderFile)
+            : base(MD3ShaderSourceConfigName, shaderFile, String.Empty) { }
+    }
+
+    /// <summary>
+    /// Configures the LWO loader to load just one layer from the model.
+    /// <para>LWO files consist of layers and in some cases it could be useful to load only one of them.
+    /// This property can be either a string - which specifies the name of the layer - or an integer - the index
+    /// of the layer. If the property is not set then the whole LWO model is loaded. Loading fails
+    /// if the requested layer is not vailable. The layer index is zero-based and the layer name may not be empty</para>
+    /// The default value is false (all layers are loaded).
+    /// </summary>
+    public sealed class LWOImportOneLayerConfig : BooleanPropertyConfig {
+
+        /// <summary>
+        /// Gets the string name used by LWOImportOneLayerConfig.
+        /// </summary>
+        public static String LWOImportOneLayerConfigName {
+            get {
+                return AiConfigs.AI_CONFIG_IMPORT_LWO_ONE_LAYER_ONLY;
+            }
+        }
+
+        /// <summary>
+        /// Constructs a new LWOImportOneLayerConfig.
+        /// </summary>
+        /// <param name="importOneLayerOnly">True if only one layer should be imported, false if all layers should be imported.</param>
+        public LWOImportOneLayerConfig(bool importOneLayerOnly) 
+            : base(LWOImportOneLayerConfigName, importOneLayerOnly, false) { }
+    }
+
+    /// <summary>
+    /// Configures the MD5 loader to not load the MD5ANIM file for a MD5MESH file automatically.
+    /// The default value is false.
+    /// <para>The default strategy is to look for a file with the same name but with the MD5ANIm extension
+    /// in the same directory. If it is found it is loaded and combined with the MD5MESH file. This configuration
+    /// option can be used to disable this behavior.</para>
+    /// </summary>
+    public sealed class MD5NoAnimationAutoLoadConfig : BooleanPropertyConfig {
+
+        /// <summary>
+        /// Gets the string name used by MD5NoAnimationAutoLoadConfig.
+        /// </summary>
+        public static String MD5NoAnimationAutoLoadConfigName {
+            get {
+                return AiConfigs.AI_CONFIG_IMPORT_MD5_NO_ANIM_AUTOLOAD;
+            }
+        }
+
+        /// <summary>
+        /// Constructs a new MD5NoAnimationAutoLoadConfig.
+        /// </summary>
+        /// <param name="noAutoLoadAnim">True if animations should not be automatically loaded, false if they should be.</param>
+        public MD5NoAnimationAutoLoadConfig(bool noAutoLoadAnim) 
+            : base(MD5NoAnimationAutoLoadConfigName, noAutoLoadAnim, false) { }
+    }
+
+    /// <summary>
+    /// Defines the beginning of the time range for which the LWS loader evaluates animations and computes
+    /// AiNodeAnim's. The default value is the one taken from the file.
+    /// <para>Assimp provides full conversion of Lightwave's envelope system, including pre and post
+    /// conditions. The loader computes linearly subsampled animation channels with the frame rate
+    /// given in the LWS file. This property defines the start time.</para>
+    /// <para>Animation channels are only generated if a node has at least one envelope with more than one key
+    /// assigned. This property is given in frames where '0' is the first. By default,
+    /// if this property is not set, the importer takes the animation start from the input LWS
+    /// file ('FirstFrame' line)</para>
+    /// </summary>
+    public sealed class LWSAnimationStartConfig : IntegerPropertyConfig {
+
+        /// <summary>
+        /// Gets the string name used by LWSAnimationStartConfig.
+        /// </summary>
+        public static String LWSAnimationStartConfigName {
+            get {
+                return AiConfigs.AI_CONFIG_IMPORT_LWS_ANIM_START;
+            }
+        }
+
+        /// <summary>
+        /// Constructs a new LWSAnimationStartConfig.
+        /// </summary>
+        /// <param name="animStart">Beginning of the time range</param>
+        public LWSAnimationStartConfig(int animStart)
+            : base(LWSAnimationStartConfigName, animStart, -1) { } //TODO: Verify the default value to tell the loader to use the value from the file
+    }
+
+    /// <summary>
+    /// Defines the ending of the time range for which the LWS loader evaluates animations and computes
+    /// AiNodeAnim's. The default value is the one taken from the file
+    /// <para>Assimp provides full conversion of Lightwave's envelope system, including pre and post
+    /// conditions. The loader computes linearly subsampled animation channels with the frame rate
+    /// given in the LWS file. This property defines the end time.</para>
+    /// <para>Animation channels are only generated if a node has at least one envelope with more than one key
+    /// assigned. This property is given in frames where '0' is the first. By default,
+    /// if this property is not set, the importer takes the animation end from the input LWS
+    /// file.</para>
+    /// </summary>
+    public sealed class LWSAnimationEndConfig : IntegerPropertyConfig {
+
+        /// <summary>
+        /// Gets the string name used by LWSAnimationEndConfig.
+        /// </summary>
+        public static String LWSAnimationEndConfigName {
+            get {
+                return AiConfigs.AI_CONFIG_IMPORT_LWS_ANIM_END;
+            }
+        }
+
+        /// <summary>
+        /// Constructs a new LWSAnimationEndConfig.
+        /// </summary>
+        /// <param name="animEnd">Ending of the time range</param>
+        public LWSAnimationEndConfig(int animEnd)
+            : base(LWSAnimationEndConfigName, animEnd, -1) { } //TODO: Verify the default value to tell the loader to use the value from the file.
+    }
+
+    /// <summary>
+    /// Defines the output frame rate of the IRR loader.
+    /// <para>IRR animations are difficult to convert for Assimp and there will always be
+    /// a loss of quality. This setting defines how many keys per second are returned by the converter.</para>
+    /// The default value is 100 frames per second.
+    /// </summary>
+    public sealed class IRRAnimationFrameRateConfig : IntegerPropertyConfig {
+
+        /// <summary>
+        /// Gets the string name used by IRRAnimationFrameRateConfig.
+        /// </summary>
+        public static String IRRAnimationFrameRateConfigName {
+            get {
+                return AiConfigs.AI_CONFIG_IMPORT_IRR_ANIM_FPS;
+            }
+        }
+
+        /// <summary>
+        /// Constructs a new IRRAnimationFramerateConfig.
+        /// </summary>
+        /// <param name="frameRate">Number of frames per second to output.</param>
+        public IRRAnimationFrameRateConfig(int frameRate) 
+            : base(IRRAnimationFrameRateConfigName, frameRate, 100) { }
+    }
+
+    /// <summary>
+    /// Ogre importer will try to load this MaterialFile. If a material file does not
+    /// exist with the same name as a material to load, the ogre importer will try to load this file
+    /// and searches for the material in it. The default string value is an empty string.
+    /// </summary>
+    public sealed class OgreMaterialFileConfig : StringPropertyConfig {
+
+        /// <summary>
+        /// Gets the string name used by OgreMaterialFileConfig.
+        /// </summary>
+        public static String OgreMaterialFileConfigName {
+            get {
+                return AiConfigs.AI_CONFIG_IMPORT_OGRE_MATERIAL_FILE;
+            }
+        }
+
+        /// <summary>
+        /// Constructs a new OgreMaterialFileConfig.
+        /// </summary>
+        /// <param name="materialFileName">Material file name to load.</param>
+        public OgreMaterialFileConfig(String materialFileName)
+            : base(OgreMaterialFileConfigName, materialFileName, String.Empty) { }
+    }
+
+    #endregion
 }
