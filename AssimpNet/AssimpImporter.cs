@@ -298,6 +298,13 @@ namespace Assimp {
         }
 
         /// <summary>
+        /// Removes all configuration properties from the importer.
+        /// </summary>
+        public void RemoveConfigs() {
+            _configs.Clear();
+        }
+
+        /// <summary>
         /// Checks if the importer has a config set by the specified name.
         /// </summary>
         /// <param name="configName">Name of the config property</param>
