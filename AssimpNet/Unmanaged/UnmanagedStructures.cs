@@ -604,7 +604,7 @@ namespace Assimp.Unmanaged {
         /// <summary>
         /// Byte length of the UTF-8 string.
         /// </summary>
-        public uint Length;
+        public UIntPtr Length;
 
         /// <summary>
         /// Actual string.
@@ -618,7 +618,7 @@ namespace Assimp.Unmanaged {
         /// </summary>
         /// <returns>AiString string data</returns>
         public String GetString() {
-            if(Length > 0) {
+            if(Length.ToUInt32() > 0) {
                 byte[] copy = new byte[AiDefines.MAX_LENGTH];
                 int index = 0;
                 //Note: I've observed an issue with x64 where the byte data is scattered about in the array, so reading
@@ -630,7 +630,7 @@ namespace Assimp.Unmanaged {
                         index++;
                     }
                 }
-                return Encoding.UTF8.GetString(copy, 0, (int) Length);
+                return Encoding.UTF8.GetString(copy, 0, (int) Length.ToUInt32());
             } else {
                 return String.Empty;
             }
@@ -645,7 +645,7 @@ namespace Assimp.Unmanaged {
                 byte[] copy = Encoding.UTF8.GetBytes(data);
                 Data = new byte[AiDefines.MAX_LENGTH];
                 Array.Copy(copy, Data, copy.Length);
-                Length = (uint) copy.Length;
+                Length = (UIntPtr) copy.Length;
             }
         }
     }
