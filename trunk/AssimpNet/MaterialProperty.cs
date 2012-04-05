@@ -122,11 +122,10 @@ namespace Assimp {
             _texType = property.Semantic;
             
             if(property.DataLength > 0 && property.Data != IntPtr.Zero) {
-                if(_type == PropertyType.String) {
-                    AiString str = MemoryHelper.MarshalStructure<AiString>(property.Data);
-                    _stringValue = str.GetString();
+                if (_type == Assimp.PropertyType.String) {
+                    _stringValue = Marshal.PtrToStringAnsi(property.Data, (int)property.DataLength);
                 } else {
-                    _value = MemoryHelper.MarshalArray<byte>(property.Data, (int) property.DataLength);
+                    _value = MemoryHelper.MarshalArray<byte>(property.Data, (int)property.DataLength);
                 }
             }
 
