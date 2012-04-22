@@ -25,6 +25,7 @@ using System.Collections.Generic;
 using System.IO;
 using Assimp.Configs;
 using Assimp.Unmanaged;
+using System.Runtime.InteropServices;
 
 namespace Assimp {
     /// <summary>
@@ -37,6 +38,13 @@ namespace Assimp {
         private List<LogStream> _logStreams;
         private Object sync = new Object();
 
+        private float m_scale = 1.0f;
+        private float m_xAxisRotation = 0.0f;
+        private float m_yAxisRotation = 0.0f;
+        private float m_zAxisRotation = 0.0f;
+        private bool m_buildMatrix = false;
+        private Matrix4x4 m_scaleRot = Matrix4x4.Identity;
+
         /// <summary>
         /// Gets if the importer has been disposed.
         /// </summary>
@@ -45,6 +53,72 @@ namespace Assimp {
                 return _isDisposed;
             }
         }
+
+        /// <summary>
+        /// Gets or sets the uniform scale for the model. This is multiplied
+        /// with the existing root node's transform.
+        /// </summary>
+        public float Scale {
+            get {
+                return m_scale;
+            }
+            set {
+               if(m_scale != value) {
+                    m_scale = value;
+                    m_buildMatrix = true;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the model's rotation about the X-Axis, in degrees. This is multiplied
+        /// with the existing root node's transform.
+        /// </summary>
+        public float XAxisRotation {
+            get {
+                return m_xAxisRotation;
+            }
+            set {
+                if(m_xAxisRotation != value) {
+                    m_xAxisRotation = value;
+                    m_buildMatrix = true;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the model's rotation abut the Y-Axis, in degrees. This is multiplied
+        /// with the existing root node's transform.
+        /// </summary>
+        public float YAxisRotation {
+            get {
+                return m_yAxisRotation;
+            }
+            set {
+                if(m_yAxisRotation != value) {
+                    m_yAxisRotation = value;
+                    m_buildMatrix = true;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the model's rotation about the Z-Axis, in degrees. This is multiplied
+        /// with the existing root node's transform.
+        /// </summary>
+        public float ZAxisRotation {
+            get {
+                return m_zAxisRotation;
+            }
+            set {
+                if(m_zAxisRotation != value) {
+                    m_zAxisRotation = value;
+                    m_buildMatrix = true;
+                }
+            }
+        }
+
+        public bool DoBake { get; set; }
 
         /// <summary>
         /// Gets or sets if verbose logging should be enabled.
@@ -136,10 +210,13 @@ namespace Assimp {
                     AttachLogs();
                     ApplyConfigs();
 
-                    ptr = AssimpMethods.ImportFileFromStream(stream, postProcessFlags, formatHint);
+                    ptr = AssimpMethods.ImportFileFromStream(stream, PostProcessSteps.None, formatHint);
 
-                    ApplyConfigsDefault();
-                    DetatachLogs();
+                    if(ptr != IntPtr.Zero) {
+                        TransformScene(ptr);
+
+                        ptr = AssimpMethods.ApplyPostProcessing(ptr, postProcessFlags);
+                    } 
 
                     if(ptr == IntPtr.Zero) {
                         throw new AssimpException("Error importing file: " + AssimpMethods.GetErrorString());
@@ -152,6 +229,10 @@ namespace Assimp {
 
                     return new Scene(scene);
                 } finally {
+
+                    ApplyConfigsDefault();
+                    DetatachLogs();
+
                     if(ptr != IntPtr.Zero) {
                         AssimpMethods.ReleaseImport(ptr);
                     }
@@ -194,11 +275,14 @@ namespace Assimp {
 
                     AttachLogs();
                     ApplyConfigs();
-                    
-                    ptr = AssimpMethods.ImportFile(file, postProcessFlags);
-                    
-                    ApplyConfigsDefault();
-                    DetatachLogs();
+
+                    ptr = AssimpMethods.ImportFile(file, PostProcessSteps.None);
+
+                    if(ptr != IntPtr.Zero) {
+                        TransformScene(ptr);
+
+                        ptr = AssimpMethods.ApplyPostProcessing(ptr, postProcessFlags);
+                    } 
 
                     if(ptr == IntPtr.Zero) {
                         throw new AssimpException("Error importing file: " + AssimpMethods.GetErrorString());
@@ -211,11 +295,61 @@ namespace Assimp {
 
                     return new Scene(scene);
                 } finally {
+
+                    ApplyConfigsDefault();
+                    DetatachLogs();
+
                     if(ptr != IntPtr.Zero) {
                         AssimpMethods.ReleaseImport(ptr);
                     }
                 }
             }
+        }
+
+        private void BuildMatrix() {
+
+            if(m_buildMatrix) {
+                Matrix4x4 scale = Matrix4x4.FromScaling(new Vector3D(m_scale, m_scale, m_scale));
+                Matrix4x4 xRot = Matrix4x4.FromRotationX(m_xAxisRotation * (float) (180.0d / Math.PI));
+                Matrix4x4 yRot = Matrix4x4.FromRotationY(m_yAxisRotation * (float) (180.0d / Math.PI));
+                Matrix4x4 zRot = Matrix4x4.FromRotationZ(m_zAxisRotation * (float) (180.0d / Math.PI));
+                m_scaleRot = scale * ((xRot * yRot) * zRot);
+            }
+
+            m_buildMatrix = false;
+        }
+
+        private unsafe bool TransformScene(IntPtr scene) {
+            BuildMatrix();
+
+            try {
+                if(!m_scaleRot.IsIdentity) {
+                    IntPtr rootNode = Marshal.ReadIntPtr(IntPtr.Add(scene, sizeof(uint))); //Skip over sceneflags
+
+                    IntPtr matrixPtr = IntPtr.Add(rootNode, Marshal.SizeOf(typeof(AiString))); //Skip over AiString
+
+                    Matrix4x4 matrix = MemoryHelper.MarshalStructure<Matrix4x4>(matrixPtr); //Get the root transform
+
+                    matrix = matrix * m_scaleRot; //Transform
+
+                    //Save back to unmanaged mem
+                    int index = 0;
+                    for(int i = 1; i <= 4; i++) {
+                        for(int j = 1; j <= 4; j++) {
+                            float value = matrix[i, j];
+                            byte[] bytes = BitConverter.GetBytes(value);
+                            foreach(byte b in bytes) {
+                                Marshal.WriteByte(matrixPtr, index, b);
+                                index++;
+                            }
+                        }
+                    }
+                    return true;
+                }
+            } catch(Exception) {
+
+            }
+            return false;
         }
 
         /// <summary>
