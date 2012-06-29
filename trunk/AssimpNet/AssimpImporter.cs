@@ -1,4 +1,4 @@
-﻿/*
+ /*
 * Copyright (c) 2012 Nicholas Woodfield
 * 
 * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -117,8 +117,6 @@ namespace Assimp {
                 }
             }
         }
-
-        public bool DoBake { get; set; }
 
         /// <summary>
         /// Gets or sets if verbose logging should be enabled.
