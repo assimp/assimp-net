@@ -71,6 +71,17 @@ namespace Assimp {
         }
 
         /// <summary>
+        /// Gets the matrix that transforms from mesh space to bone space in bind pose.
+        /// </summary>
+        public Matrix4x4 OffsetMatrix
+        {
+            get
+            {
+                return _offsetMatrix;
+            }
+        }
+
+        /// <summary>
         /// Constructs a new Bone.
         /// </summary>
         /// <param name="bone">Unmanaged AiBone struct.</param>
