@@ -32,7 +32,7 @@ namespace Assimp {
     /// relationship between the time line and mesh attachments is established by the mesh animation channel,
     /// which references singular mesh attachments by their ID and binds them to a time offset.
     /// </summary>
-    public sealed class MeshAttachment {
+    public sealed class MeshAnimationAttachment {
         private int _vertexCount;
         private Vector3D[] _vertices;
         private Vector3D[] _normals;
@@ -123,7 +123,7 @@ namespace Assimp {
         /// Constructs a new MeshAttachment.
         /// </summary>
         /// <param name="animMesh">Unmanaged AiAnimMesh struct.</param>
-        internal MeshAttachment(AiAnimMesh animMesh) {
+        internal MeshAnimationAttachment(AiAnimMesh animMesh) {
             _vertexCount = (int) animMesh.NumVertices;
 
             //Load per-vertex arrays
