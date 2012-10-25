@@ -126,7 +126,7 @@
     <Compile Include="Material.cs" />
     <Compile Include="MaterialProperty.cs" />
     <Compile Include="MeshAnimationChannel.cs" />
-    <Compile Include="MeshAttachment.cs" />
+    <Compile Include="MeshAnimationAttachment.cs" />
     <Compile Include="MeshKey.cs" />
     <Compile Include="NodeAnimationChannel.cs" />
     <Compile Include="QuaternionKey.cs" />
