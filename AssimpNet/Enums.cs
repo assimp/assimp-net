@@ -400,7 +400,22 @@ namespace Assimp {
         /// <summary>
         /// Flips face winding order from CCW (default) to CW.
         /// </summary>
-        FlipWindingOrder = 0x1000000
+        FlipWindingOrder = 0x1000000,
+
+        /// <summary>
+        /// Splits meshes with many bones into submeshes so that each submesh has fewer or as many bones as a given limit.
+        /// </summary>
+        SplitByBoneCount = 0x2000000,
+
+        /// <summary>
+        /// <para>Removes bones losslessly or according to some threshold. In some cases (e.g. formats that require it) exporters
+        /// are faced to assign dummy bone weights to otherwise static meshes assigned to animated meshes. Full, weight-based skinning is expensive while
+        /// animating nodes is extremely cheap, so this step is offered to clean up the data in that regard. 
+        /// </para>
+        /// <para>Usage of the configuration AI_CONFIG_PP_DB_THRESHOLD to control the threshold and AI_CONFIG_PP_DB_ALL_OR_NONE if you want bones
+        /// removed if and only if all bones within the scene qualify for removal.</para>
+        /// </summary>
+        Debone = 0x4000000
     }
 
     /// <summary>

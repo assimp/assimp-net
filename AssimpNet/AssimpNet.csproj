@@ -122,6 +122,8 @@
     <Compile Include="Color4D.cs" />
     <Compile Include="Configs\PropertyConfig.cs" />
     <Compile Include="Enums.cs" />
+    <Compile Include="ExportDataBlob.cs" />
+    <Compile Include="ExportFormatDescription.cs" />
     <Compile Include="Face.cs" />
     <Compile Include="Material.cs" />
     <Compile Include="MaterialProperty.cs" />
@@ -171,6 +173,7 @@
   <ItemGroup>
     <None Include="AssimpKey.snk" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

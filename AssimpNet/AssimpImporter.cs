@@ -34,7 +34,7 @@ namespace Assimp {
     public class AssimpImporter : IDisposable {
         private bool _isDisposed;
         private bool _verboseEnabled;
-        private Dictionary<String, IPropertyConfig> _configs;
+        private Dictionary<String, PropertyConfig> _configs;
         private List<LogStream> _logStreams;
         private Object sync = new Object();
 
@@ -134,7 +134,7 @@ namespace Assimp {
         /// <summary>
         /// Gets the property configurations set to this importer.
         /// </summary>
-        public Dictionary<String, IPropertyConfig> PropertyConfigurations {
+        public Dictionary<String, PropertyConfig> PropertyConfigurations {
             get {
                 return _configs;
             }
@@ -153,7 +153,7 @@ namespace Assimp {
         /// Constructs a new AssimpImporter.
         /// </summary>
         public AssimpImporter() {
-            _configs = new Dictionary<String, IPropertyConfig>();
+            _configs = new Dictionary<String, PropertyConfig>();
             _logStreams = new List<LogStream>();
         }
 
@@ -206,7 +206,7 @@ namespace Assimp {
                 try {
 
                     AttachLogs();
-                    ApplyConfigs();
+                    CreateConfigs();
 
                     ptr = AssimpMethods.ImportFileFromStream(stream, PostProcessSteps.None, formatHint);
 
@@ -228,7 +228,7 @@ namespace Assimp {
                     return new Scene(scene);
                 } finally {
 
-                    ApplyConfigsDefault();
+                    ReleaseConfigs();
                     DetatachLogs();
 
                     if(ptr != IntPtr.Zero) {
@@ -272,7 +272,7 @@ namespace Assimp {
                 try {
 
                     AttachLogs();
-                    ApplyConfigs();
+                    CreateConfigs();
 
                     ptr = AssimpMethods.ImportFile(file, PostProcessSteps.None);
 
@@ -294,7 +294,7 @@ namespace Assimp {
                     return new Scene(scene);
                 } finally {
 
-                    ApplyConfigsDefault();
+                    ReleaseConfigs();
                     DetatachLogs();
 
                     if(ptr != IntPtr.Zero) {
@@ -403,7 +403,7 @@ namespace Assimp {
         /// Sets a configuration property to the importer.
         /// </summary>
         /// <param name="config">Config to set</param>
-        public void SetConfig(IPropertyConfig config) {
+        public void SetConfig(PropertyConfig config) {
             if(config == null) {
                 return;
             }
@@ -423,7 +423,7 @@ namespace Assimp {
             if(String.IsNullOrEmpty(configName)) {
                 return;
             }
-            IPropertyConfig oldConfig;
+            PropertyConfig oldConfig;
             if(!_configs.TryGetValue(configName, out oldConfig)) {
                 _configs.Remove(configName);
             }
@@ -448,17 +448,17 @@ namespace Assimp {
             return _configs.ContainsKey(configName);
         }
 
-        //Sets all config properties to Assimp
-        private void ApplyConfigs() {
-            foreach(KeyValuePair<String, IPropertyConfig> config in _configs) {
-                config.Value.ApplyValue();
+        //Creates all property stores and sets their values
+        private void CreateConfigs() {
+            foreach(KeyValuePair<String, PropertyConfig> config in _configs) {
+                config.Value.CreatePropertyStore();
             }
         }
 
-        //Sets all default config properties to Assimp
-        private void ApplyConfigsDefault() {
-            foreach(KeyValuePair<String, IPropertyConfig> config in _configs) {
-                config.Value.ApplyDefaultValue();
+        //Destroys all property stores
+        private void ReleaseConfigs() {
+            foreach(KeyValuePair<String, PropertyConfig> config in _configs) {
+                config.Value.ReleasePropertyStore();
             }
         }
 

@@ -210,6 +210,31 @@ namespace Assimp.Unmanaged {
         /// </summary>
         public const String AI_CONFIG_FAVOUR_SPEED = "FAVOUR_SPEED";
 
+        /// <summary>
+        /// Maximum bone cone per mesh for the <see cref="PostProcessSteps.SplitByBoneCount"/> step. Meshes
+        /// are split until the max number of bones is reached.
+        /// <para>Type: integer. Default: 60</para>
+        /// </summary>
+        public const String AI_CONFIG_PP_SBBC_MAX_BONES = "PP_SBBC_MAX_BONES";
+
+        /// <summary>
+        /// Source UV channel for tangent space computation. The specified channel must exist or an error will be raised.
+        /// <para>Type: integer. Default: 0</para>
+        /// </summary>
+        public const String AI_CONFIG_PP_CT_TEXTURE_CHANNEL_INDEX = "AI_CONFIG_PP_CT_TEXTURE_CHANNEL_INDEX";
+
+        /// <summary>
+        /// Threshold used to determine if a bone is kept or removed during the <see cref="PostProcessSteps.Debone"/> step.
+        /// <para>Type: float. Default: 1.0f</para>
+        /// </summary>
+        public const String AI_CONFIG_PP_DB_THRESHOLD = "PP_DB_THRESHOLD";
+
+        /// <summary>
+        /// Require all bones to qualify for deboning before any are removed.
+        /// <para>Type: bool. Default: false</para>
+        /// </summary>
+        public const String AI_CONFIG_PP_DB_ALL_OR_NONE = "PP_DB_ALL_OR_NONE";
+
         #endregion
 
         #region Importer Settings
@@ -374,12 +399,35 @@ namespace Assimp.Unmanaged {
         public const String AI_CONFIG_IMPORT_IRR_ANIM_FPS = "IMPORT_IRR_ANIM_FPS";
 
         /// <summary>
-        /// Ogre importer will try to load this MaterialFile. If a material file does not
+        /// The Ogre importer will try to load this MaterialFile. If a material file does not
         /// exist with the same name as a material to load, the ogre importer will try to load this file
         /// and searches for the material in it.
         /// <para>Type: string. Default: ""</para>
         /// </summary>
         public const String AI_CONFIG_IMPORT_OGRE_MATERIAL_FILE = "IMPORT_OGRE_MATERIAL_FILE";
+
+        /// <summary>
+        /// The Ogre importer will detect the texture usage from the filename. Normally a texture is loaded as a color map, if no target is specified
+        /// in the material file. If this is enabled, texture names ending with _n, _l, _s are used as normal maps, light maps, or specular maps.
+        /// <para>Type: Bool. Default: true.</para>
+        /// </summary>
+        public const String AI_CONFIG_IMPORT_OGRE_TEXTURETYPE_FROM_FILENAME = "IMPORT_OGRE_TEXTURETYPE_FROM_FILENAME";
+
+        /// <summary>
+        /// Specifies whether the IFC loader skips over shape representations of type 'Curve2D'. A lot of files contain both a faceted mesh representation and a outline 
+        /// with a presentation type of 'Curve2D'. Currently Assimp does not convert those, so turning this option off just clutters the log with errors.
+        /// <para>Type: Bool. Default: true.</para>
+        /// </summary>
+        public const String AI_CONFIG_IMPORT_IFC_SKIP_CURVE_REPRESENTATIONS = "IMPORT_IFC_SKIP_CURVE_REPRESENTATIONS";
+
+        /// <summary>
+        /// Specifies whether the IFC loader will use its own, custom triangulation algorithm to triangulate wall and floor meshes. If this is set to false,
+        /// walls will be either triangulated by the post process triangulation or will be passed through as huge polygons with faked holes (e.g. holes that are connected
+        /// with the outer boundary using a dummy edge). It is highly recommended to leave this property set to true as the default post process has some known
+        /// issues with these kind of polygons.
+        /// <para>Type: Bool. Default: true.</para>
+        /// </summary>
+        public const String AI_CONFIG_IMPORT_IFC_CUSTOM_TRIANGULATION = "IMPORT_IFC_CUSTOM_TRIANGULATION";
         
         #endregion
     }

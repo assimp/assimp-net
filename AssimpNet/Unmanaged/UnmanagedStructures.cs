@@ -640,13 +640,21 @@ namespace Assimp.Unmanaged {
         /// Convienence method for setting the AiString string (and length).
         /// </summary>
         /// <param name="data">String data to set</param>
-        public void SetString(String data) {
-            if(!String.IsNullOrEmpty(data) && Encoding.UTF8.GetByteCount(data) <= AiDefines.MAX_LENGTH) {
+        public bool SetString(String data) {
+            if(data == null)
+                data = String.Empty;
+
+            //Note: aiTypes.h specifies aiString is UTF-8 encoded string.
+            if(Encoding.UTF8.GetByteCount(data) <= AiDefines.MAX_LENGTH) {
                 byte[] copy = Encoding.UTF8.GetBytes(data);
                 Data = new byte[AiDefines.MAX_LENGTH];
                 Array.Copy(copy, Data, copy.Length);
                 Length = (UIntPtr) copy.Length;
+
+                return true;
             }
+
+            return false;
         }
     }
 
@@ -754,27 +762,90 @@ namespace Assimp.Unmanaged {
     [StructLayoutAttribute(LayoutKind.Sequential)]
     public struct AiAnimMesh {
 
+        /// <summary>
         /// aiVector3D*, replacement position array.
+        /// </summary>
         public IntPtr Vertices;
 
+        /// <summary>
         /// aiVector3D*, replacement normal array.
+        /// </summary>
         public IntPtr Normals;
 
+        /// <summary>
         /// aiVector3D*, replacement tangent array.
+        /// </summary>
         public IntPtr Tangents;
 
+        /// <summary>
         /// aiVector3D*, replacement bitangent array.
+        /// </summary>
         public IntPtr BiTangents;
 
+        /// <summary>
         /// aiColor4D*[4], replacement vertex colors.
+        /// </summary>
         [MarshalAsAttribute(UnmanagedType.ByValArray, SizeConst = AiDefines.AI_MAX_NUMBER_OF_COLOR_SETS, ArraySubType = UnmanagedType.SysUInt)]
         public IntPtr[] Colors;
 
+        /// <summary>
         /// aiVector3D*[4], replacement texture coordinates.
+        /// </summary>
         [MarshalAsAttribute(UnmanagedType.ByValArray, SizeConst = AiDefines.AI_MAX_NUMBER_OF_TEXTURECOORDS, ArraySubType = UnmanagedType.SysUInt)]
         public IntPtr[] TextureCoords;
 
+        /// <summary>
         /// unsigned int, number of vertices.
+        /// </summary>
         public uint NumVertices;
+    }
+
+    /// <summary>
+    /// Describes a file format which Assimp can export to.
+    /// </summary>
+    [StructLayoutAttribute(LayoutKind.Sequential)]
+    public struct AiExportFormatDesc {
+
+        /// <summary>
+        /// char*, a short string ID to uniquely identify the export format. e.g. "dae" or "obj"
+        /// </summary>
+        public IntPtr FormatId;
+
+        /// <summary>
+        /// char*, a short description of the file format to present to users.
+        /// </summary>
+        public IntPtr Description;
+
+        /// <summary>
+        /// char*, a recommended file extension of the exported file in lower case.
+        /// </summary>
+        public IntPtr FileExtension;
+    }
+
+    /// <summary>
+    /// Describes a blob of exported scene data. Blobs can be nested, the first blob always has an empty name. Nested
+    /// blobs represent auxillary files produced by the exporter (e.g. material files) and are named accordingly.
+    /// </summary>
+    [StructLayoutAttribute(LayoutKind.Sequential)]
+    public struct AiExportDataBlob {
+        /// <summary>
+        /// size_t, size of the data in bytes.
+        /// </summary>
+        public IntPtr Size;
+
+        /// <summary>
+        /// void*, the data.
+        /// </summary>
+        public IntPtr Data;
+
+        /// <summary>
+        /// AiString, name of the blob.
+        /// </summary>
+        public AiString Name;
+
+        /// <summary>
+        /// aiExportDataBlob*, pointer to the next blob in the chain.
+        /// </summary>
+        public IntPtr NextBlob;
     }
 }

@@ -26,60 +26,111 @@ using Assimp.Unmanaged;
 
 namespace Assimp.Configs {
     /// <summary>
-    /// Interface describing a configuration property the Assimp importer.
+    /// Base property config.
     /// </summary>
-    public interface IPropertyConfig {
-
-        /// <summary>
-        /// Gets the property name.
-        /// </summary>
-        String Name {
-            get;
-        }
-
-        /// <summary>
-        /// Applies the property value.
-        /// </summary>
-        void ApplyValue();
-
-        /// <summary>
-        /// Applies the default property, if any.
-        /// </summary>
-        void ApplyDefaultValue();
-    }
-
-    /// <summary>
-    /// Describes an integer configuration property.
-    /// </summary>
-    public class IntegerPropertyConfig : IPropertyConfig {
-        private String _name;
-        private int _value;
-        private int? _defaultValue;
+    public abstract class PropertyConfig : IDisposable {
+        private String m_name;
+        private IntPtr m_propStore;
 
         /// <summary>
         /// Gets the property name.
         /// </summary>
         public String Name {
             get {
-                return _name;
+                return m_name;
             }
         }
+
+        /// <summary>
+        /// Creates a new property config that has no active Assimp property store.
+        /// </summary>
+        /// <param name="name">Name of the property.</param>
+        protected PropertyConfig(String name) {
+            m_name = name;
+            m_propStore = IntPtr.Zero;
+        }
+
+        /// <summary>
+        /// Destructor.
+        /// </summary>
+        ~PropertyConfig() {
+            Dispose(false);
+        }
+
+        /// <summary>
+        /// Sets the current value to the default value.
+        /// </summary>
+        public abstract void SetDefaultValue();
+
+        /// <summary>
+        /// Creates a new Assimp property store and calls subclasses to set their value to it.
+        /// </summary>
+        public void CreatePropertyStore() {
+            if(m_propStore == IntPtr.Zero) {
+                m_propStore = AssimpMethods.CreatePropertyStore();
+                if(m_propStore != IntPtr.Zero)
+                    ApplyValue(m_propStore);
+            }
+        }
+
+        /// <summary>
+        /// Releases an Assimp property store.
+        /// </summary>
+        public void ReleasePropertyStore() {
+            if(m_propStore != IntPtr.Zero) {
+                AssimpMethods.ReleasePropertyStore(m_propStore);
+                m_propStore = IntPtr.Zero;
+            }
+        }
+
+        /// <summary>
+        /// Applies the property value to the given Assimp property store.
+        /// </summary>
+        /// <param name="propStore">Assimp property store</param>
+        protected abstract void ApplyValue(IntPtr propStore);
+
+        /// <summary>
+        /// Disposes the property config, releasing the Assimp property store if there is one.
+        /// </summary>
+        public void Dispose() {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Disposes the property config.
+        /// </summary>
+        /// <param name="disposing">True if Dispose was called, false if called from the destructor.</param>
+        protected virtual void Dispose(bool disposing) {
+            ReleasePropertyStore();
+        }
+    }
+
+    /// <summary>
+    /// Describes an integer configuration property.
+    /// </summary>
+    public class IntegerPropertyConfig : PropertyConfig {
+        private int m_value;
+        private int m_defaultValue;
 
         /// <summary>
         /// Gets the property value.
         /// </summary>
         public int Value {
             get {
-                return _value;
+                return m_value;
+            }
+            set {
+                m_value = value;
             }
         }
 
         /// <summary>
-        /// Gets the default property value, if any.
+        /// Gets the default property value.
         /// </summary>
-        public int? DefaultValue {
+        public int DefaultValue {
             get {
-                return _defaultValue;
+                return m_defaultValue;
             }
         }
 
@@ -88,11 +139,8 @@ namespace Assimp.Configs {
         /// </summary>
         /// <param name="name">Name of the property</param>
         /// <param name="value">Property value</param>
-        public IntegerPropertyConfig(String name, int value) {
-            _name = name;
-            _value = value;
-            _defaultValue = null;
-        }
+        public IntegerPropertyConfig(String name, int value)
+            : this(name, value, 0) { }
 
         /// <summary>
         /// constructs a new IntegerPropertyConfig with a default value.
@@ -100,25 +148,26 @@ namespace Assimp.Configs {
         /// <param name="name">Name of the property</param>
         /// <param name="value">Property value</param>
         /// <param name="defaultValue">The default property value</param>
-        public IntegerPropertyConfig(String name, int value, int defaultValue) {
-            _name = name;
-            _value = value;
-            _defaultValue = defaultValue;
+        public IntegerPropertyConfig(String name, int value, int defaultValue)
+            : base(name) {
+            m_value = value;
+            m_defaultValue = defaultValue;
         }
 
         /// <summary>
-        /// Applies the property value.
+        /// Sets the current value to the default value.
         /// </summary>
-        public void ApplyValue() {
-            AssimpMethods.SetImportPropertyInteger(_name, _value);
+        public override void  SetDefaultValue() {
+            m_value = m_defaultValue;
         }
 
         /// <summary>
-        /// Applies the default property, if any.
+        /// Applies the property value to the given Assimp property store.
         /// </summary>
-        public void ApplyDefaultValue() { 
-            if(_defaultValue.HasValue) {
-                AssimpMethods.SetImportPropertyInteger(_name, _defaultValue.Value);
+        /// <param name="propStore">Assimp property store</param>
+        protected override void ApplyValue(IntPtr propStore) {
+            if(propStore != IntPtr.Zero) {
+                AssimpMethods.SetImportPropertyInteger(propStore, Name, m_value);
             }
         }
     }
@@ -126,35 +175,28 @@ namespace Assimp.Configs {
     /// <summary>
     /// Describes a float configuration property.
     /// </summary>
-    public class FloatPropertyConfig : IPropertyConfig {
-        private String _name;
-        private float _value;
-        private float? _defaultValue;
-
-        /// <summary>
-        /// Gets the property name.
-        /// </summary>
-        public String Name {
-            get { 
-                return _name;
-            }
-        }
+    public class FloatPropertyConfig : PropertyConfig {
+        private float m_value;
+        private float m_defaultValue;
 
         /// <summary>
         /// Gets the property value.
         /// </summary>
         public float Value {
             get {
-                return _value;
+                return m_value;
+            }
+            set {
+                m_value = value;
             }
         }
 
         /// <summary>
-        /// Gets the default property value, if any.
+        /// Gets the default property value.
         /// </summary>
-        public float? DefaultValue {
+        public float DefaultValue {
             get {
-                return _defaultValue;
+                return m_defaultValue;
             }
         }
 
@@ -163,11 +205,8 @@ namespace Assimp.Configs {
         /// </summary>
         /// <param name="name">Name of the property</param>
         /// <param name="value">Property value</param>
-        public FloatPropertyConfig(String name, float value) {
-            _name = name;
-            _value = value;
-            _defaultValue = null;
-        }
+        public FloatPropertyConfig(String name, float value)
+            : this(name, value, 0.0f) { }
 
         /// <summary>
         /// Constructs a new FloatPropertyConfig with a default value.
@@ -175,25 +214,26 @@ namespace Assimp.Configs {
         /// <param name="name">Name of the property</param>
         /// <param name="value">Property value</param>
         /// <param name="defaultValue">The default property value</param>
-        public FloatPropertyConfig(String name, float value, float defaultValue) {
-            _name = name;
-            _value = value;
-            _defaultValue = defaultValue;
+        public FloatPropertyConfig(String name, float value, float defaultValue)
+            : base(name) {
+            m_value = value;
+            m_defaultValue = defaultValue;
         }
 
         /// <summary>
-        /// Applies the property value.
+        /// Sets the current value to the default value.
         /// </summary>
-        public void ApplyValue() {
-            AssimpMethods.SetImportPropertyFloat(_name, _value);
+        public override void  SetDefaultValue() {
+            m_value = m_defaultValue;
         }
 
         /// <summary>
-        /// Applies the default property, if any.
+        /// Applies the property value to the given Assimp property store.
         /// </summary>
-        public void ApplyDefaultValue() {
-            if(_defaultValue.HasValue) {
-                AssimpMethods.SetImportPropertyFloat(_name, _defaultValue.Value);
+        /// <param name="propStore">Assimp property store</param>
+        protected override void ApplyValue(IntPtr propStore) {
+            if(propStore != IntPtr.Zero) {
+                AssimpMethods.SetImportPropertyFloat(propStore, Name, m_value);
             }
         }
     }
@@ -201,35 +241,28 @@ namespace Assimp.Configs {
     /// <summary>
     /// Describes a boolean configuration property.
     /// </summary>
-    public class BooleanPropertyConfig : IPropertyConfig {
-        private String _name;
-        private bool _value;
-        private bool? _defaultValue;
-
-        /// <summary>
-        /// Gets the property name.
-        /// </summary>
-        public String Name {
-            get {
-                return _name;
-            }
-        }
+    public class BooleanPropertyConfig : PropertyConfig {
+        private bool m_value;
+        private bool m_defaultValue;
 
         /// <summary>
         /// Gets the property value.
         /// </summary>
         public bool Value {
             get {
-                return _value;
+                return m_value;
+            }
+            set {
+                m_value = value;
             }
         }
 
         /// <summary>
-        /// Gets the default property value, if any.
+        /// Gets the default property value.
         /// </summary>
-        public bool? DefaultValue {
+        public bool DefaultValue {
             get {
-                return _defaultValue;
+                return m_defaultValue;
             }
         }
 
@@ -238,11 +271,8 @@ namespace Assimp.Configs {
         /// </summary>
         /// <param name="name">Name of the property</param>
         /// <param name="value">Property value</param>
-        public BooleanPropertyConfig(String name, bool value) {
-            _name = name;
-            _value = value;
-            _defaultValue = null;
-        }
+        public BooleanPropertyConfig(String name, bool value)
+            : this(name, value, false) { }
 
         /// <summary>
         /// Constructs a new BooleanPropertyConfig with a default value.
@@ -250,27 +280,27 @@ namespace Assimp.Configs {
         /// <param name="name">Name of the property</param>
         /// <param name="value">Property value</param>
         /// <param name="defaultValue">The default property value</param>
-        public BooleanPropertyConfig(String name, bool value, bool defaultValue) {
-            _name = name;
-            _value = value;
-            _defaultValue = defaultValue;
+        public BooleanPropertyConfig(String name, bool value, bool defaultValue)
+            : base(name) {
+            m_value = value;
+            m_defaultValue = defaultValue;
         }
 
         /// <summary>
-        /// Applies the property value.
+        /// Sets the current value to the default value.
         /// </summary>
-        public void ApplyValue() {
-            int aiBool = (_value) ? 1 : 0;
-            AssimpMethods.SetImportPropertyInteger(_name, aiBool);
+        public override void  SetDefaultValue() {
+            m_value = m_defaultValue;
         }
 
         /// <summary>
-        /// Applies the default property, if any.
+        /// Applies the property value to the given Assimp property store.
         /// </summary>
-        public void ApplyDefaultValue() {
-            if(_defaultValue.HasValue) {
-                int aiBool = (_defaultValue.Value) ? 1 : 0;
-                AssimpMethods.SetImportPropertyInteger(_name, aiBool);
+        /// <param name="propStore">Assimp property store</param>
+        protected override void ApplyValue(IntPtr propStore) {
+            if(propStore != IntPtr.Zero) {
+                int aiBool = (m_value) ? 1 : 0;
+                AssimpMethods.SetImportPropertyInteger(propStore, Name, aiBool);
             }
         }
     }
@@ -278,35 +308,28 @@ namespace Assimp.Configs {
     /// <summary>
     /// Describes a string configuration property.
     /// </summary>
-    public class StringPropertyConfig : IPropertyConfig {
-        private String _name;
-        private String _value;
-        private String _defaultValue;
-
-        /// <summary>
-        /// Gets the property name.
-        /// </summary>
-        public String Name {
-            get {
-                return _name;
-            }
-        }
+    public class StringPropertyConfig : PropertyConfig {
+        private String m_value;
+        private String m_defaultValue;
 
         /// <summary>
         /// Gets the property value.
         /// </summary>
         public String Value {
             get {
-                return _value;
+                return m_value;
+            }
+            set {
+                m_value = value;
             }
         }
 
         /// <summary>
-        /// Gets the default property value, if any.
+        /// Gets the default property value.
         /// </summary>
         public String DefaultValue {
             get {
-                return _defaultValue;
+                return m_defaultValue;
             }
         }
 
@@ -315,11 +338,8 @@ namespace Assimp.Configs {
         /// </summary>
         /// <param name="name">Name of the property</param>
         /// <param name="value">Property value</param>
-        public StringPropertyConfig(String name, String value) {
-            _name = name;
-            _value = value;
-            _defaultValue = null;
-        }
+        public StringPropertyConfig(String name, String value)
+            : this(name, value, String.Empty) { }
 
         /// <summary>
         /// Constructs a new StringPropertyConfig with a default value.
@@ -327,24 +347,27 @@ namespace Assimp.Configs {
         /// <param name="name">Name of the property</param>
         /// <param name="value">Property value</param>
         /// <param name="defaultValue">The default property value</param>
-        public StringPropertyConfig(String name, String value, String defaultValue) {
-            _name = name;
-            _value = value;
-            _defaultValue = defaultValue;
+        public StringPropertyConfig(String name, String value, String defaultValue)
+            : base(name) {
+            m_value = value;
+            m_defaultValue = defaultValue;
         }
 
         /// <summary>
-        /// Applies the property value.
+        /// Sets the current value to the default value.
         /// </summary>
-        public void ApplyValue() {
-            AssimpMethods.SetImportPropertyString(_name, _value);
+        public override void  SetDefaultValue() {
+            m_value = m_defaultValue;
         }
 
         /// <summary>
-        /// Applies the default property, if any.
+        /// Applies the property value to the given Assimp property store.
         /// </summary>
-        public void ApplyDefaultValue() {
-            AssimpMethods.SetImportPropertyString(_name, _defaultValue);
+        /// <param name="propStore">Assimp property store</param>
+        protected override void ApplyValue(IntPtr propStore) {
+            if(propStore != IntPtr.Zero) {
+                AssimpMethods.SetImportPropertyString(propStore, Name, m_value);
+            }
         }
 
         /// <summary>
@@ -877,6 +900,96 @@ namespace Assimp.Configs {
             : base(FavorSpeedConfigName, favorSpeed, false) { }
     }
 
+    /// <summary>
+    /// Configures the maximum bone count per mesh for the <see cref="PostPrcessStep.SplitByBoneCount"/> step. Meshes are
+    /// split until the maximum number of bones is reached.
+    /// </summary>
+    public sealed class MaxBoneCountConfig : IntegerPropertyConfig {
+
+        /// <summary>
+        /// Gets the string name used by MaxBoneCountConfig.
+        /// </summary>
+        public static String MaxBoneCountConfigName {
+            get {
+                return AiConfigs.AI_CONFIG_PP_SBBC_MAX_BONES;
+            }
+        }
+
+        /// <summary>
+        /// Constructs a new MaxBoneCountConfig.
+        /// </summary>
+        /// <param name="maxBones">The maximum bone count.</param>
+        public MaxBoneCountConfig(int maxBones)
+            : base(MaxBoneCountConfigName, maxBones, AiDefines.AI_SBBC_DEFAULT_MAX_BONES) { }
+    }
+
+    /// <summary>
+    /// Configures which texture channel is used for tangent space computations. The channel must exist or an error will be raised.
+    /// </summary>
+    public sealed class TangentTextureChannelIndexConfig : IntegerPropertyConfig {
+
+        /// <summary>
+        /// Gets the string name used by TangentTextureChannelIndexConfig.
+        /// </summary>
+        public static String TangentTextureChannelIndexConfigName {
+            get {
+                return AiConfigs.AI_CONFIG_PP_CT_TEXTURE_CHANNEL_INDEX;
+            }
+        }
+
+        /// <summary>
+        /// Constructs a new TangentTextureChannelIndexConfig.
+        /// </summary>
+        /// <param name="textureChannelIndex">The zero-based texture channel index.</param>
+        public TangentTextureChannelIndexConfig(int textureChannelIndex)
+            : base(TangentTextureChannelIndexConfigName, textureChannelIndex, 0) { }
+    }
+
+    /// <summary>
+    /// Configures the <see cref="PostProcessStep.Debone"/> threshold that is used to determine what bones are removed.
+    /// </summary>
+    public sealed class DeboneThresholdConfig : FloatPropertyConfig {
+
+        /// <summary>
+        /// Gets the string name used by DeboneThresholdConfig.
+        /// </summary>
+        public static String DeboneThresholdConfigName {
+            get {
+                return AiConfigs.AI_CONFIG_PP_DB_THRESHOLD;
+            }
+        }
+
+        /// <summary>
+        /// Constructs a new DeboneThresholdConfig.
+        /// </summary>
+        /// <param name="threshold">The debone threshold.</param>
+        public DeboneThresholdConfig(float threshold)
+            : base(DeboneThresholdConfigName, threshold, 1.0f) { }
+    }
+
+
+    /// <summary>
+    /// Configuration that requires all bones to qualify for deboning before any are removed.
+    /// </summary>
+    public sealed class DeboneAllOrNoneConfig : BooleanPropertyConfig {
+
+        /// <summary>
+        /// Gets the string name used by DeboneAllOrNoneConfig.
+        /// </summary>
+        public static String DeboneAllOrNoneConfigName {
+            get {
+                return AiConfigs.AI_CONFIG_PP_DB_ALL_OR_NONE;
+            }
+        }
+
+        /// <summary>
+        /// Constructs a new DeboneAllOrNoneConfig.
+        /// </summary>
+        /// <param name="allOrNone">True if all are required, false if none need to qualify.</param>
+        public DeboneAllOrNoneConfig(bool allOrNone)
+            : base(DeboneAllOrNoneConfigName, allOrNone, false) { }
+    }
+
     #endregion
 
     #region Importer Settings
@@ -1357,7 +1470,7 @@ namespace Assimp.Configs {
     }
 
     /// <summary>
-    /// Ogre importer will try to load this MaterialFile. If a material file does not
+    /// The Ogre importer will try to load this MaterialFile. If a material file does not
     /// exist with the same name as a material to load, the ogre importer will try to load this file
     /// and searches for the material in it. The default string value is an empty string.
     /// </summary>
@@ -1378,6 +1491,77 @@ namespace Assimp.Configs {
         /// <param name="materialFileName">Material file name to load.</param>
         public OgreMaterialFileConfig(String materialFileName)
             : base(OgreMaterialFileConfigName, materialFileName, String.Empty) { }
+    }
+
+    /// <summary>
+    /// The Ogre importer will detect the texture usage from the filename. Normally a texture is loaded as a color map, if no target is specified
+    /// in the material file. If this is enabled, texture names ending with _n, _l, _s are used as normal maps, light maps, or specular maps.
+    /// </summary>
+    public sealed class OgreTextureTypeFromFilenameConfig : BooleanPropertyConfig {
+
+        /// <summary>
+        /// Gets the string name used by OgreTextureTypeFromFilenameConfig.
+        /// </summary>
+        public static String OgreTextureTypeFromFilenameConfigName {
+            get {
+                return AiConfigs.AI_CONFIG_IMPORT_OGRE_TEXTURETYPE_FROM_FILENAME;
+            }
+        }
+
+        /// <summary>
+        /// Constructs a new OgreTextureTypeFromFilenameConfig.
+        /// </summary>
+        /// <param name="fileNameDefinesTextureUsage">True if the filename defines texture usage, false otherwise.</param>
+        public OgreTextureTypeFromFilenameConfig(bool fileNameDefinesTextureUsage)
+            : base(OgreTextureTypeFromFilenameConfigName, fileNameDefinesTextureUsage, true) { }
+    }
+
+    /// <summary>
+    /// Specifies whether the IFC loader skips over shape representations of type 'Curve2D'. A lot of files contain both a faceted mesh representation and a outline 
+    /// with a presentation type of 'Curve2D'. Currently Assimp does not convert those, so turning this option off just clutters the log with errors.
+    /// </summary>
+    public sealed class IFCSkipCurveShapesConfig : BooleanPropertyConfig {
+
+        /// <summary>
+        /// Gets the string name used by IFCSkipCurveShapesConfig.
+        /// </summary>
+        public static String IFCSkipCurveShapesConfigName {
+            get {
+                return AiConfigs.AI_CONFIG_IMPORT_IFC_SKIP_CURVE_REPRESENTATIONS;
+            }
+        }
+
+        /// <summary>
+        /// Constructs a new IFCSkipCurveShapesConfig.
+        /// </summary>
+        /// <param name="skipCurveShapes">True if the Curve2D shapes are skipped during import, false otherwise.</param>
+        public IFCSkipCurveShapesConfig(bool skipCurveShapes)
+            : base(IFCSkipCurveShapesConfigName, skipCurveShapes, true) { }
+    }
+
+    /// <summary>
+    /// Specifies whether the IFC loader will use its own, custom triangulation algorithm to triangulate wall and floor meshes. If this is set to false,
+    /// walls will be either triangulated by the post process triangulation or will be passed through as huge polygons with faked holes (e.g. holes that are connected
+    /// with the outer boundary using a dummy edge). It is highly recommended to leave this property set to true as the default post process has some known
+    /// issues with these kind of polygons.
+    /// </summary>
+    public sealed class IFCUseCustomTriangulationConfig : BooleanPropertyConfig {
+
+        /// <summary>
+        /// Gets the string name used by IFCUseCustomTriangulationConfig.
+        /// </summary>
+        public static String IFCUseCustomTriangulationConfigName {
+            get {
+                return AiConfigs.AI_CONFIG_IMPORT_IFC_CUSTOM_TRIANGULATION;
+            }
+        }
+
+        /// <summary>
+        /// Constructs a new IFCUseCustomTriangulationConfig..
+        /// </summary>
+        /// <param name="useCustomTriangulation">True if the loader should use its own triangulation routine for walls/floors, false otherwise.</param>
+        public IFCUseCustomTriangulationConfig(bool useCustomTriangulation)
+            : base(IFCUseCustomTriangulationConfigName, useCustomTriangulation, true) { }
     }
 
     #endregion
