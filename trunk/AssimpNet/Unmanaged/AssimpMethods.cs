@@ -40,7 +40,7 @@ namespace Assimp.Unmanaged {
 
         #endregion
 
-        #region Core Import Methods
+        #region Import Methods
 
         [DllImport(AssimpDLL, EntryPoint = "aiImportFile", CallingConvention = CallingConvention.Cdecl)]
         private static extern IntPtr aiImportFile([InAttribute()] [MarshalAs(UnmanagedType.LPStr)] String file, uint flags);
@@ -56,7 +56,7 @@ namespace Assimp.Unmanaged {
         }
 
         [DllImport(AssimpDLL, EntryPoint = "aiImportFileFromMemory", CallingConvention = CallingConvention.Cdecl)]
-        private static extern IntPtr aiImportFileFromMemory(byte[] buffer, uint bufferLength, uint flags, String formatHint);
+        private static extern IntPtr aiImportFileFromMemory(byte[] buffer, uint bufferLength, uint flags, [InAttribute()] [MarshalAs(UnmanagedType.LPStr)] String formatHint);
 
         /// <summary>
         /// Imports a scene from a stream. This uses the "aiImportFileFromMemory" function. The stream can be from anyplace,
@@ -90,6 +90,88 @@ namespace Assimp.Unmanaged {
         /// <returns>Pointer to the unmanaged scene data structure.</returns>
         public static IntPtr ApplyPostProcessing(IntPtr scene, PostProcessSteps flags) {
             return aiApplyPostProcessing(scene, (uint) flags);
+        }
+
+        #endregion
+
+        #region Export Methods
+
+        [DllImport(AssimpDLL, EntryPoint = "aiGetExportFormatCount", CallingConvention = CallingConvention.Cdecl)]
+        private static extern IntPtr aiGetExportFormatCount();
+
+        [DllImport(AssimpDLL, EntryPoint = "aiGetExportFormatDescription", CallingConvention = CallingConvention.Cdecl)]
+        private static extern IntPtr aiGetExportFormatDescription(IntPtr index);
+
+        /// <summary>
+        /// Gets all supported export formats.
+        /// </summary>
+        /// <returns>Array of supported export formats.</returns>
+        public static ExportFormatDescription[] GetExportFormatDescriptions() {
+            int count = aiGetExportFormatCount().ToInt32();
+
+            if(count == 0)
+                return new ExportFormatDescription[0];
+
+            ExportFormatDescription[] descriptions = new ExportFormatDescription[count];
+
+            for(int i = 0; i < count; i++) {
+                IntPtr formatDescPtr = aiGetExportFormatDescription(new IntPtr(i));
+                if(formatDescPtr != null) {
+                    AiExportFormatDesc desc = MemoryHelper.MarshalStructure<AiExportFormatDesc>(formatDescPtr);
+                    descriptions[i] = new ExportFormatDescription(ref desc);
+                }
+            }
+
+            return descriptions;
+        }
+
+        [DllImport(AssimpDLL, EntryPoint = "aiExportSceneToBlob", CallingConvention = CallingConvention.Cdecl)]
+        private static extern IntPtr aiExportSceneToBlob(IntPtr scene, [InAttribute()] [MarshalAs(UnmanagedType.LPStr)] String formatId, uint preProcessing);
+
+        [DllImport(AssimpDLL, EntryPoint = "aiReleaseExportBlob", CallingConvention = CallingConvention.Cdecl)]
+        private static extern void aiReleaseExportBlob(IntPtr blobData);
+
+        /// <summary>
+        /// Exports the given scene to a chosen file format. Returns the exported data as a binary blob which you can embed into another data structure or file.
+        /// </summary>
+        /// <param name="scene">Scene to export, it is the responsibility of the caller to free this when finished.</param>
+        /// <param name="formatDescription">Export format description the scene is exported to.</param>
+        /// <param name="preProcessing">Pre processing flags to operate on the scene during the export.</param>
+        /// <returns>Exported binary blob, or null if there was an error.</returns>
+        public static ExportDataBlob ExportSceneToBlob(IntPtr scene, ExportFormatDescription formatDescription, PostProcessSteps preProcessing) {
+            if(formatDescription == null || scene == IntPtr.Zero)
+                return null;
+
+            IntPtr blobPtr = aiExportSceneToBlob(scene, formatDescription.FormatId, (uint) preProcessing);
+
+            if(blobPtr == IntPtr.Zero)
+                return null;
+
+            AiExportDataBlob blob = MemoryHelper.MarshalStructure<AiExportDataBlob>(blobPtr);
+            ExportDataBlob dataBlob = new ExportDataBlob(ref blob);
+            aiReleaseExportBlob(blobPtr);
+
+            return dataBlob;
+        }
+
+        [DllImport(AssimpDLL, EntryPoint = "aiExportScene", CallingConvention = CallingConvention.Cdecl)]
+        private static extern ReturnCode aiExportScene(IntPtr scene, [InAttribute()] [MarshalAs(UnmanagedType.LPStr)] String formatId, [InAttribute()] [MarshalAs(UnmanagedType.LPStr)] String fileName, uint preProcessing);
+
+        /// <summary>
+        /// Exports the given scene to a chosen file format and writes the result file(s) to disk.
+        /// </summary>
+        /// <param name="scene">The scene to export, which needs to be freed by the caller. The scene is expected to conform to Assimp's Importer output format. In short,
+        /// this means the model data should use a right handed coordinate system, face winding should be counter clockwise, and the UV coordinate origin assumed to be upper left. If the input is different, specify the pre processing flags appropiately.</param>
+        /// <param name="formatDescription">Format description describing which format to export to.</param>
+        /// <param name="fileName">Output filename to write to</param>
+        /// <param name="preProcessing">Pre processing flags - accepts any post processing step flag. In reality only a small subset are actually supported, e.g. to ensure the input
+        /// conforms to the standard Assimp output format. Some may be redundant, such as triangulation, which some exporters may have to enforce due to the export format.</param>
+        /// <returns>Return code specifying if the operation was a success.</returns>
+        public static ReturnCode ExportScene(IntPtr scene, ExportFormatDescription formatDescription, String fileName, PostProcessSteps preProcessing) {
+            if(formatDescription == null || scene == IntPtr.Zero)
+                return ReturnCode.Failure;
+
+            return aiExportScene(scene, formatDescription.FormatId, fileName, (uint) preProcessing);
         }
 
         #endregion
@@ -182,35 +264,50 @@ namespace Assimp.Unmanaged {
         #region Import Properties setters
 
         /// <summary>
+        /// Create an empty property store. Property stores are used to collect import settings.
+        /// </summary>
+        /// <returns>Pointer to property store</returns>
+        [DllImport(AssimpDLL, EntryPoint = "aiCreatePropertyStore", CallingConvention = CallingConvention.Cdecl)]
+        public static extern IntPtr CreatePropertyStore();
+
+        /// <summary>
+        /// Deletes a property store.
+        /// </summary>
+        /// <param name="propertyStore">Pointer to property store</param>
+        [DllImport(AssimpDLL, EntryPoint = "aiReleasePropertyStore", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void ReleasePropertyStore(IntPtr propertyStore);
+
+        /// <summary>
         /// Sets an integer property value.
         /// </summary>
+        /// <param name="propertyStore">Pointer to property store</param>
         /// <param name="name">Property name</param>
         /// <param name="value">Property value</param>
         [DllImportAttribute(AssimpDLL, EntryPoint = "aiSetImportPropertyInteger", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void SetImportPropertyInteger([InAttribute()] [MarshalAsAttribute(UnmanagedType.LPStr)] String name, int value);
+        public static extern void SetImportPropertyInteger(IntPtr propertyStore, [InAttribute()] [MarshalAsAttribute(UnmanagedType.LPStr)] String name, int value);
 
         /// <summary>
         /// Sets a float property value.
         /// </summary>
+        /// <param name="propertyStore">Pointer to property store</param>
         /// <param name="name">Property name</param>
         /// <param name="value">Property value</param>
         [DllImportAttribute(AssimpDLL, EntryPoint = "aiSetImportPropertyFloat", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void SetImportPropertyFloat([InAttribute()] [MarshalAsAttribute(UnmanagedType.LPStr)] String name, float value);
+        public static extern void SetImportPropertyFloat(IntPtr propertyStore, [InAttribute()] [MarshalAsAttribute(UnmanagedType.LPStr)] String name, float value);
 
         [DllImportAttribute(AssimpDLL, EntryPoint = "aiSetImportPropertyString", CallingConvention = CallingConvention.Cdecl)]
-        private static extern void SetImportPropertyString([InAttribute()] [MarshalAsAttribute(UnmanagedType.LPStr)] String name, ref AiString value);
+        private static extern void SetImportPropertyString(IntPtr propertyStore, [InAttribute()] [MarshalAsAttribute(UnmanagedType.LPStr)] String name, ref AiString value);
 
         /// <summary>
         /// Sets a string property value.
         /// </summary>
+        /// <param name="propertyStore">Pointer to property store</param>
         /// <param name="name">Property name</param>
         /// <param name="value">Property value</param>
-        public static void SetImportPropertyString(String name, String value) {
+        public static void SetImportPropertyString(IntPtr propertyStore, String name, String value) {
             AiString str = new AiString();
-            str.SetString(value);
-            //Note: aiTypes.h specifies aiString is UTF-8 encoded string.
-            //str.Length = (uint) System.Text.UTF8Encoding.UTF8.GetByteCount(value);
-            SetImportPropertyString(name, ref str);
+            if(str.SetString(value))
+                SetImportPropertyString(propertyStore, name, ref str);
         }
 
         #endregion

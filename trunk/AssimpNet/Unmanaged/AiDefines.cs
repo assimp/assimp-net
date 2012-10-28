@@ -61,12 +61,22 @@ namespace Assimp.Unmanaged {
         /// <summary>
         /// Defines the maximum number of vertex color sets per mesh.
         /// </summary>
-        public const int AI_MAX_NUMBER_OF_COLOR_SETS = 0x4;
+        public const int AI_MAX_NUMBER_OF_COLOR_SETS = 0x8;
 
         /// <summary>
         /// Defines the maximum number of texture coordinate sets (UV(W) channels) per mesh.
         /// </summary>
-        public const int AI_MAX_NUMBER_OF_TEXTURECOORDS = 0x4;
+        public const int AI_MAX_NUMBER_OF_TEXTURECOORDS = 0x8;
+
+        /// <summary>
+        /// Defines the default bone count limit.
+        /// </summary>
+        public const int AI_SBBC_DEFAULT_MAX_BONES = 60;
+
+        /// <summary>
+        /// Defines the deboning threshold.
+        /// </summary>
+        public const float AI_DEBONE_THRESHOLD = 1.0f;
 
         #endregion
 
