@@ -322,9 +322,9 @@ namespace Assimp {
 
             try {
                 if(!m_scaleRot.IsIdentity) {
-                    IntPtr rootNode = Marshal.ReadIntPtr(IntPtr.Add(scene, sizeof(uint))); //Skip over sceneflags
+                    IntPtr rootNode = Marshal.ReadIntPtr(MemoryHelper.AddIntPtr(scene, sizeof(uint))); //Skip over sceneflags
 
-                    IntPtr matrixPtr = IntPtr.Add(rootNode, Marshal.SizeOf(typeof(AiString))); //Skip over AiString
+                    IntPtr matrixPtr = MemoryHelper.AddIntPtr(rootNode, Marshal.SizeOf(typeof(AiString))); //Skip over AiString
 
                     Matrix4x4 matrix = MemoryHelper.MarshalStructure<Matrix4x4>(matrixPtr); //Get the root transform
 
