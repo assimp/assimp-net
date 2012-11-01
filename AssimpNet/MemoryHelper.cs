@@ -46,16 +46,16 @@ namespace Assimp {
         /// <summary>
         /// Marshals a c-style pointer array to a manged array of structs. Takes in a parameter denoting if the
         /// pointer is a "pointer to a pointer" (void**) which requires some extra care. This will read from the start of
-        /// the IntPtr and care should be taken in esnuring that the number of elements to read is correct.
+        /// the IntPtr and care should be taken in ensuring that the number of elements to read is correct.
         /// </summary>
         /// <typeparam name="T">Struct type</typeparam>
         /// <param name="pointer">Pointer to unmanaged memory</param>
         /// <param name="length">Number of elements to marshal</param>
         /// <param name="pointerToPointer">True if the unmanaged pointer is void** or not.</param>
-        /// <returns>Managed array, or null if the pointer was not valid</returns>
+        /// <returns>Managed array</returns>
         public static T[] MarshalArray<T>(IntPtr pointer, int length, bool pointerToPointer) where T : struct {
             if(pointer == IntPtr.Zero) {
-                return null;
+                return new T[0];
             }
 
             try {
@@ -74,7 +74,7 @@ namespace Assimp {
                 }
                 return array;
             } catch(Exception) {
-                return null;
+                return new T[0];
             }
         }
 
@@ -133,6 +133,16 @@ namespace Assimp {
             byte[] toReturn = new byte[position];
             Array.Copy(buffer, toReturn, position);
             return toReturn;
+        }
+
+        /// <summary>
+        /// Adds an offset to the pointer.
+        /// </summary>
+        /// <param name="ptr">Pointer.</param>
+        /// <param name="offset">Offset</param>
+        /// <returns>New pointer</returns>
+        public static IntPtr AddIntPtr(IntPtr ptr, int offset) {
+            return new IntPtr(ptr.ToInt64() + offset);
         }
     }
 }
