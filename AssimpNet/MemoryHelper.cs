@@ -65,7 +65,7 @@ namespace Assimp {
                 T[] array = new T[length];
 
                 for(int i = 0; i < length; i++) {
-                    IntPtr currPos = pointer + (stride * i);
+                    IntPtr currPos = AddIntPtr(pointer, stride * i);
                     //If pointer is a void**, read the current position to get the proper pointer
                     if(pointerToPointer) {
                         currPos = Marshal.ReadIntPtr(currPos);
