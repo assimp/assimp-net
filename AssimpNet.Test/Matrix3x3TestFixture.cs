@@ -148,7 +148,7 @@ namespace Assimp.Test {
             Vector3D from = new Vector3D(1, 0, 0);
             Vector3D to = new Vector3D(0, 1, 0);
 
-            TK.Matrix4 tkM = TK.Matrix4.CreateRotationZ(-TK.MathHelper.PiOver2);
+            TK.Matrix4 tkM = TK.Matrix4.CreateRotationZ(TK.MathHelper.PiOver2);
             Matrix3x3 m = Matrix3x3.FromToMatrix(to, from);
 
             TestHelper.AssertEquals(tkM, m, "Testing From-To rotation matrix");

@@ -21,6 +21,8 @@
 */
 
 using System;
+using System.Reflection;
+using System.IO;
 using NUnit.Framework;
 using TK = OpenTK;
 
@@ -31,6 +33,27 @@ namespace Assimp.Test {
     public static class TestHelper {
         public const float DEFAULT_TOLERANCE = 0.000001f;
         public static float Tolerance = DEFAULT_TOLERANCE;
+
+        private static String m_rootPath = null;
+
+        public static String RootPath {
+            get {
+                if(m_rootPath == null) {
+                    Assembly entryAssembly = Assembly.GetEntryAssembly();
+                    String dirPath = String.Empty;
+
+                    if(entryAssembly == null)
+                        entryAssembly = Assembly.GetCallingAssembly();
+
+                    if(entryAssembly != null)
+                        dirPath = Path.GetDirectoryName(entryAssembly.Location);
+
+                    m_rootPath = dirPath;
+                }
+
+                return m_rootPath;
+            }
+        }
 
         public static void AssertEquals(float expected, float actual) {
             Assert.IsTrue(Math.Abs(expected - actual) <= Tolerance);
