@@ -68,14 +68,17 @@ namespace Assimp.Test {
 
         [Test]
         public void TestDecompose() {
-            Quaternion rot = new Quaternion(new Vector3D(0, 1, 0), TK.MathHelper.Pi);
+            Vector3D axis = new Vector3D(.25f, .5f, 0.0f);
+            axis.Normalize();
+
+            Quaternion rot = new Quaternion(axis, TK.MathHelper.Pi);
             float x = 50.0f;
             float y = 100.0f;
             float z = -50.0f;
 
             float scale = 2.0f;
 
-            Matrix4x4 m = Matrix4x4.FromScaling(new Vector3D(scale, scale, scale)) * Matrix4x4.FromRotationY(TK.MathHelper.Pi) * Matrix4x4.FromTranslation(new Vector3D(x, y, z));
+            Matrix4x4 m = Matrix4x4.FromScaling(new Vector3D(scale, scale, scale)) * Matrix4x4.FromAngleAxis(TK.MathHelper.Pi, axis) * Matrix4x4.FromTranslation(new Vector3D(x, y, z));
 
             Vector3D scaling1;
             Quaternion rotation1;
@@ -91,8 +94,7 @@ namespace Assimp.Test {
             TestHelper.AssertEquals(rotation1.X, rotation1.Y, rotation1.Z, rotation1.W, rotation2, "Testing decomposed rotation output");
             TestHelper.AssertEquals(translation1.X, translation1.Y, translation1.Z, translation2, "Testing decomposed translation output");
 
-            m = Matrix4x4.FromRotationY(TK.MathHelper.Pi) * Matrix4x4.FromTranslation(new Vector3D(x, y, z));
-
+            m = Matrix4x4.FromAngleAxis(TK.MathHelper.Pi, axis) * Matrix4x4.FromTranslation(new Vector3D(x, y, z));
 
             m.DecomposeNoScaling(out rotation2, out translation2);
 

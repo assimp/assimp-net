@@ -421,12 +421,12 @@ namespace Assimp {
 		/// <param name="axis">Rotation axis, which should be a normalized vector.</param>
 		/// <returns>The rotation matrix</returns>
 		public static Matrix3x3 FromAngleAxis(float radians, Vector3D axis) {
-			float c = (float) Math.Cos(radians);
-			float s = (float) Math.Sin(radians);
-			float t = 1 - c;
 			float x = axis.X;
 			float y = axis.Y;
 			float z = axis.Z;
+
+			float sin = (float) System.Math.Sin((double) radians);
+			float cos = (float) System.Math.Cos((double) radians);
 
 			float xx = x * x;
 			float yy = y * y;
@@ -436,17 +436,17 @@ namespace Assimp {
 			float yz = y * z;
 
 			Matrix3x3 m;
-			m.A1 = t * xx + c;
-			m.A2 = t * xy - s * z;
-			m.A3 = t * xz + s * y;
+			m.A1 = xx + (cos * (1.0f - xx));
+			m.B1 = (xy - (cos * xy)) + (sin * z);
+			m.C1 = (xz - (cos * xz)) - (sin * y);
 
-			m.B1 = t * xy + s * z;
-			m.B2 = t * yy + c;
-			m.B3 = t * yz - s * x;
+			m.A2 = (xy - (cos * xy)) - (sin * z);
+			m.B2 = yy + (cos * (1.0f - yy));
+			m.C2 = (yz - (cos * yz)) + (sin * x);
 
-			m.C1 = t * xz - s * y;
-			m.C2 = t * yz + s * x;
-			m.C3 = t * zz + c;
+			m.A3 = (xz - (cos * xz)) + (sin * y);
+			m.B3 = (yz - (cos * yz)) - (sin * x);
+			m.C3 = zz + (cos * (1.0f - zz));
 
 			return m;
 		}
@@ -587,7 +587,8 @@ namespace Assimp {
 
 
 		/// <summary>
-		/// Performs matrix multiplication.
+		/// Performs matrix multiplication.Multiplication order is B x A. That way, SRT concatenations
+		/// are left to right.
 		/// </summary>
 		/// <param name="a">First matrix</param>
 		/// <param name="b">Second matrix</param>

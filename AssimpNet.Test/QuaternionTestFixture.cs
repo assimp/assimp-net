@@ -63,10 +63,10 @@ namespace Assimp.Test {
 
         [Test]
         public void TestGetMatrix() {
-            TK.Quaternion tkQ = TK.Quaternion.FromAxisAngle(TK.Vector3.UnitY, TK.MathHelper.PiOver2);
+            TK.Quaternion tkQ = TK.Quaternion.FromAxisAngle(new TK.Vector3(.25f, .5f, 0.0f), TK.MathHelper.PiOver2);
             Quaternion q = new Quaternion(tkQ.W, tkQ.X, tkQ.Y, tkQ.Z);
 
-            TK.Matrix4 tkM = TK.Matrix4.CreateFromAxisAngle(TK.Vector3.UnitY, TK.MathHelper.PiOver2);
+            TK.Matrix4 tkM = TK.Matrix4.CreateFromAxisAngle(new TK.Vector3(.25f, .5f, 0.0f), TK.MathHelper.PiOver2);
             Matrix4x4 m = q.GetMatrix();
 
             TestHelper.AssertEquals(tkM, m, "Testing GetMatrix");
@@ -74,7 +74,7 @@ namespace Assimp.Test {
 
         [Test]
         public void TestNormalize() {
-            TK.Quaternion tkQ = TK.Quaternion.FromAxisAngle(TK.Vector3.UnitY, TK.MathHelper.PiOver2);
+            TK.Quaternion tkQ = TK.Quaternion.FromAxisAngle(new TK.Vector3(.25f, .5f, 0.0f), TK.MathHelper.PiOver2);
             Quaternion q = new Quaternion(tkQ.W, tkQ.X, tkQ.Y, tkQ.Z);
 
             tkQ.Normalize();
