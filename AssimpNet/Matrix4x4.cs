@@ -481,14 +481,14 @@ namespace Assimp {
 		/// <param name="translation">Vector to hold the translation component</param>
 		public void Decompose(out Vector3D scaling, out Quaternion rotation, out Vector3D translation) {
             //Extract the translation
-			translation.X = A4;
-			translation.Y = B4;
-			translation.Z = C4;
+            translation.X = A4;
+            translation.Y = B4;
+            translation.Z = C4;
 
             //Extract row vectors of the matrix
-            Vector3D row1 = new Vector3D(A1, A2, A3);//new Vector3D(A1, B1, C1);
-            Vector3D row2 = new Vector3D(B1, B2, B3);//new Vector3D(A2, B2, C2);
-            Vector3D row3 = new Vector3D(C1, C2, C3);//new Vector3D(A3, B3, C3);
+            Vector3D row1 = new Vector3D(A1, A2, A3);
+            Vector3D row2 = new Vector3D(B1, B2, B3);
+            Vector3D row3 = new Vector3D(C1, C2, C3);
 
             //Extract the scaling factors
 			scaling.X = row1.Length();
