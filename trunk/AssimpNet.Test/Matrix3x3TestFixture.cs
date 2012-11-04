@@ -148,10 +148,24 @@ namespace Assimp.Test {
             Vector3D from = new Vector3D(1, 0, 0);
             Vector3D to = new Vector3D(0, 1, 0);
 
-            TK.Matrix4 tkM = TK.Matrix4.CreateRotationZ(TK.MathHelper.PiOver2);
+            TK.Matrix4 tkM = TK.Matrix4.CreateRotationZ(-TK.MathHelper.PiOver2);
             Matrix3x3 m = Matrix3x3.FromToMatrix(to, from);
 
             TestHelper.AssertEquals(tkM, m, "Testing From-To rotation matrix");
+        }
+
+        [Test]
+        public void TestToFromQuaternion() {
+            Vector3D axis = new Vector3D(.25f, .5f, 0.0f);
+            axis.Normalize();
+
+            float angle = (float) Math.PI;
+
+            Quaternion q = new Quaternion(axis, angle);
+            Matrix3x3 m = q.GetMatrix();
+            Quaternion q2 = new Quaternion(m);
+
+            TestHelper.AssertEquals(q.X, q.Y, q.Z, q.W, q2, "Testing Quaternion->Matrix->Quaternion");
         }
 
         [Test]

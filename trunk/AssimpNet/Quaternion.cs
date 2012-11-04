@@ -70,38 +70,35 @@ namespace Assimp {
         /// </summary>
         /// <param name="matrix">Rotation matrix to create the Quaternion from.</param>
         public Quaternion(Matrix3x3 matrix) {
-            float t = 1 + matrix.A1 + matrix.B1 + matrix.C1;
+            float trace = matrix.A1 + matrix.B2 + matrix.C3;
 
-            //Large enough
-            if(t > 0.001f) {
-                float s = (float)Math.Sqrt(t) * 2.0f;
+            if(trace > 0) {
+                float s = (float) Math.Sqrt(trace + 1.0f) * 2.0f;
+                W = .25f * s;
                 X = (matrix.C2 - matrix.B3) / s;
                 Y = (matrix.A3 - matrix.C1) / s;
                 Z = (matrix.B1 - matrix.A2) / s;
-                W = 0.25f * s;
-            //Else have to check several cases
             } else if((matrix.A1 > matrix.B2) && (matrix.A1 > matrix.C3)) {
-                //Column One:
-                float s = (float) Math.Sqrt(((1.0f + matrix.A1) - matrix.B2) - matrix.C3) * 2.0f;
-                X = 0.25f * s;
-                Y = (matrix.B1 + matrix.A2) / s;
-                Z = (matrix.A3 + matrix.C1) / s;
+                float s = (float) Math.Sqrt(((1.0 + matrix.A1) - matrix.B2) - matrix.C3) * 2.0f;
                 W = (matrix.C2 - matrix.B3) / s;
+                X = .25f * s;
+                Y = (matrix.A2 + matrix.B1) / s;
+                Z = (matrix.A3 + matrix.C1) / s;
             } else if(matrix.B2 > matrix.C3) {
-                //Column Two:
                 float s = (float) Math.Sqrt(((1.0f + matrix.B2) - matrix.A1) - matrix.C3) * 2.0f;
-                X = (matrix.B1 + matrix.A2) / s;
-                Y = 0.25f * s;
-                Z = (matrix.C2 + matrix.B3) / s;
                 W = (matrix.A3 - matrix.C1) / s;
+                X = (matrix.A2 + matrix.B1) / s;
+                Y = .25f * s;
+                Z = (matrix.B3 + matrix.C2) / s;
             } else {
-                //Column Three:
                 float s = (float) Math.Sqrt(((1.0f + matrix.C3) - matrix.A1) - matrix.B2) * 2.0f;
-                X = (matrix.A3 + matrix.C1) / s;
-                Y = (matrix.C2 + matrix.B3) / s;
-                Z = 0.25f * s;
                 W = (matrix.B1 - matrix.A2) / s;
+                X = (matrix.A3 + matrix.C1) / s;
+                Y = (matrix.B3 + matrix.C2) / s;
+                Z = .25f * s;
             }
+
+            Normalize();
         }
 
         /// <summary>
@@ -133,12 +130,14 @@ namespace Assimp {
         /// <param name="angle">Angle about the axis</param>
         public Quaternion(Vector3D axis, float angle) {
             axis.Normalize();
-            float sinAngle = (float) Math.Sin(angle / 2.0f);
-            float cosAngle = (float) Math.Cos(angle / 2.0f);
-            X = axis.X * sinAngle;
-            Y = axis.Y * sinAngle;
-            Z = axis.Z * sinAngle;
-            W = cosAngle;
+
+            float halfAngle = angle * .5f;
+            float sin = (float) Math.Sin(halfAngle);
+            float cos = (float) Math.Cos(halfAngle);
+            X = axis.X * sin;
+            Y = axis.Y * sin;
+            Z = axis.Z * sin;
+            W = cos;
         }
 
         /// <summary>
@@ -168,18 +167,29 @@ namespace Assimp {
         /// </summary>
         /// <returns></returns>
         public Matrix3x3 GetMatrix() {
+            float xx = X * X;
+            float yy = Y * Y;
+            float zz = Z * Z;
+
+            float xy = X * Y;
+            float zw = Z * W;
+            float zx = Z * X;
+            float yw = Y * W;
+            float yz = Y * Z;
+            float xw = X * W;
+
             Matrix3x3 mat;
-            mat.A1 = 1.0f - 2.0f * (Y * Y + Z * Z);
-            mat.A2 = 2.0f * (X * Y - Z * W);
-            mat.A3 = 2.0f * (X * Y + Y * W);
+            mat.A1 = 1.0f - (2.0f * (yy + zz));
+            mat.B1 = 2.0f * (xy + zw);
+            mat.C1 = 2.0f * (zx - yw);
 
-            mat.B1 = 2.0f * (X * Y + Z * W);
-            mat.B2 = 1.0f - 2.0f * (X * X + Z * Z);
-            mat.B3 = 2.0f * (Y * Z - X * W);
+            mat.A2 = 2.0f * (xy - zw);
+            mat.B2 = 1.0f - (2.0f * (zz + xx));
+            mat.C2 = 2.0f * (yz + xw);
 
-            mat.C1 = 2.0f * (X * Z - Y * W);
-            mat.C2 = 2.0f * (Y * Z + X * W);
-            mat.C3 = 1.0f - 2.0f * (X * X + Y * Y);
+            mat.A3 = 2.0f * (zx + yw);
+            mat.B3 = 2.0f * (yz - xw);
+            mat.C3 = 1.0f - (2.0f * (yy + xx));
 
             return mat;
         }

@@ -26,10 +26,8 @@ using System.Runtime.InteropServices;
 
 namespace Assimp {
 	/// <summary>
-	/// Represents a 4x4 matrix. Assimp docs say their matrices are always row-major,
-	/// and it looks like they're only describing the memory layout. Matrices are treated
-	/// as column vectors however (X base in the first column, Y base the second, Z base the third,
-	/// and fourth column contains the translation).
+	/// Represents a 4x4 column-vector matrix (X base is the first column, Y base is the second, Z base the third, and translation the fourth). 
+    /// Memory layout is row major. Right handed conventions are used by default.
 	/// </summary>
 	[Serializable]
 	[StructLayout(LayoutKind.Sequential)]
@@ -482,14 +480,17 @@ namespace Assimp {
 		/// <param name="rotation">Quaternion to hold the rotation component</param>
 		/// <param name="translation">Vector to hold the translation component</param>
 		public void Decompose(out Vector3D scaling, out Quaternion rotation, out Vector3D translation) {
-			translation.X = this[1, 4];
-			translation.Y = this[2, 4];
-			translation.Z = this[3, 4];
+            //Extract the translation
+			translation.X = A4;
+			translation.Y = B4;
+			translation.Z = C4;
 
-			Vector3D row1 = new Vector3D(this[1, 1], this[1, 2], this[1, 3]);
-			Vector3D row2 = new Vector3D(this[2, 1], this[2, 2], this[2, 3]);
-			Vector3D row3 = new Vector3D(this[3, 1], this[3, 2], this[3, 3]);
+            //Extract row vectors of the matrix
+            Vector3D row1 = new Vector3D(A1, A2, A3);//new Vector3D(A1, B1, C1);
+            Vector3D row2 = new Vector3D(B1, B2, B3);//new Vector3D(A2, B2, C2);
+            Vector3D row3 = new Vector3D(C1, C2, C3);//new Vector3D(A3, B3, C3);
 
+            //Extract the scaling factors
 			scaling.X = row1.Length();
 			scaling.Y = row2.Length();
 			scaling.Z = row3.Length();
@@ -514,10 +515,12 @@ namespace Assimp {
 				row3 /= scaling.Z;
 			}
 
+            
 			//Build 3x3 rot matrix, convert it to quaternion
-			Matrix3x3 rotMat = new Matrix3x3(row1.X, row2.X, row3.X,
-											 row1.Y, row2.Y, row3.Y,
-											 row1.Z, row2.Z, row3.Z);
+            Matrix3x3 rotMat = new Matrix3x3(row1.X, row1.Y, row1.Z,
+                                             row2.X, row2.Y, row2.Z,
+                                             row3.X, row3.Y, row3.Z);
+
 			rotation = new Quaternion(rotMat);
 		}
 
@@ -528,9 +531,11 @@ namespace Assimp {
 		/// <param name="rotation">Quaternion to hold the rotation component</param>
 		/// <param name="translation">Vector to hold the translation component</param>
 		public void DecomposeNoScaling(out Quaternion rotation, out Vector3D translation) {
-			translation.X = this[1, 4];
-			translation.Y = this[2, 4];
-			translation.Z = this[3, 4];
+
+            //Extract translation
+            translation.X = A4;
+            translation.Y = B4;
+            translation.Z = C4;
 
 			rotation = new Quaternion(new Matrix3x3(this));
 		}
@@ -650,40 +655,40 @@ namespace Assimp {
 		/// <param name="axis">Rotation axis, which should be a normalized vector.</param>
 		/// <returns>The rotation matrix</returns>
 		public static Matrix4x4 FromAngleAxis(float radians, Vector3D axis) {
-			float c = (float) Math.Cos(radians);
-			float s = (float) Math.Sin(radians);
-			float t = 1 - c;
-			float x = axis.X;
-			float y = axis.Y;
-			float z = axis.Z;
+            float x = axis.X;
+            float y = axis.Y;
+            float z = axis.Z;
 
-			float xx = x * x;
-			float yy = y * y;
-			float zz = z * z;
-			float xy = x * y;
-			float xz = x * z;
-			float yz = y * z;
+            float sin = (float) System.Math.Sin((double) radians);
+            float cos = (float) System.Math.Cos((double) radians);
 
-			Matrix4x4 m;
-			m.A1 = t * xx + c;
-			m.A2 = t * xy - s * z;
-			m.A3 = t * xz + s * y;
-			m.A4 = 0.0f;
+            float xx = x * x;
+            float yy = y * y;
+            float zz = z * z;
+            float xy = x * y;
+            float xz = x * z;
+            float yz = y * z;
 
-			m.B1 = t * xy + s * z;
-			m.B2 = t * yy + c;
-			m.B3 = t * yz - s * x;
-			m.B4 = 0.0f;
+            Matrix4x4 m;
+            m.A1 = xx + (cos * (1.0f - xx));
+            m.B1 = (xy - (cos * xy)) + (sin * z);
+            m.C1 = (xz - (cos * xz)) - (sin * y);
+            m.D1 = 0.0f;
 
-			m.C1 = t * xz - s * y;
-			m.C2 = t * yz + s * x;
-			m.C3 = t * zz + c;
-			m.C4 = 0.0f;
+            m.A2 = (xy - (cos * xy)) - (sin * z);
+            m.B2 = yy + (cos * (1.0f - yy));
+            m.C2 = (yz - (cos * yz)) + (sin * x);
+            m.D2 = 0.0f;
 
-			m.D1 = 0.0f;
-			m.D2 = 0.0f;
-			m.D3 = 0.0f;
-			m.D4 = 1.0f;
+            m.A3 = (xz - (cos * xz)) + (sin * y);
+            m.B3 = (yz - (cos * yz)) - (sin * x);
+            m.C3 = zz + (cos * (1.0f - zz));
+            m.D3 = 0.0f;
+
+            m.A4 = 0.0f;
+            m.B4 = 0.0f;
+            m.C4 = 0.0f;
+            m.D4 = 1.0f;
 
 			return m;
 		}
@@ -759,7 +764,8 @@ namespace Assimp {
 
 
 		/// <summary>
-		/// Performs matrix multiplication.
+		/// Performs matrix multiplication. Multiplication order is B x A. That way, SRT concatenations
+        /// are left to right.
 		/// </summary>
 		/// <param name="a">First matrix</param>
 		/// <param name="b">Second matrix</param>
