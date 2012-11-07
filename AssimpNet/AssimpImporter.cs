@@ -32,11 +32,13 @@ namespace Assimp {
     /// Assimp importer that will use Assimp to load a model into managed memory.
     /// </summary>
     public class AssimpImporter : IDisposable {
-        private bool _isDisposed;
-        private bool _verboseEnabled;
-        private Dictionary<String, PropertyConfig> _configs;
-        private List<LogStream> _logStreams;
-        private Object sync = new Object();
+        private bool m_isDisposed;
+        private bool m_verboseEnabled;
+        private Dictionary<String, PropertyConfig> m_configs;
+        private List<LogStream> m_logStreams;
+        private Object m_sync = new Object();
+
+        private String[] m_extensionList;
 
         private float m_scale = 1.0f;
         private float m_xAxisRotation = 0.0f;
@@ -50,7 +52,7 @@ namespace Assimp {
         /// </summary>
         public bool IsDisposed {
             get {
-                return _isDisposed;
+                return m_isDisposed;
             }
         }
 
@@ -123,11 +125,10 @@ namespace Assimp {
         /// </summary>
         public bool VerboseLoggingEnabled {
             get {
-                return _verboseEnabled;
+                return m_verboseEnabled;
             }
             set {
-                _verboseEnabled = value;
-                AssimpMethods.EnableVerboseLogging(value);
+                m_verboseEnabled = value;
             }
         }
 
@@ -136,7 +137,7 @@ namespace Assimp {
         /// </summary>
         public Dictionary<String, PropertyConfig> PropertyConfigurations {
             get {
-                return _configs;
+                return m_configs;
             }
         }
 
@@ -145,7 +146,7 @@ namespace Assimp {
         /// </summary>
         public List<LogStream> LogStreams {
             get {
-                return _logStreams;
+                return m_logStreams;
             }
         }
 
@@ -153,8 +154,8 @@ namespace Assimp {
         /// Constructs a new AssimpImporter.
         /// </summary>
         public AssimpImporter() {
-            _configs = new Dictionary<String, PropertyConfig>();
-            _logStreams = new List<LogStream>();
+            m_configs = new Dictionary<String, PropertyConfig>();
+            m_logStreams = new List<LogStream>();
         }
 
         /// <summary>
@@ -189,8 +190,8 @@ namespace Assimp {
         /// <exception cref="AssimpException">Thrown if the stream is not valid (null or write-only) or if the format hint is null or empty.</exception>
         /// <exception cref="System.ObjectDisposedException">Thrown if attempting to import a model if the importer has been disposed of</exception>
         public Scene ImportFileFromStream(Stream stream, PostProcessSteps postProcessFlags, String formatHint) {
-            lock(sync) {
-                if(_isDisposed) {
+            lock(m_sync) {
+                if(m_isDisposed) {
                     throw new ObjectDisposedException("Importer has been disposed.");
                 }
 
@@ -203,33 +204,23 @@ namespace Assimp {
                 }
 
                 IntPtr ptr = IntPtr.Zero;
+                PrepareImport();
+
                 try {
-
-                    AttachLogs();
-                    CreateConfigs();
-
                     ptr = AssimpMethods.ImportFileFromStream(stream, PostProcessSteps.None, formatHint);
+
+                    if(ptr == IntPtr.Zero)
+                        throw new AssimpException("Error importing file: " + AssimpMethods.GetErrorString());
 
                     if(ptr != IntPtr.Zero) {
                         TransformScene(ptr);
 
                         ptr = AssimpMethods.ApplyPostProcessing(ptr, postProcessFlags);
-                    } 
-
-                    if(ptr == IntPtr.Zero) {
-                        throw new AssimpException("Error importing file: " + AssimpMethods.GetErrorString());
                     }
 
-                    AiScene scene = MemoryHelper.MarshalStructure<AiScene>(ptr);
-                    if((scene.Flags & SceneFlags.Incomplete) == SceneFlags.Incomplete) {
-                        throw new AssimpException("Error importing file: Imported scene is incomplete. " + AssimpMethods.GetErrorString());
-                    }
-
-                    return new Scene(scene);
+                    return ValidateAndCreateScene(ptr);
                 } finally {
-
-                    ReleaseConfigs();
-                    DetatachLogs();
+                    CleanupImport();
 
                     if(ptr != IntPtr.Zero) {
                         AssimpMethods.ReleaseImport(ptr);
@@ -257,45 +248,35 @@ namespace Assimp {
         /// <param name="file">Full path to the file</param>
         /// <param name="postProcessFlags">Post processing flags, if any</param>
         /// <returns>The imported scene</returns>
-        /// <exception cref="AssimpException">Thrown if the file is valid or there was a general error in importing the model.</exception>
+        /// <exception cref="AssimpException">Thrown if there was a general error in importing the model.</exception>
+        /// <exception cref="System.IO.FileNotFoundException">Thrown if the file could not be located.</exception>
         /// <exception cref="System.ObjectDisposedException">Thrown if attempting to import a model if the importer has been disposed of</exception>
         public Scene ImportFile(String file, PostProcessSteps postProcessFlags) {
-            lock(sync) {
-                if(_isDisposed) {
+            lock(m_sync) {
+                if(m_isDisposed) {
                     throw new ObjectDisposedException("Importer has been disposed.");
                 }
                 if(String.IsNullOrEmpty(file) || !File.Exists(file)) {
-                    throw new AssimpException("file", "Filename is null or not valid.");
+                    throw new FileNotFoundException("Filename was null or could not be found", file);
                 }
 
                 IntPtr ptr = IntPtr.Zero;
+                PrepareImport();
                 try {
-
-                    AttachLogs();
-                    CreateConfigs();
-
                     ptr = AssimpMethods.ImportFile(file, PostProcessSteps.None);
+
+                    if(ptr == IntPtr.Zero)
+                        throw new AssimpException("Error importing file: " + AssimpMethods.GetErrorString());
 
                     if(ptr != IntPtr.Zero) {
                         TransformScene(ptr);
 
                         ptr = AssimpMethods.ApplyPostProcessing(ptr, postProcessFlags);
-                    } 
-
-                    if(ptr == IntPtr.Zero) {
-                        throw new AssimpException("Error importing file: " + AssimpMethods.GetErrorString());
                     }
 
-                    AiScene scene = MemoryHelper.MarshalStructure<AiScene>(ptr);
-                    if((scene.Flags & SceneFlags.Incomplete) == SceneFlags.Incomplete) {
-                        throw new AssimpException("Error importing file: Imported scene is incomplete. " + AssimpMethods.GetErrorString());
-                    }
-
-                    return new Scene(scene);
+                    return ValidateAndCreateScene(ptr);
                 } finally {
-
-                    ReleaseConfigs();
-                    DetatachLogs();
+                    CleanupImport();
 
                     if(ptr != IntPtr.Zero) {
                         AssimpMethods.ReleaseImport(ptr);
@@ -355,10 +336,10 @@ namespace Assimp {
         /// </summary>
         /// <param name="logstream"></param>
         public void AttachLogStream(LogStream logstream) {
-            if(logstream == null || _logStreams.Contains(logstream)) {
+            if(logstream == null || m_logStreams.Contains(logstream)) {
                 return;
             }
-            _logStreams.Add(logstream);
+            m_logStreams.Add(logstream);
         }
 
         /// <summary>
@@ -369,16 +350,14 @@ namespace Assimp {
             if(logStream == null) {
                 return;
             }
-            _logStreams.Remove(logStream);
+            m_logStreams.Remove(logStream);
         }
 
         /// <summary>
         /// Detaches all logging streams that are currently attached to the importer.
         /// </summary>
         public void DetachLogStreams() {
-            foreach(LogStream stream in _logStreams) {
-                stream.Detach();
-            }
+            m_logStreams.Clear();
         }
 
         /// <summary>
@@ -387,7 +366,10 @@ namespace Assimp {
         /// </summary>
         /// <returns>The format extensions that are supported</returns>
         public String[] GetSupportedFormats() {
-            return AssimpMethods.GetExtensionList();
+            if(m_extensionList == null)
+                m_extensionList = AssimpMethods.GetExtensionList();
+
+            return (String[]) m_extensionList.Clone();
         }
 
         /// <summary>
@@ -408,10 +390,10 @@ namespace Assimp {
                 return;
             }
             String name = config.Name;
-            if(!_configs.ContainsKey(name)) {
-                _configs[name] = config;
+            if(!m_configs.ContainsKey(name)) {
+                m_configs[name] = config;
             } else {
-                _configs.Add(name, config);
+                m_configs.Add(name, config);
             }
         }
 
@@ -424,8 +406,8 @@ namespace Assimp {
                 return;
             }
             PropertyConfig oldConfig;
-            if(!_configs.TryGetValue(configName, out oldConfig)) {
-                _configs.Remove(configName);
+            if(!m_configs.TryGetValue(configName, out oldConfig)) {
+                m_configs.Remove(configName);
             }
         }
 
@@ -433,7 +415,7 @@ namespace Assimp {
         /// Removes all configuration properties from the importer.
         /// </summary>
         public void RemoveConfigs() {
-            _configs.Clear();
+            m_configs.Clear();
         }
 
         /// <summary>
@@ -445,35 +427,58 @@ namespace Assimp {
             if(String.IsNullOrEmpty(configName)) {
                 return false;
             }
-            return _configs.ContainsKey(configName);
+            return m_configs.ContainsKey(configName);
         }
 
         //Creates all property stores and sets their values
         private void CreateConfigs() {
-            foreach(KeyValuePair<String, PropertyConfig> config in _configs) {
+            foreach(KeyValuePair<String, PropertyConfig> config in m_configs) {
                 config.Value.CreatePropertyStore();
             }
         }
 
         //Destroys all property stores
         private void ReleaseConfigs() {
-            foreach(KeyValuePair<String, PropertyConfig> config in _configs) {
+            foreach(KeyValuePair<String, PropertyConfig> config in m_configs) {
                 config.Value.ReleasePropertyStore();
             }
         }
 
         //Attachs all logstreams to Assimp
         private void AttachLogs() {
-            foreach(LogStream log in _logStreams) {
+            foreach(LogStream log in m_logStreams) {
                 log.Attach();
             }
         }
 
         //Detatches all logstreams from Assimp
         private void DetatachLogs() {
-            foreach(LogStream log in _logStreams) {
+            foreach(LogStream log in m_logStreams) {
                 log.Detach();
             }
+        }
+
+        //Does all the necessary prep work before we import
+        private void PrepareImport() {
+            AssimpMethods.EnableVerboseLogging(m_verboseEnabled);
+            AttachLogs();
+            CreateConfigs();
+        }
+
+        //Does all the necessary cleanup work after we import
+        private void CleanupImport() {
+            ReleaseConfigs();
+            DetatachLogs();
+        }
+
+        //Validate the imported scene to ensure its complete and load the return scene
+        private Scene ValidateAndCreateScene(IntPtr ptr) {
+            AiScene scene = MemoryHelper.MarshalStructure<AiScene>(ptr);
+            if((scene.Flags & SceneFlags.Incomplete) == SceneFlags.Incomplete) {
+                throw new AssimpException("Error importing file: Imported scene is incomplete. " + AssimpMethods.GetErrorString());
+            }
+
+            return new Scene(scene);
         }
 
         /// <summary>
@@ -490,11 +495,11 @@ namespace Assimp {
         /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
         protected void Dispose(bool disposing) {
 
-            if(!_isDisposed) {
+            if(!m_isDisposed) {
                 if(disposing) {
                     //Dispose of managed resources
                 }
-                _isDisposed = true;
+                m_isDisposed = true;
             }
         }
     }
