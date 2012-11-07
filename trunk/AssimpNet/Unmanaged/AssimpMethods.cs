@@ -135,14 +135,14 @@ namespace Assimp.Unmanaged {
         /// Exports the given scene to a chosen file format. Returns the exported data as a binary blob which you can embed into another data structure or file.
         /// </summary>
         /// <param name="scene">Scene to export, it is the responsibility of the caller to free this when finished.</param>
-        /// <param name="formatDescription">Export format description the scene is exported to.</param>
+        /// <param name="formatId">Format id describing which format to export to.</param>
         /// <param name="preProcessing">Pre processing flags to operate on the scene during the export.</param>
         /// <returns>Exported binary blob, or null if there was an error.</returns>
-        public static ExportDataBlob ExportSceneToBlob(IntPtr scene, ExportFormatDescription formatDescription, PostProcessSteps preProcessing) {
-            if(formatDescription == null || scene == IntPtr.Zero)
+        public static ExportDataBlob ExportSceneToBlob(IntPtr scene, String formatId, PostProcessSteps preProcessing) {
+            if(String.IsNullOrEmpty(formatId) || scene == IntPtr.Zero)
                 return null;
 
-            IntPtr blobPtr = aiExportSceneToBlob(scene, formatDescription.FormatId, (uint) preProcessing);
+            IntPtr blobPtr = aiExportSceneToBlob(scene, formatId, (uint) preProcessing);
 
             if(blobPtr == IntPtr.Zero)
                 return null;
@@ -162,16 +162,16 @@ namespace Assimp.Unmanaged {
         /// </summary>
         /// <param name="scene">The scene to export, which needs to be freed by the caller. The scene is expected to conform to Assimp's Importer output format. In short,
         /// this means the model data should use a right handed coordinate system, face winding should be counter clockwise, and the UV coordinate origin assumed to be upper left. If the input is different, specify the pre processing flags appropiately.</param>
-        /// <param name="formatDescription">Format description describing which format to export to.</param>
+        /// <param name="formatId">Format id describing which format to export to.</param>
         /// <param name="fileName">Output filename to write to</param>
         /// <param name="preProcessing">Pre processing flags - accepts any post processing step flag. In reality only a small subset are actually supported, e.g. to ensure the input
         /// conforms to the standard Assimp output format. Some may be redundant, such as triangulation, which some exporters may have to enforce due to the export format.</param>
         /// <returns>Return code specifying if the operation was a success.</returns>
-        public static ReturnCode ExportScene(IntPtr scene, ExportFormatDescription formatDescription, String fileName, PostProcessSteps preProcessing) {
-            if(formatDescription == null || scene == IntPtr.Zero)
+        public static ReturnCode ExportScene(IntPtr scene, String formatId, String fileName, PostProcessSteps preProcessing) {
+            if(String.IsNullOrEmpty(formatId) || scene == IntPtr.Zero)
                 return ReturnCode.Failure;
 
-            return aiExportScene(scene, formatDescription.FormatId, fileName, (uint) preProcessing);
+            return aiExportScene(scene, formatId, fileName, (uint) preProcessing);
         }
 
         #endregion
