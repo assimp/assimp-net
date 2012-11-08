@@ -166,6 +166,8 @@ namespace Assimp {
             Dispose(false);
         }
 
+        #region
+
         /// <summary>
         /// Importers a model from the stream without running any post-process steps. The importer sets configurations
         /// and loads the model into managed memory, releasing the unmanaged memory used by Assimp. It is up to the caller to dispose of the stream.
@@ -229,13 +231,18 @@ namespace Assimp {
             }
         }
 
+        #endregion
+
+        #region ImportFile
+
         /// <summary>
         /// Importers a model from the specified file without running any post-process steps. The importer sets configurations
         /// and loads the model into managed memory, releasing the unmanaged memory used by Assimp.
         /// </summary>
         /// <param name="file">Full path to the file</param>
         /// <returns>The imported scene</returns>
-        /// <exception cref="AssimpException">Thrown if the file is valid or there was a general error in importing the model.</exception>
+        /// <exception cref="AssimpException">Thrown if there was a general error in importing the model.</exception>
+        /// <exception cref="System.IO.FileNotFoundException">Thrown if the file could not be located.</exception>
         /// <exception cref="System.ObjectDisposedException">Thrown if attempting to import a model if the importer has been disposed of</exception>
         public Scene ImportFile(String file) {
             return ImportFile(file, PostProcessSteps.None);
@@ -285,56 +292,14 @@ namespace Assimp {
             }
         }
 
-        private void BuildMatrix() {
+        #endregion
 
-            if(m_buildMatrix) {
-                Matrix4x4 scale = Matrix4x4.FromScaling(new Vector3D(m_scale, m_scale, m_scale));
-                Matrix4x4 xRot = Matrix4x4.FromRotationX(m_xAxisRotation * (float) (180.0d / Math.PI));
-                Matrix4x4 yRot = Matrix4x4.FromRotationY(m_yAxisRotation * (float) (180.0d / Math.PI));
-                Matrix4x4 zRot = Matrix4x4.FromRotationZ(m_zAxisRotation * (float) (180.0d / Math.PI));
-                m_scaleRot = scale * ((xRot * yRot) * zRot);
-            }
-
-            m_buildMatrix = false;
-        }
-
-        private unsafe bool TransformScene(IntPtr scene) {
-            BuildMatrix();
-
-            try {
-                if(!m_scaleRot.IsIdentity) {
-                    IntPtr rootNode = Marshal.ReadIntPtr(MemoryHelper.AddIntPtr(scene, sizeof(uint))); //Skip over sceneflags
-
-                    IntPtr matrixPtr = MemoryHelper.AddIntPtr(rootNode, Marshal.SizeOf(typeof(AiString))); //Skip over AiString
-
-                    Matrix4x4 matrix = MemoryHelper.MarshalStructure<Matrix4x4>(matrixPtr); //Get the root transform
-
-                    matrix = matrix * m_scaleRot; //Transform
-
-                    //Save back to unmanaged mem
-                    int index = 0;
-                    for(int i = 1; i <= 4; i++) {
-                        for(int j = 1; j <= 4; j++) {
-                            float value = matrix[i, j];
-                            byte[] bytes = BitConverter.GetBytes(value);
-                            foreach(byte b in bytes) {
-                                Marshal.WriteByte(matrixPtr, index, b);
-                                index++;
-                            }
-                        }
-                    }
-                    return true;
-                }
-            } catch(Exception) {
-
-            }
-            return false;
-        }
+        #region Logstreams
 
         /// <summary>
         /// Attaches a logging stream to the importer.
         /// </summary>
-        /// <param name="logstream"></param>
+        /// <param name="logstream">Logstream to attach</param>
         public void AttachLogStream(LogStream logstream) {
             if(logstream == null || m_logStreams.Contains(logstream)) {
                 return;
@@ -345,7 +310,7 @@ namespace Assimp {
         /// <summary>
         /// Detaches a logging stream from the importer.
         /// </summary>
-        /// <param name="logStream"></param>
+        /// <param name="logStream">Logstream to detatch</param>
         public void DetachLogStream(LogStream logStream) {
             if(logStream == null) {
                 return;
@@ -359,6 +324,10 @@ namespace Assimp {
         public void DetachLogStreams() {
             m_logStreams.Clear();
         }
+
+        #endregion
+
+        #region Format support
 
         /// <summary>
         /// Gets the model formats that are supported by Assimp. Each
@@ -380,6 +349,10 @@ namespace Assimp {
         public bool IsFormatSupported(String formatExtension) {
             return AssimpMethods.IsExtensionSupported(formatExtension);
         }
+
+        #endregion
+
+        #region Configs
 
         /// <summary>
         /// Sets a configuration property to the importer.
@@ -428,6 +401,84 @@ namespace Assimp {
                 return false;
             }
             return m_configs.ContainsKey(configName);
+        }
+
+        #endregion
+
+        #region Dispose
+
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
+        public void Dispose() {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Releases unmanaged and - optionally - managed resources
+        /// </summary>
+        /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
+        protected void Dispose(bool disposing) {
+
+            if(!m_isDisposed) {
+                if(disposing) {
+                    //Dispose of managed resources
+                }
+                m_isDisposed = true;
+            }
+        }
+
+        #endregion
+
+        #region Private methods
+
+        //Build import transformation matrix
+        private void BuildMatrix() {
+
+            if(m_buildMatrix) {
+                Matrix4x4 scale = Matrix4x4.FromScaling(new Vector3D(m_scale, m_scale, m_scale));
+                Matrix4x4 xRot = Matrix4x4.FromRotationX(m_xAxisRotation * (float) (180.0d / Math.PI));
+                Matrix4x4 yRot = Matrix4x4.FromRotationY(m_yAxisRotation * (float) (180.0d / Math.PI));
+                Matrix4x4 zRot = Matrix4x4.FromRotationZ(m_zAxisRotation * (float) (180.0d / Math.PI));
+                m_scaleRot = scale * ((xRot * yRot) * zRot);
+            }
+
+            m_buildMatrix = false;
+        }
+
+        //Transforms the root node of the scene and writes it back to the native structure
+        private unsafe bool TransformScene(IntPtr scene) {
+            BuildMatrix();
+
+            try {
+                if(!m_scaleRot.IsIdentity) {
+                    IntPtr rootNode = Marshal.ReadIntPtr(MemoryHelper.AddIntPtr(scene, sizeof(uint))); //Skip over sceneflags
+
+                    IntPtr matrixPtr = MemoryHelper.AddIntPtr(rootNode, Marshal.SizeOf(typeof(AiString))); //Skip over AiString
+
+                    Matrix4x4 matrix = MemoryHelper.MarshalStructure<Matrix4x4>(matrixPtr); //Get the root transform
+
+                    matrix = matrix * m_scaleRot; //Transform
+
+                    //Save back to unmanaged mem
+                    int index = 0;
+                    for(int i = 1; i <= 4; i++) {
+                        for(int j = 1; j <= 4; j++) {
+                            float value = matrix[i, j];
+                            byte[] bytes = BitConverter.GetBytes(value);
+                            foreach(byte b in bytes) {
+                                Marshal.WriteByte(matrixPtr, index, b);
+                                index++;
+                            }
+                        }
+                    }
+                    return true;
+                }
+            } catch(Exception) {
+
+            }
+            return false;
         }
 
         //Creates all property stores and sets their values
@@ -481,26 +532,7 @@ namespace Assimp {
             return new Scene(scene);
         }
 
-        /// <summary>
-        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-        /// </summary>
-        public void Dispose() {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
+        #endregion
 
-        /// <summary>
-        /// Releases unmanaged and - optionally - managed resources
-        /// </summary>
-        /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
-        protected void Dispose(bool disposing) {
-
-            if(!m_isDisposed) {
-                if(disposing) {
-                    //Dispose of managed resources
-                }
-                m_isDisposed = true;
-            }
-        }
     }
 }
