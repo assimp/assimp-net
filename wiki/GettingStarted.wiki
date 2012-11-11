@@ -39,7 +39,7 @@ namespace Example {
             importer.SetConfig(config);
 
             //This is how we add a logging callback 
-            LogStream logstream = new LogStream(delegate(String msg, IntPtr userData) {
+            LogStream logstream = new LogStream(delegate(String msg, String userData) {
                 Console.WriteLine(msg);
             });
             importer.AttachLogStream(logstream);
