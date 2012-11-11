@@ -115,7 +115,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Animation.cs" />
-    <Compile Include="AssimpConverter.cs" />
     <Compile Include="AssimpException.cs" />
     <Compile Include="AssimpImporter.cs" />
     <Compile Include="Bone.cs" />

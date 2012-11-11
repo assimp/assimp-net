@@ -45,18 +45,25 @@ namespace Assimp.Unmanaged {
         [DllImport(AssimpDLL, EntryPoint = "aiImportFile", CallingConvention = CallingConvention.Cdecl)]
         private static extern IntPtr aiImportFile([InAttribute()] [MarshalAs(UnmanagedType.LPStr)] String file, uint flags);
 
+        [DllImport(AssimpDLL, EntryPoint = "aiImportFileExWithProperties", CallingConvention = CallingConvention.Cdecl)]
+        private static extern IntPtr aiImportFileExWithProperties([InAttribute()] [MarshalAs(UnmanagedType.LPStr)] String file, uint flag, IntPtr fileIO, IntPtr propStore);
+
         /// <summary>
         /// Imports a file.
         /// </summary>
         /// <param name="file">Valid filename</param>
         /// <param name="flags">Post process flags specifying what steps are to be run after the import.</param>
+        /// <param name="propStore">Property store containing config name-values, may be null.</param>
         /// <returns>Pointer to the unmanaged data structure.</returns>
-        public static IntPtr ImportFile(String file, PostProcessSteps flags) {
-            return aiImportFile(file, (uint) flags);
+        public static IntPtr ImportFile(String file, PostProcessSteps flags, IntPtr propStore) {
+            return aiImportFileExWithProperties(file, (uint) flags, IntPtr.Zero, propStore);
         }
 
         [DllImport(AssimpDLL, EntryPoint = "aiImportFileFromMemory", CallingConvention = CallingConvention.Cdecl)]
         private static extern IntPtr aiImportFileFromMemory(byte[] buffer, uint bufferLength, uint flags, [InAttribute()] [MarshalAs(UnmanagedType.LPStr)] String formatHint);
+
+        [DllImport(AssimpDLL, EntryPoint = "aiImportFileFromMemoryWithProperties", CallingConvention = CallingConvention.Cdecl)]
+        private static extern IntPtr aiImportFileFromMemoryWithProperties(byte[] buffer, uint bufferLength, uint flags, [InAttribute()] [MarshalAs(UnmanagedType.LPStr)] String formatHint, IntPtr propStore);
 
         /// <summary>
         /// Imports a scene from a stream. This uses the "aiImportFileFromMemory" function. The stream can be from anyplace,
@@ -65,11 +72,12 @@ namespace Assimp.Unmanaged {
         /// <param name="stream">Stream containing the scene data</param>
         /// <param name="flags">Post processing flags</param>
         /// <param name="formatHint">A hint to Assimp to decide which importer to use to process the data</param>
+        /// <param name="propStore">Property store containing the config name-values, may be null.</param>
         /// <returns></returns>
-        public static IntPtr ImportFileFromStream(Stream stream, PostProcessSteps flags, String formatHint) {
+        public static IntPtr ImportFileFromStream(Stream stream, PostProcessSteps flags, String formatHint, IntPtr propStore) {
             byte[] buffer = MemoryHelper.ReadStreamFully(stream, 0);
 
-            return aiImportFileFromMemory(buffer, (uint) buffer.Length, (uint) flags, formatHint);
+            return aiImportFileFromMemoryWithProperties(buffer, (uint) buffer.Length, (uint) flags, formatHint, propStore);
         }
 
         /// <summary>

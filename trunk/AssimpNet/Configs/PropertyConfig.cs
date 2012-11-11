@@ -28,9 +28,8 @@ namespace Assimp.Configs {
     /// <summary>
     /// Base property config.
     /// </summary>
-    public abstract class PropertyConfig : IDisposable {
+    public abstract class PropertyConfig {
         private String m_name;
-        private IntPtr m_propStore;
 
         /// <summary>
         /// Gets the property name.
@@ -47,14 +46,6 @@ namespace Assimp.Configs {
         /// <param name="name">Name of the property.</param>
         protected PropertyConfig(String name) {
             m_name = name;
-            m_propStore = IntPtr.Zero;
-        }
-
-        /// <summary>
-        /// Destructor.
-        /// </summary>
-        ~PropertyConfig() {
-            Dispose(false);
         }
 
         /// <summary>
@@ -63,47 +54,18 @@ namespace Assimp.Configs {
         public abstract void SetDefaultValue();
 
         /// <summary>
-        /// Creates a new Assimp property store and calls subclasses to set their value to it.
+        /// Applies the property value to the given Assimp property store.
         /// </summary>
-        public void CreatePropertyStore() {
-            if(m_propStore == IntPtr.Zero) {
-                m_propStore = AssimpMethods.CreatePropertyStore();
-                if(m_propStore != IntPtr.Zero)
-                    ApplyValue(m_propStore);
-            }
-        }
-
-        /// <summary>
-        /// Releases an Assimp property store.
-        /// </summary>
-        public void ReleasePropertyStore() {
-            if(m_propStore != IntPtr.Zero) {
-                AssimpMethods.ReleasePropertyStore(m_propStore);
-                m_propStore = IntPtr.Zero;
-            }
+        /// <param name="propStore">Assimp property store</param>
+        internal void ApplyValue(IntPtr propStore) {
+            OnApplyValue(propStore);
         }
 
         /// <summary>
         /// Applies the property value to the given Assimp property store.
         /// </summary>
         /// <param name="propStore">Assimp property store</param>
-        protected abstract void ApplyValue(IntPtr propStore);
-
-        /// <summary>
-        /// Disposes the property config, releasing the Assimp property store if there is one.
-        /// </summary>
-        public void Dispose() {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        /// <summary>
-        /// Disposes the property config.
-        /// </summary>
-        /// <param name="disposing">True if Dispose was called, false if called from the destructor.</param>
-        protected virtual void Dispose(bool disposing) {
-            ReleasePropertyStore();
-        }
+        protected abstract void OnApplyValue(IntPtr propStore);
     }
 
     /// <summary>
@@ -165,7 +127,7 @@ namespace Assimp.Configs {
         /// Applies the property value to the given Assimp property store.
         /// </summary>
         /// <param name="propStore">Assimp property store</param>
-        protected override void ApplyValue(IntPtr propStore) {
+        protected override void OnApplyValue(IntPtr propStore) {
             if(propStore != IntPtr.Zero) {
                 AssimpMethods.SetImportPropertyInteger(propStore, Name, m_value);
             }
@@ -231,7 +193,7 @@ namespace Assimp.Configs {
         /// Applies the property value to the given Assimp property store.
         /// </summary>
         /// <param name="propStore">Assimp property store</param>
-        protected override void ApplyValue(IntPtr propStore) {
+        protected override void OnApplyValue(IntPtr propStore) {
             if(propStore != IntPtr.Zero) {
                 AssimpMethods.SetImportPropertyFloat(propStore, Name, m_value);
             }
@@ -297,7 +259,7 @@ namespace Assimp.Configs {
         /// Applies the property value to the given Assimp property store.
         /// </summary>
         /// <param name="propStore">Assimp property store</param>
-        protected override void ApplyValue(IntPtr propStore) {
+        protected override void OnApplyValue(IntPtr propStore) {
             if(propStore != IntPtr.Zero) {
                 int aiBool = (m_value) ? 1 : 0;
                 AssimpMethods.SetImportPropertyInteger(propStore, Name, aiBool);
@@ -364,7 +326,7 @@ namespace Assimp.Configs {
         /// Applies the property value to the given Assimp property store.
         /// </summary>
         /// <param name="propStore">Assimp property store</param>
-        protected override void ApplyValue(IntPtr propStore) {
+        protected override void OnApplyValue(IntPtr propStore) {
             if(propStore != IntPtr.Zero) {
                 AssimpMethods.SetImportPropertyString(propStore, Name, m_value);
             }

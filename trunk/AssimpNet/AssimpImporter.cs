@@ -23,22 +23,24 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.InteropServices;
 using Assimp.Configs;
 using Assimp.Unmanaged;
-using System.Runtime.InteropServices;
 
 namespace Assimp {
     /// <summary>
     /// Assimp importer that will use Assimp to load a model into managed memory.
     /// </summary>
     public class AssimpImporter : IDisposable {
+        private static Object s_sync = new Object();
+
         private bool m_isDisposed;
         private bool m_verboseEnabled;
         private Dictionary<String, PropertyConfig> m_configs;
         private List<LogStream> m_logStreams;
-        private Object m_sync = new Object();
 
-        private String[] m_extensionList;
+        private ExportFormatDescription[] m_exportFormats;
+        private String[] m_importFormats;
 
         private float m_scale = 1.0f;
         private float m_xAxisRotation = 0.0f;
@@ -46,6 +48,8 @@ namespace Assimp {
         private float m_zAxisRotation = 0.0f;
         private bool m_buildMatrix = false;
         private Matrix4x4 m_scaleRot = Matrix4x4.Identity;
+
+        private IntPtr m_propStore = IntPtr.Zero;
 
         /// <summary>
         /// Gets if the importer has been disposed.
@@ -166,7 +170,9 @@ namespace Assimp {
             Dispose(false);
         }
 
-        #region
+        #region Import
+
+        #region ImportFileFromStream
 
         /// <summary>
         /// Importers a model from the stream without running any post-process steps. The importer sets configurations
@@ -192,7 +198,7 @@ namespace Assimp {
         /// <exception cref="AssimpException">Thrown if the stream is not valid (null or write-only) or if the format hint is null or empty.</exception>
         /// <exception cref="System.ObjectDisposedException">Thrown if attempting to import a model if the importer has been disposed of</exception>
         public Scene ImportFileFromStream(Stream stream, PostProcessSteps postProcessFlags, String formatHint) {
-            lock(m_sync) {
+            lock(s_sync) {
                 if(m_isDisposed) {
                     throw new ObjectDisposedException("Importer has been disposed.");
                 }
@@ -209,16 +215,14 @@ namespace Assimp {
                 PrepareImport();
 
                 try {
-                    ptr = AssimpMethods.ImportFileFromStream(stream, PostProcessSteps.None, formatHint);
+                    ptr = AssimpMethods.ImportFileFromStream(stream, PostProcessSteps.None, formatHint, m_propStore);
 
                     if(ptr == IntPtr.Zero)
                         throw new AssimpException("Error importing file: " + AssimpMethods.GetErrorString());
 
-                    if(ptr != IntPtr.Zero) {
-                        TransformScene(ptr);
+                    TransformScene(ptr);
 
-                        ptr = AssimpMethods.ApplyPostProcessing(ptr, postProcessFlags);
-                    }
+                    ptr = AssimpMethods.ApplyPostProcessing(ptr, postProcessFlags);
 
                     return ValidateAndCreateScene(ptr);
                 } finally {
@@ -259,7 +263,7 @@ namespace Assimp {
         /// <exception cref="System.IO.FileNotFoundException">Thrown if the file could not be located.</exception>
         /// <exception cref="System.ObjectDisposedException">Thrown if attempting to import a model if the importer has been disposed of</exception>
         public Scene ImportFile(String file, PostProcessSteps postProcessFlags) {
-            lock(m_sync) {
+            lock(s_sync) {
                 if(m_isDisposed) {
                     throw new ObjectDisposedException("Importer has been disposed.");
                 }
@@ -270,16 +274,14 @@ namespace Assimp {
                 IntPtr ptr = IntPtr.Zero;
                 PrepareImport();
                 try {
-                    ptr = AssimpMethods.ImportFile(file, PostProcessSteps.None);
+                    ptr = AssimpMethods.ImportFile(file, PostProcessSteps.None, m_propStore);
 
                     if(ptr == IntPtr.Zero)
                         throw new AssimpException("Error importing file: " + AssimpMethods.GetErrorString());
 
-                    if(ptr != IntPtr.Zero) {
-                        TransformScene(ptr);
+                    TransformScene(ptr);
 
-                        ptr = AssimpMethods.ApplyPostProcessing(ptr, postProcessFlags);
-                    }
+                    ptr = AssimpMethods.ApplyPostProcessing(ptr, postProcessFlags);
 
                     return ValidateAndCreateScene(ptr);
                 } finally {
@@ -291,6 +293,331 @@ namespace Assimp {
                 }
             }
         }
+
+        #endregion
+
+        #endregion
+
+        #region ConvertFromFile
+
+        #region File to File
+
+        /// <summary>
+        /// Converts the model contained in the file to the specified format and save it to a file.
+        /// </summary>
+        /// <param name="inputFilename">Input file name to import</param>
+        /// <param name="outputFilename">Output file name to export to</param>
+        /// <param name="exportFormatId">Format id that specifies what format to export to</param>
+        ///<exception cref="AssimpException">Thrown if there was a general error in importing the model.</exception>
+        /// <exception cref="System.IO.FileNotFoundException">Thrown if the file could not be located.</exception>
+        /// <exception cref="System.ObjectDisposedException">Thrown if attempting to import a model if the importer has been disposed of</exception>
+        public void ConvertFromFileToFile(String inputFilename, String outputFilename, String exportFormatId) {
+            ConvertFromFileToFile(inputFilename, PostProcessSteps.None, outputFilename, exportFormatId, PostProcessSteps.None);
+        }
+
+        /// <summary>
+        /// Converts the model contained in the file to the specified format and save it to a file.
+        /// </summary>
+        /// <param name="inputFilename">Input file name to import</param>
+        /// <param name="outputFilename">Output file name to export to</param>
+        /// <param name="exportFormatId">Format id that specifies what format to export to</param>
+        /// <param name="exportProcessSteps">Pre processing steps used for the export</param>
+        ///<exception cref="AssimpException">Thrown if there was a general error in importing the model.</exception>
+        /// <exception cref="System.IO.FileNotFoundException">Thrown if the file could not be located.</exception>
+        /// <exception cref="System.ObjectDisposedException">Thrown if attempting to import a model if the importer has been disposed of</exception>
+        public void ConvertFromFileToFile(String inputFilename, String outputFilename, String exportFormatId, PostProcessSteps exportProcessSteps) {
+            ConvertFromFileToFile(inputFilename, PostProcessSteps.None, outputFilename, exportFormatId, exportProcessSteps);
+        }
+
+        /// <summary>
+        /// Converts the model contained in the file to the specified format and save it to a file.
+        /// </summary>
+        /// <param name="inputFilename">Input file name to import</param>
+        /// <param name="importProcessSteps">Post processing steps used for the import</param>
+        /// <param name="outputFilename">Output file name to export to</param>
+        /// <param name="exportFormatId">Format id that specifies what format to export to</param>
+        /// <param name="exportProcessSteps">Pre processing steps used for the export</param>
+        ///<exception cref="AssimpException">Thrown if there was a general error in importing the model.</exception>
+        /// <exception cref="System.IO.FileNotFoundException">Thrown if the file could not be located.</exception>
+        /// <exception cref="System.ObjectDisposedException">Thrown if attempting to import a model if the importer has been disposed of</exception>
+        public void ConvertFromFileToFile(String inputFilename, PostProcessSteps importProcessSteps, String outputFilename, String exportFormatId, PostProcessSteps exportProcessSteps) {
+            lock(s_sync) {
+                if(m_isDisposed) {
+                    throw new ObjectDisposedException("Importer has been disposed.");
+                }
+
+                if(String.IsNullOrEmpty(inputFilename) || !File.Exists(inputFilename)) {
+                    throw new FileNotFoundException("Filename was null or could not be found", inputFilename);
+                }
+
+                IntPtr ptr = IntPtr.Zero;
+                PrepareImport();
+
+                try {
+                    ptr = AssimpMethods.ImportFile(inputFilename, PostProcessSteps.None, m_propStore);
+
+                    if(ptr == IntPtr.Zero)
+                        throw new AssimpException("Error importing file: " + AssimpMethods.GetErrorString());
+
+                    TransformScene(ptr);
+                    ptr = AssimpMethods.ApplyPostProcessing(ptr, importProcessSteps);
+
+                    ValidateScene(ptr);
+
+                    AssimpMethods.ExportScene(ptr, exportFormatId, outputFilename, exportProcessSteps);
+                } finally {
+                    CleanupImport();
+
+                    if(ptr != IntPtr.Zero)
+                        AssimpMethods.ReleaseImport(ptr);
+                }
+            }
+        }
+
+        #endregion
+
+        #region File to Blob
+
+        /// <summary>
+        /// Converts the model contained in the file to the specified format and save it to a data blob.
+        /// </summary>
+        /// <param name="inputFilename">Input file name to import</param>
+        /// <param name="outputFilename">Output file name to export to</param>
+        /// <param name="exportFormatId">Format id that specifies what format to export to</param>
+        /// <returns>Data blob containing the exported scene in a binary form</returns>
+        /// <exception cref="AssimpException">Thrown if there was a general error in importing the model.</exception>
+        /// <exception cref="System.IO.FileNotFoundException">Thrown if the file could not be located.</exception>
+        /// <exception cref="System.ObjectDisposedException">Thrown if attempting to import a model if the importer has been disposed of</exception>
+        public ExportDataBlob ConvertFromFileToBlob(String inputFilename, String exportFormatId) {
+            return ConvertFromFileToBlob(inputFilename, PostProcessSteps.None, exportFormatId, PostProcessSteps.None);
+        }
+
+        /// <summary>
+        /// Converts the model contained in the file to the specified format and save it to a data blob.
+        /// </summary>
+        /// <param name="inputFilename">Input file name to import</param>
+        /// <param name="outputFilename">Output file name to export to</param>
+        /// <param name="exportFormatId">Format id that specifies what format to export to</param>
+        /// <param name="exportProcessSteps">Pre processing steps used for the export</param>
+        /// <returns>Data blob containing the exported scene in a binary form</returns>
+        /// <exception cref="AssimpException">Thrown if there was a general error in importing the model.</exception>
+        /// <exception cref="System.IO.FileNotFoundException">Thrown if the file could not be located.</exception>
+        /// <exception cref="System.ObjectDisposedException">Thrown if attempting to import a model if the importer has been disposed of</exception>
+        public ExportDataBlob ConvertFromFileToBlob(String inputFilename, String exportFormatId, PostProcessSteps exportProcessSteps) {
+            return ConvertFromFileToBlob(inputFilename, PostProcessSteps.None, exportFormatId, exportProcessSteps);
+        }
+
+        /// <summary>
+        /// Converts the model contained in the file to the specified format and save it to a data blob.
+        /// </summary>
+        /// <param name="inputFilename">Input file name to import</param>
+        /// <param name="importProcessSteps">Post processing steps used for the import</param>
+        /// <param name="outputFilename">Output file name to export to</param>
+        /// <param name="exportFormatId">Format id that specifies what format to export to</param>
+        /// <param name="exportProcessSteps">Pre processing steps used for the export</param>
+        /// <returns>Data blob containing the exported scene in a binary form</returns>
+        /// <exception cref="AssimpException">Thrown if there was a general error in importing the model.</exception>
+        /// <exception cref="System.IO.FileNotFoundException">Thrown if the file could not be located.</exception>
+        /// <exception cref="System.ObjectDisposedException">Thrown if attempting to import a model if the importer has been disposed of</exception>
+        public ExportDataBlob ConvertFromFileToBlob(String inputFilename, PostProcessSteps importProcessSteps, String exportFormatId, PostProcessSteps exportProcessSteps) {
+            lock(s_sync) {
+                if(m_isDisposed) {
+                    throw new ObjectDisposedException("Importer has been disposed.");
+                }
+
+                if(String.IsNullOrEmpty(inputFilename) || !File.Exists(inputFilename)) {
+                    throw new FileNotFoundException("Filename was null or could not be found", inputFilename);
+                }
+
+                IntPtr ptr = IntPtr.Zero;
+                PrepareImport();
+
+                try {
+                    ptr = AssimpMethods.ImportFile(inputFilename, PostProcessSteps.None, m_propStore);
+
+                    if(ptr == IntPtr.Zero)
+                        throw new AssimpException("Error importing file: " + AssimpMethods.GetErrorString());
+
+                    TransformScene(ptr);
+                    ptr = AssimpMethods.ApplyPostProcessing(ptr, importProcessSteps);
+
+                    ValidateScene(ptr);
+
+                    return AssimpMethods.ExportSceneToBlob(ptr, exportFormatId, exportProcessSteps);
+                } finally {
+                    CleanupImport();
+
+                    if(ptr != IntPtr.Zero)
+                        AssimpMethods.ReleaseImport(ptr);
+                }
+            }
+        }
+
+        #endregion
+
+        #endregion
+
+        #region ConvertFromStream
+
+        #region Stream to File
+
+        /// <summary>
+        /// Converts the model contained in the stream to the specified format and save it to a file.
+        /// </summary>
+        /// <param name="inputStream">Stream to read from</param>
+        /// <param name="importFormatHint">Format extension to serve as a hint to Assimp to choose which importer to use</param>
+        /// <param name="outputFilename">Output file name to export to</param>
+        /// <param name="exportFormatId">Format id that specifies what format to export to</param>
+        /// <exception cref="AssimpException">Thrown if the stream is not valid (null or write-only) or if the format hint is null or empty.</exception>
+        /// <exception cref="System.ObjectDisposedException">Thrown if attempting to import a model if the importer has been disposed of</exception>
+        public void ConvertFromStreamToFile(Stream inputStream, String importFormatHint, String outputFilename, String exportFormatId) {
+            ConvertFromStreamToFile(inputStream, importFormatHint, PostProcessSteps.None, outputFilename, exportFormatId, PostProcessSteps.None);
+        }
+
+        /// <summary>
+        /// Converts the model contained in the stream to the specified format and save it to a file.
+        /// </summary>
+        /// <param name="inputStream">Stream to read from</param>
+        /// <param name="importFormatHint">Format extension to serve as a hint to Assimp to choose which importer to use</param>
+        /// <param name="outputFilename">Output file name to export to</param>
+        /// <param name="exportFormatId">Format id that specifies what format to export to</param>
+        /// <param name="exportProcessSteps">Pre processing steps used for the export</param>
+        /// <exception cref="AssimpException">Thrown if the stream is not valid (null or write-only) or if the format hint is null or empty.</exception>
+        /// <exception cref="System.ObjectDisposedException">Thrown if attempting to import a model if the importer has been disposed of</exception>
+        public void ConvertFromStreamToFile(Stream inputStream, String importFormatHint, String outputFilename, String exportFormatId, PostProcessSteps exportProcessSteps) {
+            ConvertFromStreamToFile(inputStream, importFormatHint, PostProcessSteps.None, outputFilename, exportFormatId, exportProcessSteps);
+        }
+
+        /// <summary>
+        /// Converts the model contained in the stream to the specified format and save it to a file.
+        /// </summary>
+        /// <param name="inputStream">Stream to read from</param>
+        /// <param name="importFormatHint">Format extension to serve as a hint to Assimp to choose which importer to use</param>
+        /// <param name="importProcessSteps">Post processing steps used for import</param>
+        /// <param name="outputFilename">Output file name to export to</param>
+        /// <param name="exportFormatId">Format id that specifies what format to export to</param>
+        /// <param name="exportProcessSteps">Pre processing steps used for the export</param>
+        /// <exception cref="AssimpException">Thrown if the stream is not valid (null or write-only) or if the format hint is null or empty.</exception>
+        /// <exception cref="System.ObjectDisposedException">Thrown if attempting to import a model if the importer has been disposed of</exception>
+        public void ConvertFromStreamToFile(Stream inputStream, String importFormatHint, PostProcessSteps importProcessSteps, String outputFilename, String exportFormatId, PostProcessSteps exportProcessSteps) {
+            lock(s_sync) {
+                if(m_isDisposed) {
+                    throw new ObjectDisposedException("Importer has been disposed.");
+                }
+
+                if(inputStream == null || inputStream.CanRead != true) {
+                    throw new AssimpException("stream", "Can't read from the stream it's null or write-only");
+                }
+
+                if(String.IsNullOrEmpty(importFormatHint)) {
+                    throw new AssimpException("formatHint", "Format hint is null or empty");
+                }
+
+                IntPtr ptr = IntPtr.Zero;
+                PrepareImport();
+
+                try {
+                    ptr = AssimpMethods.ImportFileFromStream(inputStream, importProcessSteps, importFormatHint, m_propStore);
+
+                    if(ptr == IntPtr.Zero)
+                        throw new AssimpException("Error importing file: " + AssimpMethods.GetErrorString());
+
+                    TransformScene(ptr);
+                    ptr = AssimpMethods.ApplyPostProcessing(ptr, importProcessSteps);
+
+                    ValidateScene(ptr);
+
+                    AssimpMethods.ExportScene(ptr, exportFormatId, outputFilename, exportProcessSteps);
+                } finally {
+                    CleanupImport();
+
+                    if(ptr != IntPtr.Zero)
+                        AssimpMethods.ReleaseImport(ptr);
+                }
+            }
+        }
+
+        #endregion
+
+        #region Stream to Blob
+
+        /// <summary>
+        /// Converts the model contained in the stream to the specified format and save it to a data blob.
+        /// </summary>
+        /// <param name="inputStream">Stream to read from</param>
+        /// <param name="importFormatHint">Format extension to serve as a hint to Assimp to choose which importer to use</param>
+        /// <param name="exportFormatId">Format id that specifies what format to export to</param>
+        /// <returns>Data blob containing the exported scene in a binary form</returns>
+        /// <exception cref="AssimpException">Thrown if the stream is not valid (null or write-only) or if the format hint is null or empty.</exception>
+        /// <exception cref="System.ObjectDisposedException">Thrown if attempting to import a model if the importer has been disposed of</exception>
+        public ExportDataBlob ConvertFromStreamToBlob(Stream inputStream, String importFormatHint, String exportFormatId) {
+            return ConvertFromStreamToBlob(inputStream, importFormatHint, PostProcessSteps.None, exportFormatId, PostProcessSteps.None);
+        }
+
+        /// <summary>
+        /// Converts the model contained in the stream to the specified format and save it to a data blob.
+        /// </summary>
+        /// <param name="inputStream">Stream to read from</param>
+        /// <param name="importFormatHint">Format extension to serve as a hint to Assimp to choose which importer to use</param>
+        /// <param name="exportFormatId">Format id that specifies what format to export to</param>
+        /// <param name="exportProcessSteps">Pre processing steps used for the export</param>
+        /// <returns>Data blob containing the exported scene in a binary form</returns>
+        /// <exception cref="AssimpException">Thrown if the stream is not valid (null or write-only) or if the format hint is null or empty.</exception>
+        /// <exception cref="System.ObjectDisposedException">Thrown if attempting to import a model if the importer has been disposed of</exception>
+        public ExportDataBlob ConvertFromStreamToBlob(Stream inputStream, String importFormatHint, String exportFormatId, PostProcessSteps exportProcessSteps) {
+            return ConvertFromStreamToBlob(inputStream, importFormatHint, PostProcessSteps.None, exportFormatId, exportProcessSteps);
+        }
+
+        /// <summary>
+        /// Converts the model contained in the stream to the specified format and save it to a data blob.
+        /// </summary>
+        /// <param name="inputStream">Stream to read from</param>
+        /// <param name="importFormatHint">Format extension to serve as a hint to Assimp to choose which importer to use</param>
+        /// <param name="importProcessSteps">Post processing steps used for import</param>
+        /// <param name="exportFormatId">Format id that specifies what format to export to</param>
+        /// <param name="exportProcessSteps">Pre processing steps used for the export</param>
+        /// <returns>Data blob containing the exported scene in a binary form</returns>
+        /// <exception cref="AssimpException">Thrown if the stream is not valid (null or write-only) or if the format hint is null or empty.</exception>
+        /// <exception cref="System.ObjectDisposedException">Thrown if attempting to import a model if the importer has been disposed of</exception>
+        public ExportDataBlob ConvertFromStreamToBlob(Stream inputStream, String importFormatHint, PostProcessSteps importProcessSteps, String exportFormatId, PostProcessSteps exportProcessSteps) {
+            lock(s_sync) {
+                if(m_isDisposed) {
+                    throw new ObjectDisposedException("Importer has been disposed.");
+                }
+
+                if(inputStream == null || inputStream.CanRead != true) {
+                    throw new AssimpException("stream", "Can't read from the stream it's null or write-only");
+                }
+
+                if(String.IsNullOrEmpty(importFormatHint)) {
+                    throw new AssimpException("formatHint", "Format hint is null or empty");
+                }
+
+                IntPtr ptr = IntPtr.Zero;
+                PrepareImport();
+
+                try {
+                    ptr = AssimpMethods.ImportFileFromStream(inputStream, importProcessSteps, importFormatHint, m_propStore);
+
+                    if(ptr == IntPtr.Zero)
+                        throw new AssimpException("Error importing file: " + AssimpMethods.GetErrorString());
+
+                    TransformScene(ptr);
+                    ptr = AssimpMethods.ApplyPostProcessing(ptr, importProcessSteps);
+
+                    ValidateScene(ptr);
+
+                    return AssimpMethods.ExportSceneToBlob(ptr, exportFormatId, exportProcessSteps);
+                } finally {
+                    CleanupImport();
+
+                    if(ptr != IntPtr.Zero)
+                        AssimpMethods.ReleaseImport(ptr);
+                }
+            }
+        }
+
+        #endregion
 
         #endregion
 
@@ -329,26 +656,62 @@ namespace Assimp {
 
         #region Format support
 
-        /// <summary>
-        /// Gets the model formats that are supported by Assimp. Each
-        /// format should follow this example: ".3ds"
-        /// </summary>
-        /// <returns>The format extensions that are supported</returns>
-        public String[] GetSupportedFormats() {
-            if(m_extensionList == null)
-                m_extensionList = AssimpMethods.GetExtensionList();
+        #region Format support
 
-            return (String[]) m_extensionList.Clone();
+        /// <summary>
+        /// Gets the model formats that are supported for export by Assimp.
+        /// </summary>
+        /// <returns>Export formats supported</returns>
+        public ExportFormatDescription[] GetSupportedExportFormats() {
+            if(m_exportFormats == null)
+                m_exportFormats = AssimpMethods.GetExportFormatDescriptions();
+
+            return (ExportFormatDescription[]) m_exportFormats.Clone();
         }
 
         /// <summary>
-        /// Checks of the format extension is supported. Example: ".3ds"
+        /// Gets the model formats that are supported for import by Assimp.
         /// </summary>
-        /// <param name="formatExtension">Format extension</param>
-        /// <returns></returns>
-        public bool IsFormatSupported(String formatExtension) {
-            return AssimpMethods.IsExtensionSupported(formatExtension);
+        /// <returns>Import formats supported</returns>
+        public String[] GetSupportedImportFormats() {
+            if(m_importFormats == null)
+                m_importFormats = AssimpMethods.GetExtensionList();
+
+            return (String[]) m_importFormats.Clone();
         }
+
+        /// <summary>
+        /// Checks if the format extension (e.g. ".dae" or ".obj") is supported for import.
+        /// </summary>
+        /// <param name="format">Model format</param>
+        /// <returns>True if the format is supported, false otherwise</returns>
+        public bool IsImportFormatSupported(String format) {
+            return AssimpMethods.IsExtensionSupported(format);
+        }
+
+        /// <summary>
+        /// Checks if the format extension (e.g. ".dae" or ".obj") is supported for export.
+        /// </summary>
+        /// <param name="format">Model format</param>
+        /// <returns>True if the format is supported, false otherwise</returns>
+        public bool IsExportFormatSupported(String format) {
+            if(String.IsNullOrEmpty(format))
+                return false;
+
+            ExportFormatDescription[] exportFormats = GetSupportedExportFormats();
+
+            if(format.StartsWith(".") && format.Length >= 2)
+                format = format.Substring(1);
+
+            foreach(ExportFormatDescription desc in exportFormats) {
+                if(String.Equals(desc.FileExtension, format))
+                    return true;
+            }
+
+            return false;
+        }
+
+        #endregion
 
         #endregion
 
@@ -363,11 +726,7 @@ namespace Assimp {
                 return;
             }
             String name = config.Name;
-            if(!m_configs.ContainsKey(name)) {
-                m_configs[name] = config;
-            } else {
-                m_configs.Add(name, config);
-            }
+            m_configs[config.Name] = config;
         }
 
         /// <summary>
@@ -379,7 +738,7 @@ namespace Assimp {
                 return;
             }
             PropertyConfig oldConfig;
-            if(!m_configs.TryGetValue(configName, out oldConfig)) {
+            if(m_configs.TryGetValue(configName, out oldConfig)) {
                 m_configs.Remove(configName);
             }
         }
@@ -483,16 +842,17 @@ namespace Assimp {
 
         //Creates all property stores and sets their values
         private void CreateConfigs() {
+            m_propStore = AssimpMethods.CreatePropertyStore();
+
             foreach(KeyValuePair<String, PropertyConfig> config in m_configs) {
-                config.Value.CreatePropertyStore();
+                config.Value.ApplyValue(m_propStore);
             }
         }
 
         //Destroys all property stores
         private void ReleaseConfigs() {
-            foreach(KeyValuePair<String, PropertyConfig> config in m_configs) {
-                config.Value.ReleasePropertyStore();
-            }
+            if(m_propStore != IntPtr.Zero)
+                AssimpMethods.ReleasePropertyStore(m_propStore);
         }
 
         //Attachs all logstreams to Assimp
@@ -530,6 +890,14 @@ namespace Assimp {
             }
 
             return new Scene(scene);
+        }
+
+        //Validate the imported scene to ensure its complete and load the return scene
+        private void ValidateScene(IntPtr ptr) {
+            AiScene scene = MemoryHelper.MarshalStructure<AiScene>(ptr);
+            if((scene.Flags & SceneFlags.Incomplete) == SceneFlags.Incomplete) {
+                throw new AssimpException("Error importing file: Imported scene is incomplete. " + AssimpMethods.GetErrorString());
+            }
         }
 
         #endregion
