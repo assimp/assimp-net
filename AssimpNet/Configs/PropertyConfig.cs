@@ -863,7 +863,7 @@ namespace Assimp.Configs {
     }
 
     /// <summary>
-    /// Configures the maximum bone count per mesh for the <see cref="PostPrcessStep.SplitByBoneCount"/> step. Meshes are
+    /// Configures the maximum bone count per mesh for the <see cref="PostProcessSteps.SplitByBoneCount"/> step. Meshes are
     /// split until the maximum number of bones is reached.
     /// </summary>
     public sealed class MaxBoneCountConfig : IntegerPropertyConfig {
@@ -908,7 +908,7 @@ namespace Assimp.Configs {
     }
 
     /// <summary>
-    /// Configures the <see cref="PostProcessStep.Debone"/> threshold that is used to determine what bones are removed.
+    /// Configures the <see cref="PostProcessSteps.Debone"/> threshold that is used to determine what bones are removed.
     /// </summary>
     public sealed class DeboneThresholdConfig : FloatPropertyConfig {
 
