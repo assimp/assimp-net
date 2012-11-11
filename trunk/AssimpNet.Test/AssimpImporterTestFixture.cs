@@ -29,10 +29,6 @@ using NUnit.Framework;
 namespace Assimp.Test {
     [TestFixture]
     public class AssimpImporterTestFixture {
-        private Scene sceneA;
-        private Scene sceneB;
-        private ExportDataBlob blob;
-
         [Test]
         public void TestImportFromFile() {
             String path = Path.Combine(TestHelper.RootPath, "TestFiles\\sphere.obj");
@@ -74,7 +70,7 @@ namespace Assimp.Test {
             AssimpImporter importer = new AssimpImporter();
             importer.VerboseLoggingEnabled = true;
 
-            LogStream logstream = new LogStream(delegate(String msg, IntPtr userData) {
+            LogStream logstream = new LogStream(delegate(String msg, String userData) {
                 Console.WriteLine(msg);
             });
 
@@ -164,31 +160,23 @@ namespace Assimp.Test {
             Console.WriteLine("Thread A: Starting import.");
             AssimpImporter importer = new AssimpImporter();
             String path = Path.Combine(TestHelper.RootPath, "TestFiles\\Bob.md5mesh");
-            LogStream logStream = new LogStream(delegate(String msg, IntPtr userData) {
-                Console.WriteLine("Thread A: " + msg);
-            });
-            importer.AttachLogStream(logStream);
+
+            importer.AttachLogStream(new ConsoleLogStream("Thread A:"));
             Console.WriteLine("Thread A: Importing");
             Scene scene = importer.ImportFile(path);
             Console.WriteLine("Thread A: Done importing");
-
-            sceneA = scene;
         }
 
         private void LoadSceneB() {
             Console.WriteLine("Thread B: Starting import.");
             AssimpImporter importer = new AssimpImporter();
             String path = Path.Combine(TestHelper.RootPath, "TestFiles\\duck.dae");
-            LogStream logStream = new LogStream(delegate(String msg, IntPtr userData) {
-                Console.WriteLine("Thread B: " + msg);
-            });
-            importer.AttachLogStream(logStream);
+
+            importer.AttachLogStream(new ConsoleLogStream("Thread B:"));
             importer.SetConfig(new NormalSmoothingAngleConfig(55.0f));
             Console.WriteLine("Thread B: Importing");
             Scene scene = importer.ImportFile(path);
             Console.WriteLine("Thread B: Done importing");
-
-            sceneB = scene;
         }
 
         private void ConvertSceneC() {
@@ -196,17 +184,14 @@ namespace Assimp.Test {
             AssimpImporter importer = new AssimpImporter();
             String path = Path.Combine(TestHelper.RootPath, "TestFiles\\duck.dae");
             String outputPath = Path.Combine(TestHelper.RootPath, "TestFiles\\duck2.obj");
-            LogStream logStream = new LogStream(delegate(String msg, IntPtr userData) {
-                Console.WriteLine("Thread C: " + msg);
-            });
-            importer.AttachLogStream(logStream);
+
+            importer.AttachLogStream(new ConsoleLogStream("Thread C:"));
             importer.SetConfig(new NormalSmoothingAngleConfig(55.0f));
             importer.SetConfig(new FavorSpeedConfig(true));
             importer.VerboseLoggingEnabled = true;
 
             Console.WriteLine("Thread C: Converting");
-            blob = importer.ConvertFromFileToBlob(path, "obj");
-            importer.ConvertFromFileToFile(path, outputPath, "obj");
+            ExportDataBlob blob = importer.ConvertFromFileToBlob(path, "obj");
 
             Console.WriteLine("Thread C: Done converting");
         }

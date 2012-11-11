@@ -659,31 +659,44 @@ namespace Assimp.Unmanaged {
     }
 
     /// <summary>
+    /// Callback delegate for Assimp's LogStream.
+    /// </summary>
+    /// <param name="msg">Log message</param>
+    /// <param name="userData">User data that is passed to the callback</param>
+    public delegate void LogStreamCallback([InAttribute()] [MarshalAsAttribute(UnmanagedType.LPStr)] String msg, IntPtr userData);
+
+    /// <summary>
     /// Represents a log stream, which receives all log messages and
     /// streams them somewhere.
     /// </summary>
     [StructLayoutAttribute(LayoutKind.Sequential)]
     public struct AiLogStream {
-        private LogStreamCallback _callback;
+        private LogStreamCallback m_callback;
 
         [MarshalAs(UnmanagedType.LPStr)]
-        private String _userData;
+        private String m_userData;
 
         /// <summary>
-        /// Callback that is called when a message is logged.
+        /// Gets or sets the callback that is called when a message is logged.
         /// </summary>
         public LogStreamCallback Callback {
             get {
-                return _callback;
+                return m_callback;
+            }
+            set {
+                m_callback = value;
             }
         }
 
         /// <summary>
-        /// User data to be passed to the callback.
+        /// Gets or sets the user data to be passed to the callback.
         /// </summary>
         public String UserData {
             get {
-                return _userData;
+                return m_userData;
+            }
+            set {
+                m_userData = value;
             }
         }
 
@@ -692,8 +705,8 @@ namespace Assimp.Unmanaged {
         /// </summary>
         /// <param name="callback">Callback called when messages are logged.</param>
         public AiLogStream(LogStreamCallback callback) {
-            _callback = callback;
-            _userData = null;
+            m_callback = callback;
+            m_userData = null;
         }
 
         /// <summary>
@@ -702,8 +715,8 @@ namespace Assimp.Unmanaged {
         /// <param name="callback">Callback called when messages are logged.</param>
         /// <param name="userData">User-supplied data</param>
         public AiLogStream(LogStreamCallback callback, String userData) {
-            _callback = callback;
-            _userData = userData;
+            m_callback = callback;
+            m_userData = userData;
         }
     }
 

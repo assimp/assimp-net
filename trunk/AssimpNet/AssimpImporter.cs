@@ -382,7 +382,6 @@ namespace Assimp {
         /// Converts the model contained in the file to the specified format and save it to a data blob.
         /// </summary>
         /// <param name="inputFilename">Input file name to import</param>
-        /// <param name="outputFilename">Output file name to export to</param>
         /// <param name="exportFormatId">Format id that specifies what format to export to</param>
         /// <returns>Data blob containing the exported scene in a binary form</returns>
         /// <exception cref="AssimpException">Thrown if there was a general error in importing the model.</exception>
@@ -396,7 +395,6 @@ namespace Assimp {
         /// Converts the model contained in the file to the specified format and save it to a data blob.
         /// </summary>
         /// <param name="inputFilename">Input file name to import</param>
-        /// <param name="outputFilename">Output file name to export to</param>
         /// <param name="exportFormatId">Format id that specifies what format to export to</param>
         /// <param name="exportProcessSteps">Pre processing steps used for the export</param>
         /// <returns>Data blob containing the exported scene in a binary form</returns>
@@ -412,7 +410,6 @@ namespace Assimp {
         /// </summary>
         /// <param name="inputFilename">Input file name to import</param>
         /// <param name="importProcessSteps">Post processing steps used for the import</param>
-        /// <param name="outputFilename">Output file name to export to</param>
         /// <param name="exportFormatId">Format id that specifies what format to export to</param>
         /// <param name="exportProcessSteps">Pre processing steps used for the export</param>
         /// <returns>Data blob containing the exported scene in a binary form</returns>
