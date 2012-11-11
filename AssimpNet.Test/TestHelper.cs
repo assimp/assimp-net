@@ -21,8 +21,8 @@
 */
 
 using System;
-using System.Reflection;
 using System.IO;
+using System.Reflection;
 using NUnit.Framework;
 using TK = OpenTK;
 

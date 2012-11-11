@@ -40,8 +40,10 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AssimpImporterTestFixture.cs" />
     <Compile Include="Color3DTestFixture.cs" />
     <Compile Include="Color4DTestFixture.cs" />
+    <Compile Include="ExportDataBlobTestFixture.cs" />
     <Compile Include="Matrix3x3TestFixture.cs" />
     <Compile Include="Matrix4x4TestFixture.cs" />
     <Compile Include="ObjSameFolderMtl_TestFixture.cs" />
@@ -58,6 +60,15 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="TestFiles\Bob.md5anim">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="TestFiles\Bob.md5mesh">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="TestFiles\duck.dae">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="TestFiles\sphere.blend">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -67,6 +78,11 @@
     <None Include="TestFiles\sphere.obj">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="TestFiles\duckCM.bmp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

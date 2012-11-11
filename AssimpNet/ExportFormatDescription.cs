@@ -21,6 +21,7 @@
 */
 
 using System;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using Assimp.Unmanaged;
 
@@ -28,6 +29,7 @@ namespace Assimp {
     /// <summary>
     /// Describes a file format which Assimp can export to.
     /// </summary>
+    [DebuggerDisplay("{Description}")]
     public sealed class ExportFormatDescription {
         private String m_formatId;
         private String m_description;

@@ -37,7 +37,7 @@ namespace Assimp {
     /// Represents a log stream, which receives all log messages and
     /// streams them somewhere.
     /// </summary>
-    public sealed class LogStream {
+    public class LogStream {
         private AiLogStream _logStream;
 
         /// <summary>
@@ -81,6 +81,16 @@ namespace Assimp {
 
         internal void Detach() {
             AssimpMethods.DetachLogStream(ref _logStream);
+        }
+    }
+
+    public sealed class ConsoleLogStream : LogStream {
+
+        public ConsoleLogStream()
+            : base(Log, "BlahBlah") { }
+
+        private static void Log(String msg, IntPtr userData) {
+            Console.WriteLine(msg);
         }
     }
 }
