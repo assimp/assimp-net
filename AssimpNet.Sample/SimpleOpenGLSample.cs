@@ -20,7 +20,7 @@ namespace Assimp.Sample {
 			Title = "Quack! - Assimp.NET Simple OpenGL Sample";
 
 			String fileName = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "duck.dae");
-            Assimp.Unmanaged.AssimpLibrary.Instance.LoadLibrary("Test//Assimp64.dll");
+
 			AssimpImporter importer = new AssimpImporter();
 			importer.SetConfig(new NormalSmoothingAngleConfig(66.0f));
 			_model = importer.ImportFile(fileName, PostProcessPreset.TargetRealTimeMaximumQuality);
