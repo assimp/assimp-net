@@ -1138,6 +1138,7 @@ namespace Assimp.Unmanaged {
 
             if(!m_nameToUnmanagedFunction.TryGetValue(functionName, out function)) {
                 function = Marshal.GetDelegateForFunctionPointer(procAddr, typeof(T));
+                m_nameToUnmanagedFunction.Add(functionName, function);
             }
 
             Object o = function;
