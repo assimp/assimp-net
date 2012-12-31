@@ -107,6 +107,8 @@ namespace Assimp.Unmanaged {
         public void FreeLibrary() {
             if(m_impl != null) {
                 m_impl.FreeLibrary();
+                m_impl = null;
+                m_libraryPath = String.Empty;
             }
         }
 
@@ -1093,7 +1095,7 @@ namespace Assimp.Unmanaged {
         }
 
         public void LoadLibrary(String path) {
-            FreeLibrary();
+            FreeLibrary(true);
             m_libraryHandle = NativeMethods.LoadLibrary(path);
 
             if(m_libraryHandle == IntPtr.Zero) {
@@ -1107,9 +1109,16 @@ namespace Assimp.Unmanaged {
         }
 
         public void FreeLibrary() {
+            FreeLibrary(true);
+        }
+
+        private void FreeLibrary(bool clearFunctions) {
             if(m_libraryHandle != IntPtr.Zero) {
                 NativeMethods.FreeLibrary(m_libraryHandle);
-                m_nameToUnmanagedFunction.Clear();
+                m_libraryHandle = IntPtr.Zero;
+
+                if(clearFunctions)
+                    m_nameToUnmanagedFunction.Clear();
             }
         }
 
@@ -1143,11 +1152,7 @@ namespace Assimp.Unmanaged {
 
         private void Dispose(bool disposing) {
             if(!m_isDisposed) {
-                if(disposing)
-                    m_nameToUnmanagedFunction.Clear();
-
-                if(m_libraryHandle != IntPtr.Zero)
-                    NativeMethods.FreeLibrary(m_libraryHandle);
+                FreeLibrary(disposing);
             }
 
             m_isDisposed = true;
