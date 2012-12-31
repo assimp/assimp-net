@@ -215,21 +215,21 @@ namespace Assimp {
                 PrepareImport();
 
                 try {
-                    ptr = AssimpMethods.ImportFileFromStream(stream, PostProcessSteps.None, formatHint, m_propStore);
+                    ptr = AssimpLibrary.Instance.ImportFileFromStream(stream, PostProcessSteps.None, formatHint, m_propStore);
 
                     if(ptr == IntPtr.Zero)
-                        throw new AssimpException("Error importing file: " + AssimpMethods.GetErrorString());
+                        throw new AssimpException("Error importing file: " + AssimpLibrary.Instance.GetErrorString());
 
                     TransformScene(ptr);
 
-                    ptr = AssimpMethods.ApplyPostProcessing(ptr, postProcessFlags);
+                    ptr = AssimpLibrary.Instance.ApplyPostProcessing(ptr, postProcessFlags);
 
                     return ValidateAndCreateScene(ptr);
                 } finally {
                     CleanupImport();
 
                     if(ptr != IntPtr.Zero) {
-                        AssimpMethods.ReleaseImport(ptr);
+                        AssimpLibrary.Instance.ReleaseImport(ptr);
                     }
                 }
             }
@@ -274,21 +274,21 @@ namespace Assimp {
                 IntPtr ptr = IntPtr.Zero;
                 PrepareImport();
                 try {
-                    ptr = AssimpMethods.ImportFile(file, PostProcessSteps.None, m_propStore);
+                    ptr = AssimpLibrary.Instance.ImportFile(file, PostProcessSteps.None, m_propStore);
 
                     if(ptr == IntPtr.Zero)
-                        throw new AssimpException("Error importing file: " + AssimpMethods.GetErrorString());
+                        throw new AssimpException("Error importing file: " + AssimpLibrary.Instance.GetErrorString());
 
                     TransformScene(ptr);
 
-                    ptr = AssimpMethods.ApplyPostProcessing(ptr, postProcessFlags);
+                    ptr = AssimpLibrary.Instance.ApplyPostProcessing(ptr, postProcessFlags);
 
                     return ValidateAndCreateScene(ptr);
                 } finally {
                     CleanupImport();
 
                     if(ptr != IntPtr.Zero) {
-                        AssimpMethods.ReleaseImport(ptr);
+                        AssimpLibrary.Instance.ReleaseImport(ptr);
                     }
                 }
             }
@@ -354,22 +354,22 @@ namespace Assimp {
                 PrepareImport();
 
                 try {
-                    ptr = AssimpMethods.ImportFile(inputFilename, PostProcessSteps.None, m_propStore);
+                    ptr = AssimpLibrary.Instance.ImportFile(inputFilename, PostProcessSteps.None, m_propStore);
 
                     if(ptr == IntPtr.Zero)
-                        throw new AssimpException("Error importing file: " + AssimpMethods.GetErrorString());
+                        throw new AssimpException("Error importing file: " + AssimpLibrary.Instance.GetErrorString());
 
                     TransformScene(ptr);
-                    ptr = AssimpMethods.ApplyPostProcessing(ptr, importProcessSteps);
+                    ptr = AssimpLibrary.Instance.ApplyPostProcessing(ptr, importProcessSteps);
 
                     ValidateScene(ptr);
 
-                    AssimpMethods.ExportScene(ptr, exportFormatId, outputFilename, exportProcessSteps);
+                    AssimpLibrary.Instance.ExportScene(ptr, exportFormatId, outputFilename, exportProcessSteps);
                 } finally {
                     CleanupImport();
 
                     if(ptr != IntPtr.Zero)
-                        AssimpMethods.ReleaseImport(ptr);
+                        AssimpLibrary.Instance.ReleaseImport(ptr);
                 }
             }
         }
@@ -430,22 +430,22 @@ namespace Assimp {
                 PrepareImport();
 
                 try {
-                    ptr = AssimpMethods.ImportFile(inputFilename, PostProcessSteps.None, m_propStore);
+                    ptr = AssimpLibrary.Instance.ImportFile(inputFilename, PostProcessSteps.None, m_propStore);
 
                     if(ptr == IntPtr.Zero)
-                        throw new AssimpException("Error importing file: " + AssimpMethods.GetErrorString());
+                        throw new AssimpException("Error importing file: " + AssimpLibrary.Instance.GetErrorString());
 
                     TransformScene(ptr);
-                    ptr = AssimpMethods.ApplyPostProcessing(ptr, importProcessSteps);
+                    ptr = AssimpLibrary.Instance.ApplyPostProcessing(ptr, importProcessSteps);
 
                     ValidateScene(ptr);
 
-                    return AssimpMethods.ExportSceneToBlob(ptr, exportFormatId, exportProcessSteps);
+                    return AssimpLibrary.Instance.ExportSceneToBlob(ptr, exportFormatId, exportProcessSteps);
                 } finally {
                     CleanupImport();
 
                     if(ptr != IntPtr.Zero)
-                        AssimpMethods.ReleaseImport(ptr);
+                        AssimpLibrary.Instance.ReleaseImport(ptr);
                 }
             }
         }
@@ -514,22 +514,22 @@ namespace Assimp {
                 PrepareImport();
 
                 try {
-                    ptr = AssimpMethods.ImportFileFromStream(inputStream, importProcessSteps, importFormatHint, m_propStore);
+                    ptr = AssimpLibrary.Instance.ImportFileFromStream(inputStream, importProcessSteps, importFormatHint, m_propStore);
 
                     if(ptr == IntPtr.Zero)
-                        throw new AssimpException("Error importing file: " + AssimpMethods.GetErrorString());
+                        throw new AssimpException("Error importing file: " + AssimpLibrary.Instance.GetErrorString());
 
                     TransformScene(ptr);
-                    ptr = AssimpMethods.ApplyPostProcessing(ptr, importProcessSteps);
+                    ptr = AssimpLibrary.Instance.ApplyPostProcessing(ptr, importProcessSteps);
 
                     ValidateScene(ptr);
 
-                    AssimpMethods.ExportScene(ptr, exportFormatId, outputFilename, exportProcessSteps);
+                    AssimpLibrary.Instance.ExportScene(ptr, exportFormatId, outputFilename, exportProcessSteps);
                 } finally {
                     CleanupImport();
 
                     if(ptr != IntPtr.Zero)
-                        AssimpMethods.ReleaseImport(ptr);
+                        AssimpLibrary.Instance.ReleaseImport(ptr);
                 }
             }
         }
@@ -594,22 +594,22 @@ namespace Assimp {
                 PrepareImport();
 
                 try {
-                    ptr = AssimpMethods.ImportFileFromStream(inputStream, importProcessSteps, importFormatHint, m_propStore);
+                    ptr = AssimpLibrary.Instance.ImportFileFromStream(inputStream, importProcessSteps, importFormatHint, m_propStore);
 
                     if(ptr == IntPtr.Zero)
-                        throw new AssimpException("Error importing file: " + AssimpMethods.GetErrorString());
+                        throw new AssimpException("Error importing file: " + AssimpLibrary.Instance.GetErrorString());
 
                     TransformScene(ptr);
-                    ptr = AssimpMethods.ApplyPostProcessing(ptr, importProcessSteps);
+                    ptr = AssimpLibrary.Instance.ApplyPostProcessing(ptr, importProcessSteps);
 
                     ValidateScene(ptr);
 
-                    return AssimpMethods.ExportSceneToBlob(ptr, exportFormatId, exportProcessSteps);
+                    return AssimpLibrary.Instance.ExportSceneToBlob(ptr, exportFormatId, exportProcessSteps);
                 } finally {
                     CleanupImport();
 
                     if(ptr != IntPtr.Zero)
-                        AssimpMethods.ReleaseImport(ptr);
+                        AssimpLibrary.Instance.ReleaseImport(ptr);
                 }
             }
         }
@@ -661,7 +661,7 @@ namespace Assimp {
         /// <returns>Export formats supported</returns>
         public ExportFormatDescription[] GetSupportedExportFormats() {
             if(m_exportFormats == null)
-                m_exportFormats = AssimpMethods.GetExportFormatDescriptions();
+                m_exportFormats = AssimpLibrary.Instance.GetExportFormatDescriptions();
 
             return (ExportFormatDescription[]) m_exportFormats.Clone();
         }
@@ -672,7 +672,7 @@ namespace Assimp {
         /// <returns>Import formats supported</returns>
         public String[] GetSupportedImportFormats() {
             if(m_importFormats == null)
-                m_importFormats = AssimpMethods.GetExtensionList();
+                m_importFormats = AssimpLibrary.Instance.GetExtensionList();
 
             return (String[]) m_importFormats.Clone();
         }
@@ -683,7 +683,7 @@ namespace Assimp {
         /// <param name="format">Model format</param>
         /// <returns>True if the format is supported, false otherwise</returns>
         public bool IsImportFormatSupported(String format) {
-            return AssimpMethods.IsExtensionSupported(format);
+            return AssimpLibrary.Instance.IsExtensionSupported(format);
         }
 
         /// <summary>
@@ -839,7 +839,7 @@ namespace Assimp {
 
         //Creates all property stores and sets their values
         private void CreateConfigs() {
-            m_propStore = AssimpMethods.CreatePropertyStore();
+            m_propStore = AssimpLibrary.Instance.CreatePropertyStore();
 
             foreach(KeyValuePair<String, PropertyConfig> config in m_configs) {
                 config.Value.ApplyValue(m_propStore);
@@ -849,7 +849,7 @@ namespace Assimp {
         //Destroys all property stores
         private void ReleaseConfigs() {
             if(m_propStore != IntPtr.Zero)
-                AssimpMethods.ReleasePropertyStore(m_propStore);
+                AssimpLibrary.Instance.ReleasePropertyStore(m_propStore);
         }
 
         //Attachs all logstreams to Assimp
@@ -868,7 +868,7 @@ namespace Assimp {
 
         //Does all the necessary prep work before we import
         private void PrepareImport() {
-            AssimpMethods.EnableVerboseLogging(m_verboseEnabled);
+            AssimpLibrary.Instance.EnableVerboseLogging(m_verboseEnabled);
             AttachLogs();
             CreateConfigs();
         }
@@ -883,7 +883,7 @@ namespace Assimp {
         private Scene ValidateAndCreateScene(IntPtr ptr) {
             AiScene scene = MemoryHelper.MarshalStructure<AiScene>(ptr);
             if((scene.Flags & SceneFlags.Incomplete) == SceneFlags.Incomplete) {
-                throw new AssimpException("Error importing file: Imported scene is incomplete. " + AssimpMethods.GetErrorString());
+                throw new AssimpException("Error importing file: Imported scene is incomplete. " + AssimpLibrary.Instance.GetErrorString());
             }
 
             return new Scene(scene);
@@ -893,7 +893,7 @@ namespace Assimp {
         private void ValidateScene(IntPtr ptr) {
             AiScene scene = MemoryHelper.MarshalStructure<AiScene>(ptr);
             if((scene.Flags & SceneFlags.Incomplete) == SceneFlags.Incomplete) {
-                throw new AssimpException("Error importing file: Imported scene is incomplete. " + AssimpMethods.GetErrorString());
+                throw new AssimpException("Error importing file: Imported scene is incomplete. " + AssimpLibrary.Instance.GetErrorString());
             }
         }
 

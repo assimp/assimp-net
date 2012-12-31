@@ -420,14 +420,14 @@ namespace Assimp {
             foreach(var texType in Enum.GetValues(typeof(TextureType))) {
                 TextureType type = (TextureType) texType;
                 if(type != TextureType.None) {
-                    uint count = AssimpMethods.GetMaterialTextureCount(ref material, type);
+                    uint count = AssimpLibrary.Instance.GetMaterialTextureCount(ref material, type);
                     for(uint i = 0; i < count; i++) {
                         List<TextureSlot> slots;
                         if(!_textures.TryGetValue((int) type, out slots)) {
                             slots = new List<TextureSlot>();
                             _textures.Add((int) type, slots);
                         }
-                        slots.Add(AssimpMethods.GetMaterialTexture(ref material, type, i));
+                        slots.Add(AssimpLibrary.Instance.GetMaterialTexture(ref material, type, i));
                     }
                 }
             }

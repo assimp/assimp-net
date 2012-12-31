@@ -103,11 +103,11 @@ namespace Assimp {
         }
 
         internal void Attach() {
-            AssimpMethods.AttachLogStream(ref m_logStream);
+            AssimpLibrary.Instance.AttachLogStream(ref m_logStream);
         }
 
         internal void Detach() {
-            AssimpMethods.DetachLogStream(ref m_logStream);
+            AssimpLibrary.Instance.DetachLogStream(ref m_logStream);
         }
     }
 
