@@ -1,4 +1,26 @@
-﻿using System;
+﻿/*
+* Copyright (c) 2012-2013 Nicholas Woodfield
+* 
+* Permission is hereby granted, free of charge, to any person obtaining a copy
+* of this software and associated documentation files (the "Software"), to deal
+* in the Software without restriction, including without limitation the rights
+* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+* copies of the Software, and to permit persons to whom the Software is
+* furnished to do so, subject to the following conditions:
+* 
+* The above copyright notice and this permission notice shall be included in
+* all copies or substantial portions of the Software.
+* 
+* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+* THE SOFTWARE.
+*/
+
+using System;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -10,11 +32,11 @@ using OpenTK.Graphics.OpenGL;
 
 namespace Assimp.Sample {
 	public class SimpleOpenGLSample : GameWindow {
-		private Scene _model;
-		private Vector3 _sceneCenter, _sceneMin, _sceneMax;
-		private float _angle;
-		private int _displayList;
-		private int _texID;
+		private Scene m_model;
+		private Vector3 m_sceneCenter, m_sceneMin, m_sceneMax;
+		private float m_angle;
+		private int m_displayList;
+		private int m_texId;
 
 		public SimpleOpenGLSample() : base() {
 			Title = "Quack! - Assimp.NET Simple OpenGL Sample";
@@ -23,20 +45,20 @@ namespace Assimp.Sample {
 
 			AssimpImporter importer = new AssimpImporter();
 			importer.SetConfig(new NormalSmoothingAngleConfig(66.0f));
-			_model = importer.ImportFile(fileName, PostProcessPreset.TargetRealTimeMaximumQuality);
+			m_model = importer.ImportFile(fileName, PostProcessPreset.TargetRealTimeMaximumQuality);
 			ComputeBoundingBox();
 		}
 
 		private void ComputeBoundingBox() {
-			_sceneMin = new Vector3(1e10f, 1e10f, 1e10f);
-			_sceneMax = new Vector3(-1e10f, -1e10f, -1e10f);
+			m_sceneMin = new Vector3(1e10f, 1e10f, 1e10f);
+			m_sceneMax = new Vector3(-1e10f, -1e10f, -1e10f);
 			Matrix4 identity = Matrix4.Identity;
 
-			ComputeBoundingBox(_model.RootNode, ref _sceneMin, ref _sceneMax, ref identity);
+			ComputeBoundingBox(m_model.RootNode, ref m_sceneMin, ref m_sceneMax, ref identity);
 
-			_sceneCenter.X = (_sceneMin.X + _sceneMax.X) / 2.0f;
-			_sceneCenter.Y = (_sceneMin.Y + _sceneMax.Y) / 2.0f;
-			_sceneCenter.Z = (_sceneMin.Z + _sceneMax.Z) / 2.0f;
+			m_sceneCenter.X = (m_sceneMin.X + m_sceneMax.X) / 2.0f;
+			m_sceneCenter.Y = (m_sceneMin.Y + m_sceneMax.Y) / 2.0f;
+			m_sceneCenter.Z = (m_sceneMin.Z + m_sceneMax.Z) / 2.0f;
 		}
 
 		private void ComputeBoundingBox(Node node, ref Vector3 min, ref Vector3 max, ref Matrix4 trafo) {
@@ -45,7 +67,7 @@ namespace Assimp.Sample {
 
 			if(node.HasMeshes) {
 				foreach(int index in node.MeshIndices) {
-					Mesh mesh = _model.Meshes[index];
+					Mesh mesh = m_model.Meshes[index];
 					for(int i = 0; i < mesh.VertexCount; i++) {
 						Vector3 tmp = FromVector(mesh.Vertices[i]);
 						Vector3.Transform(ref tmp, ref trafo, out tmp);
@@ -69,15 +91,15 @@ namespace Assimp.Sample {
 
 		protected override void OnUnload(EventArgs e) {
 			base.OnUnload(e);
-			GL.DeleteTexture(_texID);
+			GL.DeleteTexture(m_texId);
 		}
 
 		protected override void OnUpdateFrame(FrameEventArgs e) {
 			base.OnUpdateFrame(e);
 
-			_angle += 25f * (float) e.Time;
-			if(_angle > 360) {
-				_angle = 0.0f;
+			m_angle += 25f * (float) e.Time;
+			if(m_angle > 360) {
+				m_angle = 0.0f;
 			}
 			if(Keyboard[OpenTK.Input.Key.Escape]) {
 				this.Exit();
@@ -112,24 +134,24 @@ namespace Assimp.Sample {
 			Matrix4 lookat = Matrix4.LookAt(0, 5, 5, 0, 0, 0, 0, 1, 0);
 			GL.LoadMatrix(ref lookat);
 
-			GL.Rotate(_angle, 0.0f, 1.0f, 0.0f);
+			GL.Rotate(m_angle, 0.0f, 1.0f, 0.0f);
 
-			float tmp = _sceneMax.X - _sceneMin.X;
-			tmp = Math.Max(_sceneMax.Y - _sceneMin.Y, tmp);
-			tmp = Math.Max(_sceneMax.Z - _sceneMin.Z, tmp);
+			float tmp = m_sceneMax.X - m_sceneMin.X;
+			tmp = Math.Max(m_sceneMax.Y - m_sceneMin.Y, tmp);
+			tmp = Math.Max(m_sceneMax.Z - m_sceneMin.Z, tmp);
 			tmp = 1.0f / tmp;
 			GL.Scale(tmp*2, tmp*2, tmp*2);
 
-			GL.Translate(-_sceneCenter);
+			GL.Translate(-m_sceneCenter);
 
-			if(_displayList == 0) {
-				_displayList = GL.GenLists(1);
-				GL.NewList(_displayList, ListMode.Compile);
-				RecursiveRender(_model, _model.RootNode);
+			if(m_displayList == 0) {
+				m_displayList = GL.GenLists(1);
+				GL.NewList(m_displayList, ListMode.Compile);
+				RecursiveRender(m_model, m_model.RootNode);
 				GL.EndList();
 			}
 
-			GL.CallList(_displayList);
+			GL.CallList(m_displayList);
 
 			SwapBuffers();
 		}
@@ -200,7 +222,7 @@ namespace Assimp.Sample {
 			}
 
 			for(int i = 0; i < node.ChildCount; i++) {
-				RecursiveRender(_model, node.Children[i]);
+				RecursiveRender(m_model, node.Children[i]);
 			}
 		}
 
@@ -216,8 +238,8 @@ namespace Assimp.Sample {
 					System.Drawing.Imaging.ImageLockMode.ReadOnly,
 					System.Drawing.Imaging.PixelFormat.Format24bppRgb
 				);
-			_texID = GL.GenTexture();
-			GL.BindTexture(TextureTarget.Texture2D, _texID);
+			m_texId = GL.GenTexture();
+			GL.BindTexture(TextureTarget.Texture2D, m_texId);
 
 			GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgb, textureBitmap.Width, textureBitmap.Height, 0,
 				OpenTK.Graphics.OpenGL.PixelFormat.Bgr, PixelType.UnsignedByte, TextureData.Scan0);
