@@ -106,7 +106,7 @@ namespace Assimp.Unmanaged {
 
         /// <summary>
         /// Loads the Assimp unmanaged library using the DLL path specified in LibraryPath. If the library is already loaded, or there was an error
-        /// in loading the library, an AssimpException is t hrown.
+        /// in loading the library, an AssimpException is thrown.
         /// </summary>
         /// <param name="libPath">Path to the Assimp DLL.</param>
         /// <exception cref="Assimp.AssimpException">Thrown if the library is already loaded or if there was an error in loading the library.</exception>
