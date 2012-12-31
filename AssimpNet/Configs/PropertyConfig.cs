@@ -129,7 +129,7 @@ namespace Assimp.Configs {
         /// <param name="propStore">Assimp property store</param>
         protected override void OnApplyValue(IntPtr propStore) {
             if(propStore != IntPtr.Zero) {
-                AssimpMethods.SetImportPropertyInteger(propStore, Name, m_value);
+                AssimpLibrary.Instance.SetImportPropertyInteger(propStore, Name, m_value);
             }
         }
     }
@@ -195,7 +195,7 @@ namespace Assimp.Configs {
         /// <param name="propStore">Assimp property store</param>
         protected override void OnApplyValue(IntPtr propStore) {
             if(propStore != IntPtr.Zero) {
-                AssimpMethods.SetImportPropertyFloat(propStore, Name, m_value);
+                AssimpLibrary.Instance.SetImportPropertyFloat(propStore, Name, m_value);
             }
         }
     }
@@ -262,7 +262,7 @@ namespace Assimp.Configs {
         protected override void OnApplyValue(IntPtr propStore) {
             if(propStore != IntPtr.Zero) {
                 int aiBool = (m_value) ? 1 : 0;
-                AssimpMethods.SetImportPropertyInteger(propStore, Name, aiBool);
+                AssimpLibrary.Instance.SetImportPropertyInteger(propStore, Name, aiBool);
             }
         }
     }
@@ -328,7 +328,7 @@ namespace Assimp.Configs {
         /// <param name="propStore">Assimp property store</param>
         protected override void OnApplyValue(IntPtr propStore) {
             if(propStore != IntPtr.Zero) {
-                AssimpMethods.SetImportPropertyString(propStore, Name, m_value);
+                AssimpLibrary.Instance.SetImportPropertyString(propStore, Name, m_value);
             }
         }
 

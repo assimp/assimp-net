@@ -83,7 +83,7 @@ namespace Assimp.Test {
             Vector3D scaling1;
             Quaternion rotation1;
             Vector3D translation1;
-            Assimp.Unmanaged.AssimpMethods.DecomposeMatrix(ref m, out scaling1, out rotation1, out translation1);
+            Assimp.Unmanaged.AssimpLibrary.Instance.DecomposeMatrix(ref m, out scaling1, out rotation1, out translation1);
 
             Vector3D scaling2;
             Quaternion rotation2;
