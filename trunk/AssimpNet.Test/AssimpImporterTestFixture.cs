@@ -24,6 +24,7 @@ using System;
 using System.IO;
 using System.Threading;
 using Assimp.Configs;
+using Assimp.Unmanaged;
 using NUnit.Framework;
 
 namespace Assimp.Test {
@@ -139,6 +140,23 @@ namespace Assimp.Test {
             importer.ConvertFromStreamToFile(memStream, ".dae", outputPath2, "obj");
 
             memStream.Close();
+
+            importer.DetachLogStreams();
+        }
+
+        [Test]
+        public void TestLoadFreeLibrary() {
+            if(AssimpLibrary.Instance.LibraryLoaded)
+                AssimpLibrary.Instance.FreeLibrary();
+
+            AssimpLibrary.Instance.LoadLibrary();
+            
+            String path = Path.Combine(TestHelper.RootPath, "TestFiles\\duck.dae");
+            AssimpImporter importer = new AssimpImporter();
+            importer.ImportFile(path);
+            importer.Dispose();
+
+            AssimpLibrary.Instance.FreeLibrary();
         }
 
         [Test]
