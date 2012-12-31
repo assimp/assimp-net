@@ -804,17 +804,18 @@ namespace Assimp {
         }
 
         //Transforms the root node of the scene and writes it back to the native structure
-        private unsafe bool TransformScene(IntPtr scene) {
+        private bool TransformScene(IntPtr scene) {
             BuildMatrix();
 
             try {
                 if(!m_scaleRot.IsIdentity) {
-                    IntPtr rootNode = Marshal.ReadIntPtr(MemoryHelper.AddIntPtr(scene, sizeof(uint))); //Skip over sceneflags
+                    AiScene aiScene = MemoryHelper.MarshalStructure<AiScene>(scene);
+                    if(aiScene.RootNode == IntPtr.Zero)
+                        return false;
 
-                    IntPtr matrixPtr = MemoryHelper.AddIntPtr(rootNode, Marshal.SizeOf(typeof(AiString))); //Skip over AiString
+                    IntPtr matrixPtr = MemoryHelper.AddIntPtr(aiScene.RootNode, Marshal.SizeOf(typeof(AiString))); //Skip over Node Name
 
                     Matrix4x4 matrix = MemoryHelper.MarshalStructure<Matrix4x4>(matrixPtr); //Get the root transform
-
                     matrix = matrix * m_scaleRot; //Transform
 
                     //Save back to unmanaged mem
@@ -829,6 +830,7 @@ namespace Assimp {
                             }
                         }
                     }
+
                     return true;
                 }
             } catch(Exception) {
