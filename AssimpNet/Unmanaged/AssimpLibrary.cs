@@ -94,14 +94,7 @@ namespace Assimp.Unmanaged {
         /// </summary>
         /// <exception cref="Assimp.AssimpException">Thrown if the library is already loaded or if there was an error in loading the library.</exception>
         public void LoadLibrary() {
-            String libPath;
-            if(IntPtr.Size == 8) {
-                libPath = m_default64BitPath;
-            } else {
-                libPath = m_default32BitPath;
-            }
-
-            LoadLibrary(libPath);
+            LoadLibrary(m_default32BitPath, m_default64BitPath);
         }
 
         /// <summary>
@@ -119,6 +112,17 @@ namespace Assimp.Unmanaged {
 
             m_impl = impl;
             m_libraryPath = libPath;
+        }
+
+        /// <summary>
+        /// Convienence method that gives the AssimpLibrary paths to both a 32-bit and 64-bit path, letting the runtime choose between the two depending on the
+        /// bitness of the process.
+        /// </summary>
+        /// <param name="lib32Path">Path to the 32 bit Assimp DLL</param>
+        /// <param name="lib64Path">Path to the 64 bit Assimp DLL</param>
+        public void LoadLibrary(String lib32Path, String lib64Path) {
+            String libPath = (IntPtr.Size == 8) ? lib64Path : lib32Path;
+            LoadLibrary(libPath);
         }
 
         /// <summary>
