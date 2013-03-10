@@ -326,7 +326,7 @@ namespace Assimp.Unmanaged {
         /// <summary>
         /// Attaches a log stream callback to catch Assimp messages.
         /// </summary>
-        /// <param name="stream">Pointer to an instance of AiLogStream.</param>
+        /// <param name="logStreamPtr">Pointer to an instance of AiLogStream.</param>
         public void AttachLogStream(IntPtr logStreamPtr) {
             LoadIfNotLoaded();
 
@@ -350,7 +350,7 @@ namespace Assimp.Unmanaged {
         /// <summary>
         /// Detaches a logstream callback.
         /// </summary>
-        /// <param name="stream">Pointer to an instance of AiLogStream.</param>
+        /// <param name="logStreamPtr">Pointer to an instance of AiLogStream.</param>
         /// <returns>A return code signifying if the function was successful or not.</returns>
         public ReturnCode DetachLogStream(IntPtr logStreamPtr) {
             LoadIfNotLoaded();

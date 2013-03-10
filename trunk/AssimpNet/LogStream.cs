@@ -93,6 +93,9 @@ namespace Assimp {
             Initialize(callback, userData);
         }
 
+        /// <summary>
+        /// Finalizes an instance of the <see cref="LogStream"/> class.
+        /// </summary>
         ~LogStream() {
             Dispose(false);
         }

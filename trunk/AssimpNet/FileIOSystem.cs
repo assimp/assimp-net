@@ -39,6 +39,10 @@ namespace Assimp {
         /// </summary>
         public FileIOSystem() : this(null) { }
 
+        /// <summary>
+        /// Constructs a new FileIOSystem that uses the specified search directories.
+        /// </summary>
+        /// <param name="searchPaths">Search directories to search for files in</param>
         public FileIOSystem(params String[] searchPaths) {
             m_searchDirectories = new List<DirectoryInfo>();
 
@@ -74,6 +78,12 @@ namespace Assimp {
             return searchPaths.ToArray();
         }
 
+        /// <summary>
+        /// Opens a stream to a file.
+        /// </summary>
+        /// <param name="pathToFile">Path to the file</param>
+        /// <param name="fileMode">Desired file access mode</param>
+        /// <returns>The IO stream</returns>
         public override IOStream OpenFile(String pathToFile, FileIOMode fileMode) {
             return new FileIOStream(this, pathToFile, fileMode);
         }
