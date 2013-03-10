@@ -21,6 +21,7 @@
 */
 
 using System;
+using System.Runtime.InteropServices;
 using Assimp.Unmanaged;
 
 namespace Assimp {
@@ -28,61 +29,99 @@ namespace Assimp {
     /// Callback delegate for Assimp's LogStream.
     /// </summary>
     /// <param name="msg">Log message</param>
-    /// <param name="userData">User data that is passed to the callback</param>
-    public delegate void LogCallback(String msg, String userData);
+    /// <param name="userData">Supplied user data</param>
+    public delegate void LoggingCallback(String msg, String userData);
 
     /// <summary>
-    /// Represents a log stream, which receives all log messages and
-    /// streams them somewhere.
+    /// Represents a log stream, which receives all log messages and streams them somewhere.
     /// </summary>
-    public class LogStream {
-        private AiLogStream m_logStream;
-        private LogCallback m_logCallback;
+    public class LogStream : IDisposable {
+        private LoggingCallback m_logCallback;
+        private AiLogStreamCallback m_assimpCallback;
+        private IntPtr m_logstreamPtr;
+        private String m_userData;
+        private bool m_isDisposed;
 
         /// <summary>
-        /// User data to be passed to the callback.
+        /// Gets or sets the user data to be passed to the callback.
         /// </summary>
         public String UserData {
             get {
-                return m_logStream.UserData;
+                return m_userData;
             }
             set {
-                m_logStream.UserData = value;
+                m_userData = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets whether the logstream has been disposed or not.
+        /// </summary>
+        public bool IsDisposed {
+            get {
+                return m_isDisposed;
             }
         }
 
         /// <summary>
         /// Constructs a new LogStream.
         /// </summary>
-        protected LogStream() {
-            m_logStream = new AiLogStream(OnLogstream);
-        }
+        protected LogStream() : this("") { }
 
         /// <summary>
         /// Constructs a new LogStream.
         /// </summary>
         /// <param name="userData">User-supplied data</param>
         protected LogStream(String userData) {
-            m_logStream = new AiLogStream(OnLogstream, userData);
+            Initialize(null, userData);
         }
 
         /// <summary>
         /// Constructs a new LogStream.
         /// </summary>
-        /// <param name="callback">Callback called when messages are logged.</param>
-        public LogStream(LogCallback callback) {
-            m_logStream = new AiLogStream(OnLogstream);
-            m_logCallback = callback;
+        /// <param name="callback">Logging callback that is called when messages are received by the log stream.</param>
+        public LogStream(LoggingCallback callback) {
+            Initialize(callback, String.Empty);
         }
 
         /// <summary>
         /// Constructs a new LogStream.
         /// </summary>
-        /// <param name="callback">Callback called when messages are logged.</param>
+        /// <param name="callback">Logging callback that is called when messages are received by the log stream.</param>
         /// <param name="userData">User-supplied data</param>
-        public LogStream(LogCallback callback, String userData) {
-            m_logStream = new AiLogStream(OnLogstream, userData);
-            m_logCallback = callback;
+        public LogStream(LoggingCallback callback, String userData) {
+            Initialize(callback, userData);
+        }
+
+        ~LogStream() {
+            Dispose(false);
+        }
+
+        /// <summary>
+        /// Releases unmanaged resources held by the LogStream. This should not be called by the user if the logstream is currently attached to an assimp importer.
+        /// </summary>
+        public void Dispose() {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Releases unmanaged and - optionally - managed resources.
+        /// </summary>
+        /// <param name="disposing">True to release both managed and unmanaged resources; False to release only unmanaged resources.</param>
+        protected virtual void Dispose(bool disposing) {
+            if(!m_isDisposed) {
+                if(m_logstreamPtr != IntPtr.Zero) {
+                    Marshal.FreeHGlobal(m_logstreamPtr);
+                    m_logstreamPtr = IntPtr.Zero;
+                }
+
+                if(disposing) {
+                    m_assimpCallback = null;
+                }
+
+                m_isDisposed = true;
+            }
         }
 
         /// <summary>
@@ -91,22 +130,51 @@ namespace Assimp {
         /// </summary>
         /// <param name="msg">Message</param>
         /// <param name="userData">User data</param>
-        protected virtual void Log(String msg, String userData) { }
+        protected virtual void LogMessage(String msg, String userData) { }
 
-        internal void OnLogstream(String msg, IntPtr userData) {
+        /// <summary>
+        /// Called when the log stream has been attached to the assimp importer. At this point it may start receiving messages.
+        /// </summary>
+        protected virtual void OnAttach() { }
+
+        /// <summary>
+        /// Called when the log stream has been detatched from the assimp importer. After this point it will stop receiving
+        /// messages until it is re-attached.
+        /// </summary>
+        protected virtual void OnDetach() { }
+
+        internal void OnAiLogStreamCallback(String msg, IntPtr userData) {
             if(m_logCallback != null) {
-                m_logCallback(msg, m_logStream.UserData);
+                m_logCallback(msg, m_userData);
             } else {
-                Log(msg, m_logStream.UserData);
+                LogMessage(msg, m_userData);
             }
         }
 
         internal void Attach() {
-            AssimpLibrary.Instance.AttachLogStream(ref m_logStream);
+            AssimpLibrary.Instance.AttachLogStream(m_logstreamPtr);
+            OnAttach();
         }
 
         internal void Detach() {
-            AssimpLibrary.Instance.DetachLogStream(ref m_logStream);
+            AssimpLibrary.Instance.DetachLogStream(m_logstreamPtr);
+            OnDetach();
+        }
+
+        private void Initialize(LoggingCallback callback, String userData) {
+            if(userData == null)
+                userData = String.Empty;
+
+            m_assimpCallback = OnAiLogStreamCallback;
+            m_logCallback = callback;
+            m_userData = userData;
+
+            AiLogStream logStream;
+            logStream.Callback = Marshal.GetFunctionPointerForDelegate(m_assimpCallback);
+            logStream.UserData = IntPtr.Zero;
+
+            m_logstreamPtr = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(AiLogStream)));
+            Marshal.StructureToPtr(logStream, m_logstreamPtr, false);
         }
     }
 
@@ -114,7 +182,6 @@ namespace Assimp {
     /// Log stream that writes messages to the Console.
     /// </summary>
     public sealed class ConsoleLogStream : LogStream {
-
         /// <summary>
         /// Constructs a new console logstream.
         /// </summary>
@@ -131,7 +198,7 @@ namespace Assimp {
         /// </summary>
         /// <param name="msg">Message</param>
         /// <param name="userData">Userdata</param>
-        protected override void Log(String msg, String userData) {
+        protected override void LogMessage(String msg, String userData) {
             if(String.IsNullOrEmpty(userData)) {
                 Console.WriteLine(msg);
             } else {
