@@ -227,6 +227,8 @@ namespace Assimp {
                 if(m_fileStream != null)
                     m_fileStream.Close();
 
+                m_fileStream = null;
+
                 base.Dispose(disposing);
             }
         }
