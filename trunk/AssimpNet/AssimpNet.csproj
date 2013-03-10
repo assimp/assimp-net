@@ -53,10 +53,13 @@
     <Compile Include="Color3D.cs" />
     <Compile Include="Color4D.cs" />
     <Compile Include="Configs\PropertyConfig.cs" />
+    <Compile Include="FileIOSystem.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="ExportDataBlob.cs" />
     <Compile Include="ExportFormatDescription.cs" />
     <Compile Include="Face.cs" />
+    <Compile Include="IOStream.cs" />
+    <Compile Include="IOSystem.cs" />
     <Compile Include="Material.cs" />
     <Compile Include="MaterialProperty.cs" />
     <Compile Include="MeshAnimationChannel.cs" />

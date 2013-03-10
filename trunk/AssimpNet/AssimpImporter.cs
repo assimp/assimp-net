@@ -38,6 +38,7 @@ namespace Assimp {
         private bool m_verboseEnabled;
         private Dictionary<String, PropertyConfig> m_configs;
         private List<LogStream> m_logStreams;
+        private IOSystem m_ioSystem;
 
         private ExportFormatDescription[] m_exportFormats;
         private String[] m_importFormats;
@@ -137,6 +138,15 @@ namespace Assimp {
         }
 
         /// <summary>
+        /// Gets whether this importer is using a user-defined IO system for file handling.
+        /// </summary>
+        public bool UsingCustomIOSystem {
+            get {
+                return m_ioSystem != null && !m_ioSystem.IsDisposed;
+            }
+        }
+
+        /// <summary>
         /// Gets the property configurations set to this importer.
         /// </summary>
         public Dictionary<String, PropertyConfig> PropertyConfigurations {
@@ -160,14 +170,6 @@ namespace Assimp {
         public AssimpImporter() {
             m_configs = new Dictionary<String, PropertyConfig>();
             m_logStreams = new List<LogStream>();
-        }
-
-        /// <summary>
-        /// Releases unmanaged resources and performs other cleanup operations before the
-        /// <see cref="AssimpImporter"/> is reclaimed by garbage collection.
-        /// </summary>
-        ~AssimpImporter() {
-            Dispose(false);
         }
 
         #region Import
@@ -222,7 +224,8 @@ namespace Assimp {
 
                     TransformScene(ptr);
 
-                    ptr = AssimpLibrary.Instance.ApplyPostProcessing(ptr, postProcessFlags);
+                    if(postProcessFlags != PostProcessSteps.None)
+                        ptr = AssimpLibrary.Instance.ApplyPostProcessing(ptr, postProcessFlags);
 
                     return ValidateAndCreateScene(ptr);
                 } finally {
@@ -267,21 +270,28 @@ namespace Assimp {
                 if(m_isDisposed) {
                     throw new ObjectDisposedException("Importer has been disposed.");
                 }
-                if(String.IsNullOrEmpty(file) || !File.Exists(file)) {
+
+                IntPtr ptr = IntPtr.Zero;
+                IntPtr fileIO = IntPtr.Zero;
+
+                //Only do file checks if not using a custom IOSystem
+                if(UsingCustomIOSystem) {
+                    fileIO = m_ioSystem.AiFileIO;
+                } else if(String.IsNullOrEmpty(file) || !File.Exists(file)) {
                     throw new FileNotFoundException("Filename was null or could not be found", file);
                 }
 
-                IntPtr ptr = IntPtr.Zero;
                 PrepareImport();
                 try {
-                    ptr = AssimpLibrary.Instance.ImportFile(file, PostProcessSteps.None, m_propStore);
+                    ptr = AssimpLibrary.Instance.ImportFile(file, PostProcessSteps.None, fileIO, m_propStore);
 
                     if(ptr == IntPtr.Zero)
                         throw new AssimpException("Error importing file: " + AssimpLibrary.Instance.GetErrorString());
 
                     TransformScene(ptr);
 
-                    ptr = AssimpLibrary.Instance.ApplyPostProcessing(ptr, postProcessFlags);
+                    if(postProcessFlags != PostProcessSteps.None)
+                        ptr = AssimpLibrary.Instance.ApplyPostProcessing(ptr, postProcessFlags);
 
                     return ValidateAndCreateScene(ptr);
                 } finally {
@@ -346,25 +356,32 @@ namespace Assimp {
                     throw new ObjectDisposedException("Importer has been disposed.");
                 }
 
-                if(String.IsNullOrEmpty(inputFilename) || !File.Exists(inputFilename)) {
+                IntPtr ptr = IntPtr.Zero;
+                IntPtr fileIO = IntPtr.Zero;
+
+                //Only do file checks if not using a custom IOSystem
+                if(UsingCustomIOSystem) {
+                    fileIO = m_ioSystem.AiFileIO;
+                } else if(String.IsNullOrEmpty(inputFilename) || !File.Exists(inputFilename)) {
                     throw new FileNotFoundException("Filename was null or could not be found", inputFilename);
                 }
 
-                IntPtr ptr = IntPtr.Zero;
                 PrepareImport();
 
                 try {
-                    ptr = AssimpLibrary.Instance.ImportFile(inputFilename, PostProcessSteps.None, m_propStore);
+                    ptr = AssimpLibrary.Instance.ImportFile(inputFilename, PostProcessSteps.None, fileIO, m_propStore);
 
                     if(ptr == IntPtr.Zero)
                         throw new AssimpException("Error importing file: " + AssimpLibrary.Instance.GetErrorString());
 
                     TransformScene(ptr);
-                    ptr = AssimpLibrary.Instance.ApplyPostProcessing(ptr, importProcessSteps);
+
+                    if(importProcessSteps != PostProcessSteps.None)
+                        ptr = AssimpLibrary.Instance.ApplyPostProcessing(ptr, importProcessSteps);
 
                     ValidateScene(ptr);
 
-                    AssimpLibrary.Instance.ExportScene(ptr, exportFormatId, outputFilename, exportProcessSteps);
+                    AssimpLibrary.Instance.ExportScene(ptr, exportFormatId, outputFilename, fileIO, exportProcessSteps);
                 } finally {
                     CleanupImport();
 
@@ -422,21 +439,28 @@ namespace Assimp {
                     throw new ObjectDisposedException("Importer has been disposed.");
                 }
 
-                if(String.IsNullOrEmpty(inputFilename) || !File.Exists(inputFilename)) {
+                IntPtr ptr = IntPtr.Zero;
+                IntPtr fileIO = IntPtr.Zero;
+
+                //Only do file checks if not using a custom IOSystem
+                if(UsingCustomIOSystem) {
+                    fileIO = m_ioSystem.AiFileIO;
+                } else if(String.IsNullOrEmpty(inputFilename) || !File.Exists(inputFilename)) {
                     throw new FileNotFoundException("Filename was null or could not be found", inputFilename);
                 }
 
-                IntPtr ptr = IntPtr.Zero;
                 PrepareImport();
 
                 try {
-                    ptr = AssimpLibrary.Instance.ImportFile(inputFilename, PostProcessSteps.None, m_propStore);
+                    ptr = AssimpLibrary.Instance.ImportFile(inputFilename, PostProcessSteps.None, fileIO, m_propStore);
 
                     if(ptr == IntPtr.Zero)
                         throw new AssimpException("Error importing file: " + AssimpLibrary.Instance.GetErrorString());
 
                     TransformScene(ptr);
-                    ptr = AssimpLibrary.Instance.ApplyPostProcessing(ptr, importProcessSteps);
+
+                    if(importProcessSteps != PostProcessSteps.None)
+                        ptr = AssimpLibrary.Instance.ApplyPostProcessing(ptr, importProcessSteps);
 
                     ValidateScene(ptr);
 
@@ -520,7 +544,9 @@ namespace Assimp {
                         throw new AssimpException("Error importing file: " + AssimpLibrary.Instance.GetErrorString());
 
                     TransformScene(ptr);
-                    ptr = AssimpLibrary.Instance.ApplyPostProcessing(ptr, importProcessSteps);
+
+                    if(importProcessSteps != PostProcessSteps.None)
+                        ptr = AssimpLibrary.Instance.ApplyPostProcessing(ptr, importProcessSteps);
 
                     ValidateScene(ptr);
 
@@ -600,7 +626,9 @@ namespace Assimp {
                         throw new AssimpException("Error importing file: " + AssimpLibrary.Instance.GetErrorString());
 
                     TransformScene(ptr);
-                    ptr = AssimpLibrary.Instance.ApplyPostProcessing(ptr, importProcessSteps);
+
+                    if(importProcessSteps != PostProcessSteps.None)
+                        ptr = AssimpLibrary.Instance.ApplyPostProcessing(ptr, importProcessSteps);
 
                     ValidateScene(ptr);
 
@@ -615,6 +643,29 @@ namespace Assimp {
         }
 
         #endregion
+
+        #endregion
+
+        #region IOSystem
+
+        /// <summary>
+        /// Sets a custom file system implementation that is used by this importer. If it is null, then the default assimp file system
+        /// is used instead.
+        /// </summary>
+        /// <param name="ioSystem">Custom file system implementation</param>
+        public void SetIOSystem(IOSystem ioSystem) {
+            if(ioSystem == null || ioSystem.IsDisposed)
+                ioSystem = null;
+
+            m_ioSystem = ioSystem;
+        }
+
+        /// <summary>
+        /// Removes the currently set custom file system implementation from the importer.
+        /// </summary>
+        public void RemoveIOSystem() {
+            m_ioSystem = null;
+        }
 
         #endregion
 
@@ -764,7 +815,7 @@ namespace Assimp {
         #region Dispose
 
         /// <summary>
-        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// Disposes of resources held by the importer. These include logstreams and IO systems still attached.
         /// </summary>
         public void Dispose() {
             Dispose(true);
@@ -774,12 +825,18 @@ namespace Assimp {
         /// <summary>
         /// Releases unmanaged and - optionally - managed resources
         /// </summary>
-        /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
+        /// <param name="disposing">True to release both managed and unmanaged resources; False to release only unmanaged resources.</param>
         protected void Dispose(bool disposing) {
-
             if(!m_isDisposed) {
                 if(disposing) {
-                    //Dispose of managed resources
+                    foreach(LogStream logstream in m_logStreams) {
+                        logstream.Dispose();
+                    }
+
+                    m_logStreams.Clear();
+
+                    if(UsingCustomIOSystem)
+                        m_ioSystem.Dispose();
                 }
                 m_isDisposed = true;
             }
@@ -879,6 +936,11 @@ namespace Assimp {
         private void CleanupImport() {
             ReleaseConfigs();
             DetatachLogs();
+
+            //Noticed that sometimes Assimp doesn't call Close() callbacks always, so ensure we clean up those up here
+            if(UsingCustomIOSystem) {
+                m_ioSystem.CloseAllFiles();
+            }
         }
 
         //Validate the imported scene to ensure its complete and load the return scene

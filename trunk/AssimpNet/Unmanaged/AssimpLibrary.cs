@@ -151,11 +151,24 @@ namespace Assimp.Unmanaged {
         /// <param name="propStore">Property store containing config name-values, may be null.</param>
         /// <returns>Pointer to the unmanaged data structure.</returns>
         public IntPtr ImportFile(String file, PostProcessSteps flags, IntPtr propStore) {
+            return ImportFile(file, flags, IntPtr.Zero, propStore);
+        }
+
+        /// <summary>
+        /// Imports a file.
+        /// </summary>
+        /// <param name="file">Valid filename</param>
+        /// <param name="flags">Post process flags specifying what steps are to be run after the import.</param>
+        /// <param name="fileIO">Pointer to an instance of AiFileIO, a custom file IO system used to open the model and 
+        /// any associated file the loader needs to open, passing NULL uses the default implementation.</param>
+        /// <param name="propStore">Property store containing config name-values, may be null.</param>
+        /// <returns>Pointer to the unmanaged data structure.</returns>
+        public IntPtr ImportFile(String file, PostProcessSteps flags, IntPtr fileIO, IntPtr propStore) {
             LoadIfNotLoaded();
 
             AssimpDelegates.aiImportFileExWithProperties func = m_impl.GetFunction<AssimpDelegates.aiImportFileExWithProperties>("aiImportFileExWithProperties");
 
-            return func(file, (uint) flags, IntPtr.Zero, propStore);
+            return func(file, (uint) flags, fileIO, propStore);
         }
 
         /// <summary>
@@ -280,14 +293,30 @@ namespace Assimp.Unmanaged {
         /// conforms to the standard Assimp output format. Some may be redundant, such as triangulation, which some exporters may have to enforce due to the export format.</param>
         /// <returns>Return code specifying if the operation was a success.</returns>
         public ReturnCode ExportScene(IntPtr scene, String formatId, String fileName, PostProcessSteps preProcessing) {
+            return ExportScene(scene, formatId, fileName, IntPtr.Zero, preProcessing);
+        }
+
+        /// <summary>
+        /// Exports the given scene to a chosen file format and writes the result file(s) to disk.
+        /// </summary>
+        /// <param name="scene">The scene to export, which needs to be freed by the caller. The scene is expected to conform to Assimp's Importer output format. In short,
+        /// this means the model data should use a right handed coordinate system, face winding should be counter clockwise, and the UV coordinate origin assumed to be upper left. If the input is different, specify the pre processing flags appropiately.</param>
+        /// <param name="formatId">Format id describing which format to export to.</param>
+        /// <param name="fileName">Output filename to write to</param>
+        /// <param name="fileIO">Pointer to an instance of AiFileIO, a custom file IO system used to open the model and 
+        /// any associated file the loader needs to open, passing NULL uses the default implementation.</param>
+        /// <param name="preProcessing">Pre processing flags - accepts any post processing step flag. In reality only a small subset are actually supported, e.g. to ensure the input
+        /// conforms to the standard Assimp output format. Some may be redundant, such as triangulation, which some exporters may have to enforce due to the export format.</param>
+        /// <returns>Return code specifying if the operation was a success.</returns>
+        public ReturnCode ExportScene(IntPtr scene, String formatId, String fileName, IntPtr fileIO, PostProcessSteps preProcessing) {
             LoadIfNotLoaded();
 
             if(String.IsNullOrEmpty(formatId) || scene == IntPtr.Zero)
                 return ReturnCode.Failure;
 
-            AssimpDelegates.aiExportScene exportFunc = m_impl.GetFunction<AssimpDelegates.aiExportScene>("aiExportScene");
+            AssimpDelegates.aiExportSceneEx exportFunc = m_impl.GetFunction<AssimpDelegates.aiExportSceneEx>("aiExportSceneEx");
 
-            return exportFunc(scene, formatId, fileName, (uint) preProcessing);
+            return exportFunc(scene, formatId, fileName, fileIO, (uint) preProcessing);
         }
 
         #endregion
@@ -297,20 +326,20 @@ namespace Assimp.Unmanaged {
         /// <summary>
         /// Attaches a log stream callback to catch Assimp messages.
         /// </summary>
-        /// <param name="stream">Logstream to attach</param>
-        public void AttachLogStream(ref AiLogStream stream) {
+        /// <param name="stream">Pointer to an instance of AiLogStream.</param>
+        public void AttachLogStream(IntPtr logStreamPtr) {
             LoadIfNotLoaded();
 
             AssimpDelegates.aiAttachLogStream func = m_impl.GetFunction<AssimpDelegates.aiAttachLogStream>("aiAttachLogStream");
 
-            func(ref stream);
+            func(logStreamPtr);
         }
 
         /// <summary>
         /// Enables verbose logging.
         /// </summary>
         /// <param name="enable">True if verbose logging is to be enabled or not.</param>
-        public void EnableVerboseLogging([InAttribute()] [MarshalAs(UnmanagedType.Bool)] bool enable) {
+        public void EnableVerboseLogging(bool enable) {
             LoadIfNotLoaded();
 
             AssimpDelegates.aiEnableVerboseLogging func = m_impl.GetFunction<AssimpDelegates.aiEnableVerboseLogging>("aiEnableVerboseLogging");
@@ -321,14 +350,14 @@ namespace Assimp.Unmanaged {
         /// <summary>
         /// Detaches a logstream callback.
         /// </summary>
-        /// <param name="stream">Logstream to detach</param>
+        /// <param name="stream">Pointer to an instance of AiLogStream.</param>
         /// <returns>A return code signifying if the function was successful or not.</returns>
-        public ReturnCode DetachLogStream(ref AiLogStream stream) {
+        public ReturnCode DetachLogStream(IntPtr logStreamPtr) {
             LoadIfNotLoaded();
 
             AssimpDelegates.aiDetachLogStream func = m_impl.GetFunction<AssimpDelegates.aiDetachLogStream>("aiDetachLogStream");
 
-            return func(ref stream);
+            return func(logStreamPtr);
         }
 
         /// <summary>
@@ -922,16 +951,19 @@ namespace Assimp.Unmanaged {
         #region Import Delegates
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        public delegate IntPtr aiImportFile([InAttribute()] [MarshalAs(UnmanagedType.LPStr)] String file, uint flags);
+        public delegate IntPtr aiImportFile([In, MarshalAs(UnmanagedType.LPStr)] String file, uint flags);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        public delegate IntPtr aiImportFileExWithProperties([InAttribute()] [MarshalAs(UnmanagedType.LPStr)] String file, uint flag, IntPtr fileIO, IntPtr propStore);
+        public delegate IntPtr aiImportFileEx([In, MarshalAs(UnmanagedType.LPStr)] String file, uint flags, IntPtr fileIO);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        public delegate IntPtr aiImportFileFromMemory(byte[] buffer, uint bufferLength, uint flags, [InAttribute()] [MarshalAs(UnmanagedType.LPStr)] String formatHint);
+        public delegate IntPtr aiImportFileExWithProperties([In, MarshalAs(UnmanagedType.LPStr)] String file, uint flag, IntPtr fileIO, IntPtr propStore);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        public delegate IntPtr aiImportFileFromMemoryWithProperties(byte[] buffer, uint bufferLength, uint flags, [InAttribute()] [MarshalAs(UnmanagedType.LPStr)] String formatHint, IntPtr propStore);
+        public delegate IntPtr aiImportFileFromMemory(byte[] buffer, uint bufferLength, uint flags, [In, MarshalAs(UnmanagedType.LPStr)] String formatHint);
+
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        public delegate IntPtr aiImportFileFromMemoryWithProperties(byte[] buffer, uint bufferLength, uint flags, [In, MarshalAs(UnmanagedType.LPStr)] String formatHint, IntPtr propStore);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate void aiReleaseImport(IntPtr scene);
@@ -950,26 +982,29 @@ namespace Assimp.Unmanaged {
         public delegate IntPtr aiGetExportFormatDescription(IntPtr index);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        public delegate IntPtr aiExportSceneToBlob(IntPtr scene, [InAttribute()] [MarshalAs(UnmanagedType.LPStr)] String formatId, uint preProcessing);
+        public delegate IntPtr aiExportSceneToBlob(IntPtr scene, [In, MarshalAs(UnmanagedType.LPStr)] String formatId, uint preProcessing);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate void aiReleaseExportBlob(IntPtr blobData);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        public delegate ReturnCode aiExportScene(IntPtr scene, [InAttribute()] [MarshalAs(UnmanagedType.LPStr)] String formatId, [InAttribute()] [MarshalAs(UnmanagedType.LPStr)] String fileName, uint preProcessing);
+        public delegate ReturnCode aiExportScene(IntPtr scene, [In, MarshalAs(UnmanagedType.LPStr)] String formatId, [In, MarshalAs(UnmanagedType.LPStr)] String fileName, uint preProcessing);
+
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        public delegate ReturnCode aiExportSceneEx(IntPtr scene, [In, MarshalAs(UnmanagedType.LPStr)] String formatId, [In, MarshalAs(UnmanagedType.LPStr)] String fileName, IntPtr fileIO, uint preProcessing);
 
         #endregion
 
         #region Logging Delegates
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        public delegate void aiAttachLogStream(ref AiLogStream stream);
+        public delegate void aiAttachLogStream(IntPtr logStreamPtr);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        public delegate void aiEnableVerboseLogging([InAttribute()] [MarshalAs(UnmanagedType.Bool)] bool enable);
+        public delegate void aiEnableVerboseLogging([In, MarshalAs(UnmanagedType.Bool)] bool enable);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        public delegate ReturnCode aiDetachLogStream(ref AiLogStream stream);
+        public delegate ReturnCode aiDetachLogStream(IntPtr logStreamPtr);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate void aiDetachAllLogStreams();
@@ -985,32 +1020,32 @@ namespace Assimp.Unmanaged {
         public delegate void aiReleasePropertyStore(IntPtr propertyStore);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        public delegate void aiSetImportPropertyInteger(IntPtr propertyStore, [InAttribute()] [MarshalAsAttribute(UnmanagedType.LPStr)] String name, int value);
+        public delegate void aiSetImportPropertyInteger(IntPtr propertyStore, [In, MarshalAs(UnmanagedType.LPStr)] String name, int value);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        public delegate void aiSetImportPropertyFloat(IntPtr propertyStore, [InAttribute()] [MarshalAsAttribute(UnmanagedType.LPStr)] String name, float value);
+        public delegate void aiSetImportPropertyFloat(IntPtr propertyStore, [In, MarshalAs(UnmanagedType.LPStr)] String name, float value);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        public delegate void aiSetImportPropertyString(IntPtr propertyStore, [InAttribute()] [MarshalAsAttribute(UnmanagedType.LPStr)] String name, ref AiString value);
+        public delegate void aiSetImportPropertyString(IntPtr propertyStore, [In, MarshalAs(UnmanagedType.LPStr)] String name, ref AiString value);
 
         #endregion
 
         #region Material Delegates
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        public delegate ReturnCode aiGetMaterialColor(ref AiMaterial mat, [InAttribute()] [MarshalAsAttribute(UnmanagedType.LPStr)] String key, uint texType, uint texIndex, IntPtr colorOut);
+        public delegate ReturnCode aiGetMaterialColor(ref AiMaterial mat, [In, MarshalAs(UnmanagedType.LPStr)] String key, uint texType, uint texIndex, IntPtr colorOut);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        public delegate ReturnCode aiGetMaterialFloatArray(ref AiMaterial mat, [InAttribute()] [MarshalAsAttribute(UnmanagedType.LPStr)] String key, uint texType, uint texIndex, IntPtr ptrOut, ref uint valueCount);
+        public delegate ReturnCode aiGetMaterialFloatArray(ref AiMaterial mat, [In, MarshalAs(UnmanagedType.LPStr)] String key, uint texType, uint texIndex, IntPtr ptrOut, ref uint valueCount);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        public delegate ReturnCode aiGetMaterialIntegerArray(ref AiMaterial mat, [InAttribute()] [MarshalAsAttribute(UnmanagedType.LPStr)] String key, uint texType, uint texIndex, IntPtr ptrOut, ref uint valueCount);
+        public delegate ReturnCode aiGetMaterialIntegerArray(ref AiMaterial mat, [In, MarshalAs(UnmanagedType.LPStr)] String key, uint texType, uint texIndex, IntPtr ptrOut, ref uint valueCount);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        public delegate ReturnCode aiGetMaterialProperty(ref AiMaterial mat, [InAttribute()] [MarshalAsAttribute(UnmanagedType.LPStr)] String key, uint texType, uint texIndex, out IntPtr propertyOut);
+        public delegate ReturnCode aiGetMaterialProperty(ref AiMaterial mat, [In, MarshalAs(UnmanagedType.LPStr)] String key, uint texType, uint texIndex, out IntPtr propertyOut);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        public delegate ReturnCode aiGetMaterialString(ref AiMaterial mat, [InAttribute()] [MarshalAsAttribute(UnmanagedType.LPStr)] String key, uint texType, uint texIndex, out AiString str);
+        public delegate ReturnCode aiGetMaterialString(ref AiMaterial mat, [In, MarshalAs(UnmanagedType.LPStr)] String key, uint texType, uint texIndex, out AiString str);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate ReturnCode aiGetMaterialTexture(ref AiMaterial mat, TextureType type, uint index, out AiString path, out TextureMapping mapping, out uint uvIndex, out float blendFactor, out TextureOperation textureOp, out TextureWrapMode wrapMode, out uint flags);
@@ -1067,7 +1102,7 @@ namespace Assimp.Unmanaged {
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        public delegate bool aiIsExtensionSupported([InAttribute()] [MarshalAs(UnmanagedType.LPStr)] String extension);
+        public delegate bool aiIsExtensionSupported([In, MarshalAs(UnmanagedType.LPStr)] String extension);
 
         #endregion
 

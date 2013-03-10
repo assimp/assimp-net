@@ -1094,4 +1094,39 @@ namespace Assimp {
         /// </summary>
         Translation = 0x4
     }
+
+    /// <summary>
+    /// Defines the desired file I/O mode is when opening a new file.
+    /// </summary>
+    public enum FileIOMode {
+        /// <summary>
+        /// Open the file for writing.
+        /// </summary>
+        Write = 0,
+
+        /// <summary>
+        /// Open the file for writing binary data to it.
+        /// </summary>
+        WriteBinary = 1,
+
+        /// <summary>
+        /// Open the file for writing text data to it.
+        /// </summary>
+        WriteText = 2,
+
+        /// <summary>
+        /// Open the file for reading.
+        /// </summary>
+        Read = 3,
+
+        /// <summary>
+        /// Open the file for reading binary data from it.
+        /// </summary>
+        ReadBinary = 4,
+
+        /// <summary>
+        /// Open the file for reading text data from it.
+        /// </summary>
+        ReadText = 5
+    }
 }

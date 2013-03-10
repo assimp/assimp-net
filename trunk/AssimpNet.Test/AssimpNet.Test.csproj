@@ -45,6 +45,7 @@
     <Compile Include="Color3DTestFixture.cs" />
     <Compile Include="Color4DTestFixture.cs" />
     <Compile Include="ExportDataBlobTestFixture.cs" />
+    <Compile Include="IOSystem_TestFixture.cs" />
     <Compile Include="Matrix3x3TestFixture.cs" />
     <Compile Include="Matrix4x4TestFixture.cs" />
     <Compile Include="ObjSameFolderMtl_TestFixture.cs" />
@@ -68,6 +69,12 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="TestFiles\duck.dae">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="TestFiles\fenris\objects\fenris.lwo">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="TestFiles\fenris\scenes\fenris.lws">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="TestFiles\sphere.blend">
