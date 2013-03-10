@@ -79,6 +79,9 @@ namespace Assimp {
             m_openedFiles = new Dictionary<IntPtr, IOStream>();
         }
 
+        /// <summary>
+        /// Finalizes an instance of the <see cref="IOSystem"/> class.
+        /// </summary>
         ~IOSystem() {
             Dispose(false);
         }

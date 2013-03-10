@@ -112,6 +112,9 @@ namespace Assimp {
             Marshal.StructureToPtr(file, m_filePtr, false);
         }
 
+        /// <summary>
+        /// Finalizes an instance of the <see cref="IOStream"/> class.
+        /// </summary>
         ~IOStream() {
             Dispose(false);
         }
