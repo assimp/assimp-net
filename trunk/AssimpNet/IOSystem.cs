@@ -103,10 +103,10 @@ namespace Assimp {
                 return;
 
             if(m_openedFiles.ContainsKey(stream.AiFile)) {
+                m_openedFiles.Remove(stream.AiFile);
+
                 if(!stream.IsDisposed)
                     stream.Close();
-
-                m_openedFiles.Remove(stream.AiFile);
             }
         }
 
@@ -175,9 +175,7 @@ namespace Assimp {
 
             IOStream iostream;
             if(m_openedFiles.TryGetValue(file, out iostream)) {
-                if(!iostream.IsDisposed)
-                    iostream.Close();
-                m_openedFiles.Remove(file);
+                CloseFile(iostream);
             }
         }
 
