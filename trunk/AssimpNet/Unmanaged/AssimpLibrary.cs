@@ -656,7 +656,6 @@ namespace Assimp.Unmanaged {
             float blendFactor;
             TextureOperation texOp;
             TextureWrapMode[] wrapModes = new TextureWrapMode[2];
-            wrapModes[1] = TextureWrapMode.Decal;
             uint flags;
 
             ReturnCode code = func(ref mat, type, index, out str, out mapping, out uvIndex, out blendFactor, out texOp, wrapModes, out flags);
