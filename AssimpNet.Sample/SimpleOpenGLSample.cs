@@ -201,16 +201,16 @@ namespace Assimp.Sample {
 
 						GL.Begin(faceMode);
 						for(int i = 0; i < face.IndexCount; i++) {
-							uint indice = face.Indices[i];
+							int indice = face.Indices[i];
 							if(hasColors) {
-								Color4 vertColor = FromColor(mesh.GetVertexColors(0)[indice]);
+								Color4 vertColor = FromColor(mesh.VertexColorChannels[0][indice]);
 							}
 							if(mesh.HasNormals) {
 								Vector3 normal = FromVector(mesh.Normals[indice]);
 								GL.Normal3(normal);
 							}
 							if(hasTexCoords) {
-								Vector3 uvw = FromVector(mesh.GetTextureCoords(0)[indice]);
+								Vector3 uvw = FromVector(mesh.TextureCoordinateChannels[0][indice]);
 								GL.TexCoord2(uvw.X, 1 - uvw.Y);
 							}
 							Vector3 pos = FromVector(mesh.Vertices[indice]);
@@ -250,9 +250,10 @@ namespace Assimp.Sample {
 		}
 
 		private void ApplyMaterial(Material mat) {
-			if(mat.GetTextureCount(TextureType.Diffuse) > 0) {
-				TextureSlot tex = mat.GetTexture(TextureType.Diffuse, 0);
-				LoadTexture(tex.FilePath);
+			if(mat.GetMaterialTextureCount(TextureType.Diffuse) > 0) {
+                TextureSlot tex;
+                if(mat.GetMaterialTexture(TextureType.Diffuse, 0, out tex))
+				    LoadTexture(tex.FilePath);
 			}
 			
 			Color4 color = new Color4(.8f, .8f, .8f, 1.0f);

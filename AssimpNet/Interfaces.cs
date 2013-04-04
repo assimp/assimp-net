@@ -21,47 +21,33 @@
 */
 
 using System;
-using System.Globalization;
-using System.Runtime.InteropServices;
 
 namespace Assimp {
     /// <summary>
-    /// Represents a single influence of a bone on a vertex.
+    /// Represents an object that can be marshaled to and from a native representation.
     /// </summary>
-    [Serializable]
-    [StructLayoutAttribute(LayoutKind.Sequential)]
-    public struct VertexWeight {
-        /// <summary>
-        /// Index of the vertex which is influenced by the bone.
-        /// </summary>
-        public int VertexID;
+    /// <typeparam name="Managed">Managed object type</typeparam>
+    /// <typeparam name="Native">Native value type</typeparam>
+    public interface IMarshalable<Managed, Native>
+        where Managed : class, new()
+        where Native : struct {
 
         /// <summary>
-        /// Strength of the influence in range of (0...1). All influences
-        /// from all bones at one vertex amounts to 1.
+        /// Gets if the native value type is blittable (that is, does not require marshaling by the runtime, e.g. has MarshalAs attributes).
         /// </summary>
-        public float Weight;
+        bool IsNativeBlittable { get; }
 
         /// <summary>
-        /// Constructs a new VertexWeight.
+        /// Writes the managed data to the native value.
         /// </summary>
-        /// <param name="vertID">Index of the vertex.</param>
-        /// <param name="weight">Weight of the influence.</param>
-        public VertexWeight(int vertID, float weight) {
-            VertexID = vertID;
-            Weight = weight;
-        }
+        /// <param name="thisPtr">Optional pointer to the memory that will hold the native value.</param>
+        /// <param name="nativeValue">Output native value</param>
+        void ToNative(IntPtr thisPtr, out Native nativeValue);
 
         /// <summary>
-        /// Returns a <see cref="System.String"/> that represents this instance.
+        /// Reads the unmanaged data from the native value.
         /// </summary>
-        /// <returns>
-        /// A <see cref="System.String"/> that represents this instance.
-        /// </returns>
-        public override string ToString() {
-            CultureInfo info = CultureInfo.CurrentCulture;
-            return String.Format(info, "{{VertexID:{0} Weight:{1}}}",
-                new Object[] { VertexID.ToString(info), Weight.ToString(info) });
-        }
+        /// <param name="nativeValue">Input native value</param>
+        void FromNative(ref Native nativeValue);
     }
 }
