@@ -530,7 +530,7 @@ namespace Assimp.Unmanaged {
                 float[] array = null;
                 if(code == ReturnCode.Success && floatCount > 0) {
                     array = new float[floatCount];
-                    Marshal.Copy(ptr, array, 0, (int) floatCount);
+                    MemoryHelper.Read<float>(ptr, array, 0, (int) floatCount);
                 }
                 return array;
             } finally {
@@ -562,7 +562,7 @@ namespace Assimp.Unmanaged {
                 int[] array = null;
                 if(code == ReturnCode.Success && intCount > 0) {
                     array = new int[intCount];
-                    Marshal.Copy(ptr, array, 0, (int) intCount);
+                    MemoryHelper.Read<int>(ptr, array, 0, (int) intCount);
                 }
                 return array;
             } finally {
