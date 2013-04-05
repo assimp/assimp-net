@@ -227,7 +227,7 @@ namespace Assimp {
                     if(postProcessFlags != PostProcessSteps.None)
                         ptr = AssimpLibrary.Instance.ApplyPostProcessing(ptr, postProcessFlags);
 
-                    return new Scene(MemoryHelper.MarshalStructure<AiScene>(ptr));
+                    return Scene.FromUnmanagedScene(ptr);
                 } finally {
                     CleanupImport();
 
@@ -293,7 +293,7 @@ namespace Assimp {
                     if(postProcessFlags != PostProcessSteps.None)
                         ptr = AssimpLibrary.Instance.ApplyPostProcessing(ptr, postProcessFlags);
 
-                    return new Scene(MemoryHelper.MarshalStructure<AiScene>(ptr));
+                    return Scene.FromUnmanagedScene(ptr);
                 } finally {
                     CleanupImport();
 
