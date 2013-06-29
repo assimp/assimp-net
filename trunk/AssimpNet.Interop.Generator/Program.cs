@@ -1,4 +1,4 @@
- /*
+﻿/*
 * Copyright (c) 2012-2013 AssimpNet - Nicholas Woodfield
 * 
 * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -29,10 +29,10 @@ using Mono.Cecil.Cil;
 using Mono.Cecil.Pdb;
 using Mono.Collections.Generic;
 
-namespace AssimpNet.Interop.Generator {
+namespace Tesla.Interop.Generator {
     /// <summary>
-    /// Console program that patches AssimpNet.dll, by iterating over all types and finding stubs to replace with IL code. Based on SharpDX's interop generator, direct
-    /// port from Tesla 3D Engine.
+    /// Console program that patches AssimpNet.dll, by iterating over all types and finding stubs to replace with IL code. Original idea (and some of the IL code) credit goes to SharpDX, 
+    /// the generator below is ported from the Tesla 3D engine project.
     /// </summary>
     class Program {
         private static AssemblyDefinition m_mscorLib;
