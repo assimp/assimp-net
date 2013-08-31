@@ -31,12 +31,8 @@ namespace Assimp {
     /// Assimp importer that will use Assimp to load a model into managed memory.
     /// </summary>
     public class AssimpImporter : IDisposable {
-        private static Object s_sync = new Object();
-
         private bool m_isDisposed;
-        private bool m_verboseEnabled;
         private Dictionary<String, PropertyConfig> m_configs;
-        private List<LogStream> m_logStreams;
         private IOSystem m_ioSystem;
 
         private ExportFormatDescription[] m_exportFormats;
@@ -125,18 +121,6 @@ namespace Assimp {
         }
 
         /// <summary>
-        /// Gets or sets if verbose logging should be enabled.
-        /// </summary>
-        public bool VerboseLoggingEnabled {
-            get {
-                return m_verboseEnabled;
-            }
-            set {
-                m_verboseEnabled = value;
-            }
-        }
-
-        /// <summary>
         /// Gets whether this importer is using a user-defined IO system for file handling.
         /// </summary>
         public bool UsingCustomIOSystem {
@@ -155,20 +139,10 @@ namespace Assimp {
         }
 
         /// <summary>
-        /// Gets the logstreams attached to this importer.
-        /// </summary>
-        public List<LogStream> LogStreams {
-            get {
-                return m_logStreams;
-            }
-        }
-
-        /// <summary>
         /// Constructs a new AssimpImporter.
         /// </summary>
         public AssimpImporter() {
             m_configs = new Dictionary<String, PropertyConfig>();
-            m_logStreams = new List<LogStream>();
         }
 
         #region Import
@@ -199,40 +173,34 @@ namespace Assimp {
         /// <exception cref="AssimpException">Thrown if the stream is not valid (null or write-only) or if the format hint is null or empty.</exception>
         /// <exception cref="System.ObjectDisposedException">Thrown if attempting to import a model if the importer has been disposed of</exception>
         public Scene ImportFileFromStream(Stream stream, PostProcessSteps postProcessFlags, String formatHint) {
-            lock(s_sync) {
-                if(m_isDisposed) {
-                    throw new ObjectDisposedException("Importer has been disposed.");
-                }
+            CheckDisposed();
 
-                if(stream == null || stream.CanRead != true) {
-                    throw new AssimpException("stream", "Can't read from the stream it's null or write-only");
-                }
+            if(stream == null || stream.CanRead != true)
+                throw new AssimpException("stream", "Can't read from the stream it's null or write-only");
 
-                if(String.IsNullOrEmpty(formatHint)) {
-                    throw new AssimpException("formatHint", "Format hint is null or empty");
-                }
+            if(String.IsNullOrEmpty(formatHint))
+                throw new AssimpException("formatHint", "Format hint is null or empty");
 
-                IntPtr ptr = IntPtr.Zero;
-                PrepareImport();
+            IntPtr ptr = IntPtr.Zero;
+            PrepareImport();
 
-                try {
-                    ptr = AssimpLibrary.Instance.ImportFileFromStream(stream, PostProcessSteps.None, formatHint, m_propStore);
+            try {
+                ptr = AssimpLibrary.Instance.ImportFileFromStream(stream, PostProcessSteps.None, formatHint, m_propStore);
 
-                    if(ptr == IntPtr.Zero)
-                        throw new AssimpException("Error importing file: " + AssimpLibrary.Instance.GetErrorString());
+                if(ptr == IntPtr.Zero)
+                    throw new AssimpException("Error importing file: " + AssimpLibrary.Instance.GetErrorString());
 
-                    TransformScene(ptr);
+                TransformScene(ptr);
 
-                    if(postProcessFlags != PostProcessSteps.None)
-                        ptr = AssimpLibrary.Instance.ApplyPostProcessing(ptr, postProcessFlags);
+                if(postProcessFlags != PostProcessSteps.None)
+                    ptr = AssimpLibrary.Instance.ApplyPostProcessing(ptr, postProcessFlags);
 
-                    return Scene.FromUnmanagedScene(ptr);
-                } finally {
-                    CleanupImport();
+                return Scene.FromUnmanagedScene(ptr);
+            } finally {
+                CleanupImport();
 
-                    if(ptr != IntPtr.Zero) {
-                        AssimpLibrary.Instance.ReleaseImport(ptr);
-                    }
+                if(ptr != IntPtr.Zero) {
+                    AssimpLibrary.Instance.ReleaseImport(ptr);
                 }
             }
         }
@@ -265,40 +233,36 @@ namespace Assimp {
         /// <exception cref="System.IO.FileNotFoundException">Thrown if the file could not be located.</exception>
         /// <exception cref="System.ObjectDisposedException">Thrown if attempting to import a model if the importer has been disposed of</exception>
         public Scene ImportFile(String file, PostProcessSteps postProcessFlags) {
-            lock(s_sync) {
-                if(m_isDisposed) {
-                    throw new ObjectDisposedException("Importer has been disposed.");
-                }
+            CheckDisposed();
 
-                IntPtr ptr = IntPtr.Zero;
-                IntPtr fileIO = IntPtr.Zero;
+            IntPtr ptr = IntPtr.Zero;
+            IntPtr fileIO = IntPtr.Zero;
 
-                //Only do file checks if not using a custom IOSystem
-                if(UsingCustomIOSystem) {
-                    fileIO = m_ioSystem.AiFileIO;
-                } else if(String.IsNullOrEmpty(file) || !File.Exists(file)) {
-                    throw new FileNotFoundException("Filename was null or could not be found", file);
-                }
+            //Only do file checks if not using a custom IOSystem
+            if(UsingCustomIOSystem) {
+                fileIO = m_ioSystem.AiFileIO;
+            } else if(String.IsNullOrEmpty(file) || !File.Exists(file)) {
+                throw new FileNotFoundException("Filename was null or could not be found", file);
+            }
 
-                PrepareImport();
-                try {
-                    ptr = AssimpLibrary.Instance.ImportFile(file, PostProcessSteps.None, fileIO, m_propStore);
+            PrepareImport();
+            try {
+                ptr = AssimpLibrary.Instance.ImportFile(file, PostProcessSteps.None, fileIO, m_propStore);
 
-                    if(ptr == IntPtr.Zero)
-                        throw new AssimpException("Error importing file: " + AssimpLibrary.Instance.GetErrorString());
+                if(ptr == IntPtr.Zero)
+                    throw new AssimpException("Error importing file: " + AssimpLibrary.Instance.GetErrorString());
 
-                    TransformScene(ptr);
+                TransformScene(ptr);
 
-                    if(postProcessFlags != PostProcessSteps.None)
-                        ptr = AssimpLibrary.Instance.ApplyPostProcessing(ptr, postProcessFlags);
+                if(postProcessFlags != PostProcessSteps.None)
+                    ptr = AssimpLibrary.Instance.ApplyPostProcessing(ptr, postProcessFlags);
 
-                    return Scene.FromUnmanagedScene(ptr);
-                } finally {
-                    CleanupImport();
+                return Scene.FromUnmanagedScene(ptr);
+            } finally {
+                CleanupImport();
 
-                    if(ptr != IntPtr.Zero) {
-                        AssimpLibrary.Instance.ReleaseImport(ptr);
-                    }
+                if(ptr != IntPtr.Zero) {
+                    AssimpLibrary.Instance.ReleaseImport(ptr);
                 }
             }
         }
@@ -350,41 +314,37 @@ namespace Assimp {
         /// <exception cref="System.IO.FileNotFoundException">Thrown if the file could not be located.</exception>
         /// <exception cref="System.ObjectDisposedException">Thrown if attempting to import a model if the importer has been disposed of</exception>
         public void ConvertFromFileToFile(String inputFilename, PostProcessSteps importProcessSteps, String outputFilename, String exportFormatId, PostProcessSteps exportProcessSteps) {
-            lock(s_sync) {
-                if(m_isDisposed) {
-                    throw new ObjectDisposedException("Importer has been disposed.");
-                }
+            CheckDisposed();
 
-                IntPtr ptr = IntPtr.Zero;
-                IntPtr fileIO = IntPtr.Zero;
+            IntPtr ptr = IntPtr.Zero;
+            IntPtr fileIO = IntPtr.Zero;
 
-                //Only do file checks if not using a custom IOSystem
-                if(UsingCustomIOSystem) {
-                    fileIO = m_ioSystem.AiFileIO;
-                } else if(String.IsNullOrEmpty(inputFilename) || !File.Exists(inputFilename)) {
-                    throw new FileNotFoundException("Filename was null or could not be found", inputFilename);
-                }
+            //Only do file checks if not using a custom IOSystem
+            if(UsingCustomIOSystem) {
+                fileIO = m_ioSystem.AiFileIO;
+            } else if(String.IsNullOrEmpty(inputFilename) || !File.Exists(inputFilename)) {
+                throw new FileNotFoundException("Filename was null or could not be found", inputFilename);
+            }
 
-                PrepareImport();
+            PrepareImport();
 
-                try {
-                    ptr = AssimpLibrary.Instance.ImportFile(inputFilename, PostProcessSteps.None, fileIO, m_propStore);
+            try {
+                ptr = AssimpLibrary.Instance.ImportFile(inputFilename, PostProcessSteps.None, fileIO, m_propStore);
 
-                    if(ptr == IntPtr.Zero)
-                        throw new AssimpException("Error importing file: " + AssimpLibrary.Instance.GetErrorString());
+                if(ptr == IntPtr.Zero)
+                    throw new AssimpException("Error importing file: " + AssimpLibrary.Instance.GetErrorString());
 
-                    TransformScene(ptr);
+                TransformScene(ptr);
 
-                    if(importProcessSteps != PostProcessSteps.None)
-                        ptr = AssimpLibrary.Instance.ApplyPostProcessing(ptr, importProcessSteps);
+                if(importProcessSteps != PostProcessSteps.None)
+                    ptr = AssimpLibrary.Instance.ApplyPostProcessing(ptr, importProcessSteps);
 
-                    AssimpLibrary.Instance.ExportScene(ptr, exportFormatId, outputFilename, fileIO, exportProcessSteps);
-                } finally {
-                    CleanupImport();
+                AssimpLibrary.Instance.ExportScene(ptr, exportFormatId, outputFilename, fileIO, exportProcessSteps);
+            } finally {
+                CleanupImport();
 
-                    if(ptr != IntPtr.Zero)
-                        AssimpLibrary.Instance.ReleaseImport(ptr);
-                }
+                if(ptr != IntPtr.Zero)
+                    AssimpLibrary.Instance.ReleaseImport(ptr);
             }
         }
 
@@ -431,41 +391,37 @@ namespace Assimp {
         /// <exception cref="System.IO.FileNotFoundException">Thrown if the file could not be located.</exception>
         /// <exception cref="System.ObjectDisposedException">Thrown if attempting to import a model if the importer has been disposed of</exception>
         public ExportDataBlob ConvertFromFileToBlob(String inputFilename, PostProcessSteps importProcessSteps, String exportFormatId, PostProcessSteps exportProcessSteps) {
-            lock(s_sync) {
-                if(m_isDisposed) {
-                    throw new ObjectDisposedException("Importer has been disposed.");
-                }
+            CheckDisposed();
 
-                IntPtr ptr = IntPtr.Zero;
-                IntPtr fileIO = IntPtr.Zero;
+            IntPtr ptr = IntPtr.Zero;
+            IntPtr fileIO = IntPtr.Zero;
 
-                //Only do file checks if not using a custom IOSystem
-                if(UsingCustomIOSystem) {
-                    fileIO = m_ioSystem.AiFileIO;
-                } else if(String.IsNullOrEmpty(inputFilename) || !File.Exists(inputFilename)) {
-                    throw new FileNotFoundException("Filename was null or could not be found", inputFilename);
-                }
+            //Only do file checks if not using a custom IOSystem
+            if(UsingCustomIOSystem) {
+                fileIO = m_ioSystem.AiFileIO;
+            } else if(String.IsNullOrEmpty(inputFilename) || !File.Exists(inputFilename)) {
+                throw new FileNotFoundException("Filename was null or could not be found", inputFilename);
+            }
 
-                PrepareImport();
+            PrepareImport();
 
-                try {
-                    ptr = AssimpLibrary.Instance.ImportFile(inputFilename, PostProcessSteps.None, fileIO, m_propStore);
+            try {
+                ptr = AssimpLibrary.Instance.ImportFile(inputFilename, PostProcessSteps.None, fileIO, m_propStore);
 
-                    if(ptr == IntPtr.Zero)
-                        throw new AssimpException("Error importing file: " + AssimpLibrary.Instance.GetErrorString());
+                if(ptr == IntPtr.Zero)
+                    throw new AssimpException("Error importing file: " + AssimpLibrary.Instance.GetErrorString());
 
-                    TransformScene(ptr);
+                TransformScene(ptr);
 
-                    if(importProcessSteps != PostProcessSteps.None)
-                        ptr = AssimpLibrary.Instance.ApplyPostProcessing(ptr, importProcessSteps);
+                if(importProcessSteps != PostProcessSteps.None)
+                    ptr = AssimpLibrary.Instance.ApplyPostProcessing(ptr, importProcessSteps);
 
-                    return AssimpLibrary.Instance.ExportSceneToBlob(ptr, exportFormatId, exportProcessSteps);
-                } finally {
-                    CleanupImport();
+                return AssimpLibrary.Instance.ExportSceneToBlob(ptr, exportFormatId, exportProcessSteps);
+            } finally {
+                CleanupImport();
 
-                    if(ptr != IntPtr.Zero)
-                        AssimpLibrary.Instance.ReleaseImport(ptr);
-                }
+                if(ptr != IntPtr.Zero)
+                    AssimpLibrary.Instance.ReleaseImport(ptr);
             }
         }
 
@@ -516,40 +472,34 @@ namespace Assimp {
         /// <exception cref="AssimpException">Thrown if the stream is not valid (null or write-only) or if the format hint is null or empty.</exception>
         /// <exception cref="System.ObjectDisposedException">Thrown if attempting to import a model if the importer has been disposed of</exception>
         public void ConvertFromStreamToFile(Stream inputStream, String importFormatHint, PostProcessSteps importProcessSteps, String outputFilename, String exportFormatId, PostProcessSteps exportProcessSteps) {
-            lock(s_sync) {
-                if(m_isDisposed) {
-                    throw new ObjectDisposedException("Importer has been disposed.");
-                }
+            CheckDisposed();
 
-                if(inputStream == null || inputStream.CanRead != true) {
-                    throw new AssimpException("stream", "Can't read from the stream it's null or write-only");
-                }
+            if(inputStream == null || inputStream.CanRead != true)
+                throw new AssimpException("stream", "Can't read from the stream it's null or write-only");
 
-                if(String.IsNullOrEmpty(importFormatHint)) {
-                    throw new AssimpException("formatHint", "Format hint is null or empty");
-                }
+            if(String.IsNullOrEmpty(importFormatHint))
+                throw new AssimpException("formatHint", "Format hint is null or empty");
 
-                IntPtr ptr = IntPtr.Zero;
-                PrepareImport();
+            IntPtr ptr = IntPtr.Zero;
+            PrepareImport();
 
-                try {
-                    ptr = AssimpLibrary.Instance.ImportFileFromStream(inputStream, importProcessSteps, importFormatHint, m_propStore);
+            try {
+                ptr = AssimpLibrary.Instance.ImportFileFromStream(inputStream, importProcessSteps, importFormatHint, m_propStore);
 
-                    if(ptr == IntPtr.Zero)
-                        throw new AssimpException("Error importing file: " + AssimpLibrary.Instance.GetErrorString());
+                if(ptr == IntPtr.Zero)
+                    throw new AssimpException("Error importing file: " + AssimpLibrary.Instance.GetErrorString());
 
-                    TransformScene(ptr);
+                TransformScene(ptr);
 
-                    if(importProcessSteps != PostProcessSteps.None)
-                        ptr = AssimpLibrary.Instance.ApplyPostProcessing(ptr, importProcessSteps);
+                if(importProcessSteps != PostProcessSteps.None)
+                    ptr = AssimpLibrary.Instance.ApplyPostProcessing(ptr, importProcessSteps);
 
-                    AssimpLibrary.Instance.ExportScene(ptr, exportFormatId, outputFilename, exportProcessSteps);
-                } finally {
-                    CleanupImport();
+                AssimpLibrary.Instance.ExportScene(ptr, exportFormatId, outputFilename, exportProcessSteps);
+            } finally {
+                CleanupImport();
 
-                    if(ptr != IntPtr.Zero)
-                        AssimpLibrary.Instance.ReleaseImport(ptr);
-                }
+                if(ptr != IntPtr.Zero)
+                    AssimpLibrary.Instance.ReleaseImport(ptr);
             }
         }
 
@@ -596,40 +546,34 @@ namespace Assimp {
         /// <exception cref="AssimpException">Thrown if the stream is not valid (null or write-only) or if the format hint is null or empty.</exception>
         /// <exception cref="System.ObjectDisposedException">Thrown if attempting to import a model if the importer has been disposed of</exception>
         public ExportDataBlob ConvertFromStreamToBlob(Stream inputStream, String importFormatHint, PostProcessSteps importProcessSteps, String exportFormatId, PostProcessSteps exportProcessSteps) {
-            lock(s_sync) {
-                if(m_isDisposed) {
-                    throw new ObjectDisposedException("Importer has been disposed.");
-                }
+            CheckDisposed();
 
-                if(inputStream == null || inputStream.CanRead != true) {
-                    throw new AssimpException("stream", "Can't read from the stream it's null or write-only");
-                }
+            if(inputStream == null || inputStream.CanRead != true)
+                throw new AssimpException("stream", "Can't read from the stream it's null or write-only");
 
-                if(String.IsNullOrEmpty(importFormatHint)) {
-                    throw new AssimpException("formatHint", "Format hint is null or empty");
-                }
+            if(String.IsNullOrEmpty(importFormatHint))
+                throw new AssimpException("formatHint", "Format hint is null or empty");
 
-                IntPtr ptr = IntPtr.Zero;
-                PrepareImport();
+            IntPtr ptr = IntPtr.Zero;
+            PrepareImport();
 
-                try {
-                    ptr = AssimpLibrary.Instance.ImportFileFromStream(inputStream, importProcessSteps, importFormatHint, m_propStore);
+            try {
+                ptr = AssimpLibrary.Instance.ImportFileFromStream(inputStream, importProcessSteps, importFormatHint, m_propStore);
 
-                    if(ptr == IntPtr.Zero)
-                        throw new AssimpException("Error importing file: " + AssimpLibrary.Instance.GetErrorString());
+                if(ptr == IntPtr.Zero)
+                    throw new AssimpException("Error importing file: " + AssimpLibrary.Instance.GetErrorString());
 
-                    TransformScene(ptr);
+                TransformScene(ptr);
 
-                    if(importProcessSteps != PostProcessSteps.None)
-                        ptr = AssimpLibrary.Instance.ApplyPostProcessing(ptr, importProcessSteps);
+                if(importProcessSteps != PostProcessSteps.None)
+                    ptr = AssimpLibrary.Instance.ApplyPostProcessing(ptr, importProcessSteps);
 
-                    return AssimpLibrary.Instance.ExportSceneToBlob(ptr, exportFormatId, exportProcessSteps);
-                } finally {
-                    CleanupImport();
+                return AssimpLibrary.Instance.ExportSceneToBlob(ptr, exportFormatId, exportProcessSteps);
+            } finally {
+                CleanupImport();
 
-                    if(ptr != IntPtr.Zero)
-                        AssimpLibrary.Instance.ReleaseImport(ptr);
-                }
+                if(ptr != IntPtr.Zero)
+                    AssimpLibrary.Instance.ReleaseImport(ptr);
             }
         }
 
@@ -659,41 +603,6 @@ namespace Assimp {
         }
 
         #endregion
-
-        #region Logstreams
-
-        /// <summary>
-        /// Attaches a logging stream to the importer.
-        /// </summary>
-        /// <param name="logstream">Logstream to attach</param>
-        public void AttachLogStream(LogStream logstream) {
-            if(logstream == null || m_logStreams.Contains(logstream)) {
-                return;
-            }
-            m_logStreams.Add(logstream);
-        }
-
-        /// <summary>
-        /// Detaches a logging stream from the importer.
-        /// </summary>
-        /// <param name="logStream">Logstream to detatch</param>
-        public void DetachLogStream(LogStream logStream) {
-            if(logStream == null) {
-                return;
-            }
-            m_logStreams.Remove(logStream);
-        }
-
-        /// <summary>
-        /// Detaches all logging streams that are currently attached to the importer.
-        /// </summary>
-        public void DetachLogStreams() {
-            m_logStreams.Clear();
-        }
-
-        #endregion
-
-        #region Format support
 
         #region Format support
 
@@ -749,8 +658,6 @@ namespace Assimp {
 
             return false;
         }
-
-        #endregion
 
         #endregion
 
@@ -820,12 +727,6 @@ namespace Assimp {
         protected void Dispose(bool disposing) {
             if(!m_isDisposed) {
                 if(disposing) {
-                    foreach(LogStream logstream in m_logStreams) {
-                        logstream.Dispose();
-                    }
-
-                    m_logStreams.Clear();
-
                     if(UsingCustomIOSystem)
                         m_ioSystem.Dispose();
                 }
@@ -836,6 +737,11 @@ namespace Assimp {
         #endregion
 
         #region Private methods
+
+        private void CheckDisposed() {
+            if(m_isDisposed)
+                throw new ObjectDisposedException("Importer has been disposed.");
+        }
 
         //Build import transformation matrix
         private void BuildMatrix() {
@@ -893,31 +799,14 @@ namespace Assimp {
                 AssimpLibrary.Instance.ReleasePropertyStore(m_propStore);
         }
 
-        //Attachs all logstreams to Assimp
-        private void AttachLogs() {
-            foreach(LogStream log in m_logStreams) {
-                log.Attach();
-            }
-        }
-
-        //Detatches all logstreams from Assimp
-        private void DetatachLogs() {
-            foreach(LogStream log in m_logStreams) {
-                log.Detach();
-            }
-        }
-
         //Does all the necessary prep work before we import
         private void PrepareImport() {
-            AssimpLibrary.Instance.EnableVerboseLogging(m_verboseEnabled);
-            AttachLogs();
             CreateConfigs();
         }
 
         //Does all the necessary cleanup work after we import
         private void CleanupImport() {
             ReleaseConfigs();
-            DetatachLogs();
 
             //Noticed that sometimes Assimp doesn't call Close() callbacks always, so ensure we clean up those up here
             if(UsingCustomIOSystem) {
