@@ -59,7 +59,7 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AssimpImporterTestFixture.cs" />
+    <Compile Include="AssimpContextTestFixture.cs" />
     <Compile Include="Color3DTestFixture.cs" />
     <Compile Include="Color4DTestFixture.cs" />
     <Compile Include="ExportDataBlobTestFixture.cs" />

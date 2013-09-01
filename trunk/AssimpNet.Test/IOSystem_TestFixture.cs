@@ -34,7 +34,7 @@ namespace Assimp.Test {
             String[] searchPaths = { Path.Combine(TestHelper.RootPath, "TestFiles\\fenris\\scenes"), Path.Combine(TestHelper.RootPath, "TestFiles\\fenris\\objects") };
             FileIOSystem ioSystem = new FileIOSystem(searchPaths);
 
-            AssimpImporter importer = new AssimpImporter();
+            AssimpContext importer = new AssimpContext();
             importer.SetIOSystem(ioSystem);
 
             //None, using the "target high quality flags caused a crash with this model.
@@ -48,7 +48,7 @@ namespace Assimp.Test {
             String[] searchPaths = { Path.Combine(TestHelper.RootPath, "TestFiles\\fenris\\objects") };
             FileIOSystem ioSystem = new FileIOSystem(searchPaths);
 
-            AssimpImporter importer = new AssimpImporter();
+            AssimpContext importer = new AssimpContext();
             importer.SetIOSystem(ioSystem);
 
             //Output path has to be specified fully, since we may be creating the file
@@ -62,7 +62,7 @@ namespace Assimp.Test {
             String[] searchPaths = { Path.Combine(TestHelper.RootPath, "TestFiles") };
             FileIOSystem ioSystem = new FileIOSystem(searchPaths);
 
-            AssimpImporter importer = new AssimpImporter();
+            AssimpContext importer = new AssimpContext();
             importer.SetIOSystem(ioSystem);
             Assert.Throws<AssimpException>(delegate() {
                 importer.ImportFile(fileName, PostProcessSteps.None);

@@ -39,11 +39,11 @@ namespace Assimp.Sample {
 		private int m_texId;
 
 		public SimpleOpenGLSample() : base() {
-			Title = "Quack! - Assimp.NET Simple OpenGL Sample";
+			Title = "Quack! - AssimpNet Simple OpenGL Sample";
 
 			String fileName = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "duck.dae");
 
-			AssimpImporter importer = new AssimpImporter();
+			AssimpContext importer = new AssimpContext();
 			importer.SetConfig(new NormalSmoothingAngleConfig(66.0f));
 			m_model = importer.ImportFile(fileName, PostProcessPreset.TargetRealTimeMaximumQuality);
 			ComputeBoundingBox();
