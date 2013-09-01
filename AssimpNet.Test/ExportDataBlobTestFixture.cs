@@ -33,7 +33,7 @@ namespace Assimp.Test {
         public void TestToStream() {
             String path = Path.Combine(TestHelper.RootPath, "TestFiles\\duck.dae");
 
-            AssimpImporter importer = new AssimpImporter();
+            AssimpContext importer = new AssimpContext();
             ExportDataBlob blob = importer.ConvertFromFileToBlob(path, "obj");
 
             Assert.IsNotNull(blob);
