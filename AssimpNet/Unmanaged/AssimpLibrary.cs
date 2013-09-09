@@ -1466,8 +1466,14 @@ namespace Assimp.Unmanaged {
         private void PreloadFunctions() {
             Type[] funcDelegateTypes = typeof(AssimpDelegates).GetNestedTypes();
 
-            foreach(Type funcType in funcDelegateTypes) 
-                GetFunction(funcType.GetCustomAttribute<AssimpFunctionNameAttribute>().UnmanagedFunctionName, funcType);
+            foreach(Type funcType in funcDelegateTypes) {
+                AssimpFunctionNameAttribute assimpAttr = GetAssimpAttribute(funcType);
+
+                if(assimpAttr == null)
+                    continue;
+
+                GetFunction(assimpAttr.UnmanagedFunctionName, funcType);
+            }
         }
 
         private void Dispose(bool disposing) {
@@ -1475,6 +1481,16 @@ namespace Assimp.Unmanaged {
                 FreeAssimpLibrary(disposing);
 
             m_isDisposed = true;
+        }
+
+        private AssimpFunctionNameAttribute GetAssimpAttribute(Type type) {
+            object[] attributes = type.GetCustomAttributes(typeof(AssimpFunctionNameAttribute), false);
+            foreach(object attr in attributes) {
+                if(attr is AssimpFunctionNameAttribute)
+                    return attr as AssimpFunctionNameAttribute;
+            }
+
+            return null;
         }
     }
 
