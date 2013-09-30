@@ -37,11 +37,6 @@ namespace Assimp {
     /// Helper static class containing functions that aid dealing with unmanaged memory to managed memory conversions.
     /// </summary>
     public static class MemoryHelper {
-        /// <summary>
-        /// FOR DEBUG, will be removed soon
-        /// </summary>
-        public static int ALLOCCOUNT = 0;
-
         #region Marshaling Interop
 
         /// <summary>
@@ -387,7 +382,6 @@ namespace Assimp {
         /// <param name="sizeInBytes">Size in bytes to allocate</param>
         /// <returns>Pointer to allocated memory</returns>
         public static IntPtr AllocateMemory(int sizeInBytes) {
-            ALLOCCOUNT++;
             return Marshal.AllocHGlobal(sizeInBytes);
         }
 
@@ -396,10 +390,8 @@ namespace Assimp {
         /// </summary>
         /// <param name="memoryPtr">Pointer to memory</param>
         public static void FreeMemory(IntPtr memoryPtr) {
-            if(memoryPtr != IntPtr.Zero) {
+            if(memoryPtr != IntPtr.Zero)
                 Marshal.FreeHGlobal(memoryPtr);
-                ALLOCCOUNT--;
-            }
         }
 
         /// <summary>
@@ -416,14 +408,11 @@ namespace Assimp {
             for(int i = 0; i < length; i++) {
                 IntPtr currPos = Read<IntPtr>(AddIntPtr(memoryPtr, stride * i));
 
-                if(currPos != IntPtr.Zero) {
+                if(currPos != IntPtr.Zero)
                     Marshal.FreeHGlobal(currPos);
-                    ALLOCCOUNT--;
-                }
             }
 
             Marshal.FreeHGlobal(memoryPtr);
-            ALLOCCOUNT--;
         }
 
         /// <summary>
