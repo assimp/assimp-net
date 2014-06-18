@@ -1,5 +1,5 @@
 ﻿/*
-* Copyright (c) 2012-2013 AssimpNet - Nicholas Woodfield
+* Copyright (c) 2012-2014 AssimpNet - Nicholas Woodfield
 * 
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -26,7 +26,8 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using Assimp.Unmanaged;
 
-namespace Assimp {
+namespace Assimp
+{
     /// <summary>
     /// Callback delegate for Assimp's LogStream.
     /// </summary>
@@ -38,7 +39,8 @@ namespace Assimp {
     /// Represents a log stream, which receives all log messages and streams them somewhere.
     /// </summary>
     [DebuggerDisplay("IsAttached = {IsAttached}")]
-    public class LogStream : IDisposable {
+    public class LogStream : IDisposable
+    {
         private static Object s_sync = new Object();
         private static List<LogStream> s_activeLogstreams = new List<LogStream>();
 
@@ -52,11 +54,14 @@ namespace Assimp {
         /// <summary>
         /// Gets or sets, if verbose logging is enabled globally.
         /// </summary>
-        public static bool IsVerboseLoggingEnabled {
-            get {
+        public static bool IsVerboseLoggingEnabled
+        {
+            get
+            {
                 return AssimpLibrary.Instance.GetVerboseLoggingEnabled();
             }
-            set {
+            set
+            {
                 AssimpLibrary.Instance.EnableVerboseLogging(value);
             }
         }
@@ -64,11 +69,14 @@ namespace Assimp {
         /// <summary>
         /// Gets or sets the user data to be passed to the callback.
         /// </summary>
-        public String UserData {
-            get {
+        public String UserData
+        {
+            get
+            {
                 return m_userData;
             }
-            set {
+            set
+            {
                 m_userData = value;
             }
         }
@@ -76,8 +84,10 @@ namespace Assimp {
         /// <summary>
         /// Gets whether the logstream has been disposed or not.
         /// </summary>
-        public bool IsDisposed {
-            get {
+        public bool IsDisposed
+        {
+            get
+            {
                 return m_isDisposed;
             }
         }
@@ -85,8 +95,10 @@ namespace Assimp {
         /// <summary>
         /// Gets whether or not the logstream is currently attached to the library.
         /// </summary>
-        public bool IsAttached {
-            get {
+        public bool IsAttached
+        {
+            get
+            {
                 return m_isAttached;
             }
         }
@@ -94,7 +106,8 @@ namespace Assimp {
         /// <summary>
         /// Static constructor.
         /// </summary>
-        static LogStream() {
+        static LogStream()
+        {
             AssimpLibrary.Instance.LibraryFreed += AssimpLibraryFreed;
         }
 
@@ -107,7 +120,8 @@ namespace Assimp {
         /// Constructs a new LogStream.
         /// </summary>
         /// <param name="userData">User-supplied data</param>
-        protected LogStream(String userData) {
+        protected LogStream(String userData)
+        {
             Initialize(null, userData);
         }
 
@@ -115,7 +129,8 @@ namespace Assimp {
         /// Constructs a new LogStream.
         /// </summary>
         /// <param name="callback">Logging callback that is called when messages are received by the log stream.</param>
-        public LogStream(LoggingCallback callback) {
+        public LogStream(LoggingCallback callback)
+        {
             Initialize(callback, String.Empty);
         }
 
@@ -124,23 +139,28 @@ namespace Assimp {
         /// </summary>
         /// <param name="callback">Logging callback that is called when messages are received by the log stream.</param>
         /// <param name="userData">User-supplied data</param>
-        public LogStream(LoggingCallback callback, String userData) {
+        public LogStream(LoggingCallback callback, String userData)
+        {
             Initialize(callback, userData);
         }
 
         /// <summary>
         /// Finalizes an instance of the <see cref="LogStream"/> class.
         /// </summary>
-        ~LogStream() {
+        ~LogStream()
+        {
             Dispose(false);
         }
 
         /// <summary>
         /// Detaches all active logstreams from the library.
         /// </summary>
-        public static void DetachAllLogstreams() {
-            lock(s_sync) {
-                foreach(LogStream logstream in s_activeLogstreams) {
+        public static void DetachAllLogstreams()
+        {
+            lock(s_sync)
+            {
+                foreach(LogStream logstream in s_activeLogstreams)
+                {
                     logstream.m_isAttached = false;
                     AssimpLibrary.Instance.DetachLogStream(logstream.m_logstreamPtr);
                     logstream.OnDetach();
@@ -154,25 +174,30 @@ namespace Assimp {
         /// Gets all active logstreams that are currently attached to the library.
         /// </summary>
         /// <returns></returns>
-        public static IEnumerable<LogStream> GetAttachedLogStreams() {
-            lock(s_sync) {
+        public static IEnumerable<LogStream> GetAttachedLogStreams()
+        {
+            lock(s_sync)
+            {
                 return s_activeLogstreams.ToArray();
             }
         }
 
         //Ensure we cleanup our logstreams if any are around when the unmanaged library is freed.
-        private static void AssimpLibraryFreed(object sender, EventArgs e) {
+        private static void AssimpLibraryFreed(object sender, EventArgs e)
+        {
             DetachAllLogstreams();
         }
 
         /// <summary>
         /// Attaches the logstream to the library.
         /// </summary>
-        public void Attach() {
+        public void Attach()
+        {
             if(m_isAttached)
                 return;
 
-            lock(s_sync) {
+            lock(s_sync)
+            {
                 s_activeLogstreams.Add(this);
                 m_isAttached = true;
                 AssimpLibrary.Instance.AttachLogStream(m_logstreamPtr);
@@ -183,11 +208,13 @@ namespace Assimp {
         /// <summary>
         /// Detatches the logstream from the library.
         /// </summary>
-        public void Detach() {
+        public void Detach()
+        {
             if(!m_isAttached)
                 return;
 
-            lock(s_sync) {
+            lock(s_sync)
+            {
                 s_activeLogstreams.Remove(this);
                 m_isAttached = false;
                 AssimpLibrary.Instance.DetachLogStream(m_logstreamPtr);
@@ -198,7 +225,8 @@ namespace Assimp {
         /// <summary>
         /// Releases unmanaged resources held by the LogStream. This should not be called by the user if the logstream is currently attached to an assimp importer.
         /// </summary>
-        public void Dispose() {
+        public void Dispose()
+        {
             Dispose(true);
             GC.SuppressFinalize(this);
         }
@@ -207,14 +235,18 @@ namespace Assimp {
         /// Releases unmanaged and - optionally - managed resources.
         /// </summary>
         /// <param name="disposing">True to release both managed and unmanaged resources; False to release only unmanaged resources.</param>
-        protected virtual void Dispose(bool disposing) {
-            if(!m_isDisposed) {
-                if(m_logstreamPtr != IntPtr.Zero) {
+        protected virtual void Dispose(bool disposing)
+        {
+            if(!m_isDisposed)
+            {
+                if(m_logstreamPtr != IntPtr.Zero)
+                {
                     MemoryHelper.FreeMemory(m_logstreamPtr);
                     m_logstreamPtr = IntPtr.Zero;
                 }
 
-                if(disposing) {
+                if(disposing)
+                {
                     m_assimpCallback = null;
                 }
 
@@ -241,15 +273,20 @@ namespace Assimp {
         /// </summary>
         protected virtual void OnDetach() { }
 
-        private void OnAiLogStreamCallback(String msg, IntPtr userData) {
-            if(m_logCallback != null) {
+        private void OnAiLogStreamCallback(String msg, IntPtr userData)
+        {
+            if(m_logCallback != null)
+            {
                 m_logCallback(msg, m_userData);
-            } else {
+            }
+            else
+            {
                 LogMessage(msg, m_userData);
             }
         }
 
-        private void Initialize(LoggingCallback callback, String userData) {
+        private void Initialize(LoggingCallback callback, String userData)
+        {
             if(userData == null)
                 userData = String.Empty;
 
@@ -269,7 +306,8 @@ namespace Assimp {
     /// <summary>
     /// Log stream that writes messages to the Console.
     /// </summary>
-    public sealed class ConsoleLogStream : LogStream {
+    public sealed class ConsoleLogStream : LogStream
+    {
         /// <summary>
         /// Constructs a new console logstream.
         /// </summary>
@@ -286,10 +324,14 @@ namespace Assimp {
         /// </summary>
         /// <param name="msg">Message</param>
         /// <param name="userData">Userdata</param>
-        protected override void LogMessage(String msg, String userData) {
-            if(String.IsNullOrEmpty(userData)) {
+        protected override void LogMessage(String msg, String userData)
+        {
+            if(String.IsNullOrEmpty(userData))
+            {
                 Console.WriteLine(msg);
-            } else {
+            }
+            else
+            {
                 Console.WriteLine(String.Format("{0}: {1}", userData, msg));
             }
         }

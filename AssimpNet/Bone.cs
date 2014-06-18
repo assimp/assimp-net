@@ -1,5 +1,5 @@
 ﻿/*
-* Copyright (c) 2012-2013 AssimpNet - Nicholas Woodfield
+* Copyright (c) 2012-2014 AssimpNet - Nicholas Woodfield
 * 
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -24,13 +24,15 @@ using System;
 using System.Collections.Generic;
 using Assimp.Unmanaged;
 
-namespace Assimp {
+namespace Assimp
+{
     /// <summary>
     /// Represents a single bone of a mesh. A bone has a name which allows it to be found in the frame
     /// hierarchy and by which it can be addressed by animations. In addition it has a number of
     /// influences on vertices.
     /// </summary>
-    public sealed class Bone : IMarshalable<Bone, AiBone> {
+    public sealed class Bone : IMarshalable<Bone, AiBone>
+    {
         private String m_name;
         private List<VertexWeight> m_weights;
         private Matrix4x4 m_offsetMatrix;
@@ -38,11 +40,14 @@ namespace Assimp {
         /// <summary>
         /// Gets or sets the name of the bone.
         /// </summary>
-        public String Name {
-            get {
+        public String Name
+        {
+            get
+            {
                 return m_name;
             }
-            set {
+            set
+            {
                 m_name = value;
             }
         }
@@ -50,8 +55,10 @@ namespace Assimp {
         /// <summary>
         /// Gets the number of vertex influences the bone contains.
         /// </summary>
-        public int VertexWeightCount {
-            get {
+        public int VertexWeightCount
+        {
+            get
+            {
                 return m_weights.Count;
             }
         }
@@ -59,8 +66,10 @@ namespace Assimp {
         /// <summary>
         /// Gets if the bone has vertex weights - this should always be true.
         /// </summary>
-        public bool HasVertexWeights {
-            get {
+        public bool HasVertexWeights
+        {
+            get
+            {
                 return m_weights.Count > 0;
             }
         }
@@ -68,8 +77,10 @@ namespace Assimp {
         /// <summary>
         /// Gets the vertex weights owned by the bone.
         /// </summary>
-        public List<VertexWeight> VertexWeights {
-            get {
+        public List<VertexWeight> VertexWeights
+        {
+            get
+            {
                 return m_weights;
             }
         }
@@ -83,7 +94,8 @@ namespace Assimp {
             {
                 return m_offsetMatrix;
             }
-            set {
+            set
+            {
                 m_offsetMatrix = value;
             }
         }
@@ -91,7 +103,8 @@ namespace Assimp {
         /// <summary>
         /// Constructs a new instance of the <see cref="Bone"/> class.
         /// </summary>
-        public Bone() {
+        public Bone()
+        {
             m_name = null;
             m_offsetMatrix = Matrix3x3.Identity;
             m_weights = new List<VertexWeight>();
@@ -103,7 +116,8 @@ namespace Assimp {
         /// <param name="name">Name of the bone</param>
         /// <param name="offsetMatrix">Bone's offset matrix</param>
         /// <param name="weights">Vertex weights</param>
-        public Bone(String name, Matrix3x3 offsetMatrix, VertexWeight[] weights) {
+        public Bone(String name, Matrix3x3 offsetMatrix, VertexWeight[] weights)
+        {
             m_name = name;
             m_offsetMatrix = offsetMatrix;
             m_weights = new List<VertexWeight>();
@@ -117,7 +131,8 @@ namespace Assimp {
         /// <summary>
         /// Gets if the native value type is blittable (that is, does not require marshaling by the runtime, e.g. has MarshalAs attributes).
         /// </summary>
-        bool IMarshalable<Bone, AiBone>.IsNativeBlittable {
+        bool IMarshalable<Bone, AiBone>.IsNativeBlittable
+        {
             get { return true; }
         }
 
@@ -126,12 +141,13 @@ namespace Assimp {
         /// </summary>
         /// <param name="thisPtr">Optional pointer to the memory that will hold the native value.</param>
         /// <param name="nativeValue">Output native value</param>
-        void IMarshalable<Bone, AiBone>.ToNative(IntPtr thisPtr, out AiBone nativeValue) {
+        void IMarshalable<Bone, AiBone>.ToNative(IntPtr thisPtr, out AiBone nativeValue)
+        {
             nativeValue.Name = new AiString(m_name);
             nativeValue.OffsetMatrix = m_offsetMatrix;
             nativeValue.NumWeights = (uint) m_weights.Count;
             nativeValue.Weights = IntPtr.Zero;
-            
+
             if(nativeValue.NumWeights > 0)
                 nativeValue.Weights = MemoryHelper.ToNativeArray<VertexWeight>(m_weights.ToArray());
         }
@@ -140,7 +156,8 @@ namespace Assimp {
         /// Reads the unmanaged data from the native value.
         /// </summary>
         /// <param name="nativeValue">Input native value</param>
-        void IMarshalable<Bone, AiBone>.FromNative(ref AiBone nativeValue) {
+        void IMarshalable<Bone, AiBone>.FromNative(ref AiBone nativeValue)
+        {
             m_name = nativeValue.Name.GetString();
             m_offsetMatrix = nativeValue.OffsetMatrix;
             m_weights.Clear();
@@ -154,7 +171,8 @@ namespace Assimp {
         /// </summary>
         /// <param name="nativeValue">Native value to free</param>
         /// <param name="freeNative">True if the unmanaged memory should be freed, false otherwise.</param>
-        public static void FreeNative(IntPtr nativeValue, bool freeNative) {
+        public static void FreeNative(IntPtr nativeValue, bool freeNative)
+        {
             if(nativeValue == IntPtr.Zero)
                 return;
 

@@ -1,5 +1,5 @@
 ﻿/*
-* Copyright (c) 2012-2013 AssimpNet - Nicholas Woodfield
+* Copyright (c) 2012-2014 AssimpNet - Nicholas Woodfield
 * 
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -23,7 +23,8 @@
 using System;
 using Assimp.Unmanaged;
 
-namespace Assimp {
+namespace Assimp
+{
     /// <summary>
     /// Represents an embedded texture. Some file formats directly embed texture assets.
     /// Embedded textures may be uncompressed, where the data is given in an uncompressed format.
@@ -32,7 +33,8 @@ namespace Assimp {
     /// get access to the actual color data. This object represents both types, so some properties may or may not be valid depending
     /// if it is compressed or not.
     /// </summary>
-    public sealed class EmbeddedTexture : IMarshalable<EmbeddedTexture, AiTexture> {
+    public sealed class EmbeddedTexture : IMarshalable<EmbeddedTexture, AiTexture>
+    {
         private bool m_isCompressed;
 
         //Uncompressed textures only
@@ -47,8 +49,10 @@ namespace Assimp {
         /// <summary>
         /// Gets if the texture is compressed or not.
         /// </summary>
-        public bool IsCompressed {
-            get {
+        public bool IsCompressed
+        {
+            get
+            {
                 return m_isCompressed;
             }
         }
@@ -56,8 +60,10 @@ namespace Assimp {
         /// <summary>
         /// Gets the width of the texture in pixels. Only valid for non-compressed textures.
         /// </summary>
-        public int Width {
-            get {
+        public int Width
+        {
+            get
+            {
                 return m_width;
             }
         }
@@ -65,8 +71,10 @@ namespace Assimp {
         /// <summary>
         /// Gets the height of the texture in pixels. Only valid for non-compressed textures.
         /// </summary>
-        public int Height {
-            get {
+        public int Height
+        {
+            get
+            {
                 return m_height;
             }
         }
@@ -74,8 +82,10 @@ namespace Assimp {
         /// <summary>
         /// Gets if the texture has non-compressed texel data. Only valid for non-compressed textures.
         /// </summary>
-        public bool HasNonCompressedData {
-            get {
+        public bool HasNonCompressedData
+        {
+            get
+            {
                 return m_nonCompressedData != null || m_nonCompressedData.Length != 0;
             }
         }
@@ -83,8 +93,10 @@ namespace Assimp {
         /// <summary>
         /// Gets the size of the non-compressed texel data. Only valid for non-compressed textures.
         /// </summary>
-        public int NonCompressedDataSize {
-            get {
+        public int NonCompressedDataSize
+        {
+            get
+            {
                 return (m_nonCompressedData == null) ? 0 : m_nonCompressedData.Length;
             }
         }
@@ -92,8 +104,10 @@ namespace Assimp {
         /// <summary>
         /// Gets the non-compressed texel data, the array is of size Width * Height. Only valid for non-compressed textures.
         /// </summary>
-        public Texel[] NonCompressedData {
-            get {
+        public Texel[] NonCompressedData
+        {
+            get
+            {
                 return m_nonCompressedData;
             }
         }
@@ -101,8 +115,10 @@ namespace Assimp {
         /// <summary>
         /// Gets if the embedded texture has compressed data. Only valid for compressed textures.
         /// </summary>
-        public bool HasCompressedData {
-            get {
+        public bool HasCompressedData
+        {
+            get
+            {
                 return m_compressedData != null || m_compressedData.Length != 0;
             }
         }
@@ -110,8 +126,10 @@ namespace Assimp {
         /// <summary>
         /// Gets the size of the compressed data. Only valid for compressed textures.
         /// </summary>
-        public int CompressedDataSize {
-            get {
+        public int CompressedDataSize
+        {
+            get
+            {
                 return (m_compressedData == null) ? 0 : m_compressedData.Length;
             }
         }
@@ -119,8 +137,10 @@ namespace Assimp {
         /// <summary>
         /// Gets the raw byte data representing the compressed texture. Only valid for compressed textures.
         /// </summary>
-        public byte[] CompressedData {
-            get {
+        public byte[] CompressedData
+        {
+            get
+            {
                 return m_compressedData;
             }
         }
@@ -129,8 +149,10 @@ namespace Assimp {
         /// Gets the format hint to determine the type of compressed data. This hint
         /// is a three-character lower-case hint like "dds", "jpg", "png".
         /// </summary>
-        public String CompressedFormatHint {
-            get {
+        public String CompressedFormatHint
+        {
+            get
+            {
                 return m_compressedFormatHint;
             }
         }
@@ -139,7 +161,8 @@ namespace Assimp {
         /// Constructs a new instance of the <see cref="EmbeddedTexture"/> class. Should use only if
         /// reading from a native value.
         /// </summary>
-        public EmbeddedTexture() {
+        public EmbeddedTexture()
+        {
             m_isCompressed = false;
         }
 
@@ -150,7 +173,8 @@ namespace Assimp {
         /// </summary>
         /// <param name="compressedFormatHint">The 3 character format hint.</param>
         /// <param name="compressedData">The compressed data.</param>
-        public EmbeddedTexture(String compressedFormatHint, byte[] compressedData) {
+        public EmbeddedTexture(String compressedFormatHint, byte[] compressedData)
+        {
             m_compressedFormatHint = compressedFormatHint;
             m_compressedData = compressedData;
 
@@ -168,7 +192,8 @@ namespace Assimp {
         /// <param name="height">Height of the texture</param>
         /// <param name="uncompressedData">Color data</param>
         /// <exception cref="ArgumentException">Thrown if the data size does not match width * height.</exception>
-        public EmbeddedTexture(int width, int height, Texel[] uncompressedData) {
+        public EmbeddedTexture(int width, int height, Texel[] uncompressedData)
+        {
             m_width = width;
             m_height = height;
             m_nonCompressedData = uncompressedData;
@@ -186,7 +211,8 @@ namespace Assimp {
         /// <summary>
         /// Gets if the native value type is blittable (that is, does not require marshaling by the runtime, e.g. has MarshalAs attributes).
         /// </summary>
-        bool IMarshalable<EmbeddedTexture, AiTexture>.IsNativeBlittable {
+        bool IMarshalable<EmbeddedTexture, AiTexture>.IsNativeBlittable
+        {
             get { return true; }
         }
 
@@ -195,17 +221,21 @@ namespace Assimp {
         /// </summary>
         /// <param name="thisPtr">Optional pointer to the memory that will hold the native value.</param>
         /// <param name="nativeValue">Output native value</param>
-        void IMarshalable<EmbeddedTexture, AiTexture>.ToNative(IntPtr thisPtr, out AiTexture nativeValue) {
-            if(IsCompressed) {
+        void IMarshalable<EmbeddedTexture, AiTexture>.ToNative(IntPtr thisPtr, out AiTexture nativeValue)
+        {
+            if(IsCompressed)
+            {
                 nativeValue.Width = (uint) CompressedDataSize;
                 nativeValue.Height = 0;
                 nativeValue.Data = IntPtr.Zero;
-                
+
                 if(CompressedDataSize > 0)
                     nativeValue.Data = MemoryHelper.ToNativeArray<byte>(m_compressedData);
 
                 nativeValue.SetFormatHint(m_compressedFormatHint);
-            } else {
+            }
+            else
+            {
                 nativeValue.Width = (uint) m_width;
                 nativeValue.Height = (uint) m_height;
                 nativeValue.Data = IntPtr.Zero;
@@ -221,10 +251,12 @@ namespace Assimp {
         /// Reads the unmanaged data from the native value.
         /// </summary>
         /// <param name="nativeValue">Input native value</param>
-        void IMarshalable<EmbeddedTexture, AiTexture>.FromNative(ref AiTexture nativeValue) {
+        void IMarshalable<EmbeddedTexture, AiTexture>.FromNative(ref AiTexture nativeValue)
+        {
             m_isCompressed = nativeValue.Height == 0;
 
-            if(IsCompressed) {
+            if(IsCompressed)
+            {
                 m_width = 0;
                 m_height = 0;
                 m_nonCompressedData = null;
@@ -234,7 +266,9 @@ namespace Assimp {
                     m_compressedData = MemoryHelper.FromNativeArray<byte>(nativeValue.Data, (int) nativeValue.Width);
 
                 m_compressedFormatHint = nativeValue.GetFormatHint();
-            } else {
+            }
+            else
+            {
                 m_compressedData = null;
                 m_compressedFormatHint = null;
                 m_nonCompressedData = null;
@@ -254,7 +288,8 @@ namespace Assimp {
         /// </summary>
         /// <param name="nativeValue">Native value to free</param>
         /// <param name="freeNative">True if the unmanaged memory should be freed, false otherwise.</param>
-        public static void FreeNative(IntPtr nativeValue, bool freeNative) {
+        public static void FreeNative(IntPtr nativeValue, bool freeNative)
+        {
             if(nativeValue == IntPtr.Zero)
                 return;
 

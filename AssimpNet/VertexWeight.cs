@@ -1,5 +1,5 @@
 ﻿/*
-* Copyright (c) 2012-2013 AssimpNet - Nicholas Woodfield
+* Copyright (c) 2012-2014 AssimpNet - Nicholas Woodfield
 * 
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -24,13 +24,15 @@ using System;
 using System.Globalization;
 using System.Runtime.InteropServices;
 
-namespace Assimp {
+namespace Assimp
+{
     /// <summary>
     /// Represents a single influence of a bone on a vertex.
     /// </summary>
     [Serializable]
     [StructLayoutAttribute(LayoutKind.Sequential)]
-    public struct VertexWeight {
+    public struct VertexWeight
+    {
         /// <summary>
         /// Index of the vertex which is influenced by the bone.
         /// </summary>
@@ -47,7 +49,8 @@ namespace Assimp {
         /// </summary>
         /// <param name="vertID">Index of the vertex.</param>
         /// <param name="weight">Weight of the influence.</param>
-        public VertexWeight(int vertID, float weight) {
+        public VertexWeight(int vertID, float weight)
+        {
             VertexID = vertID;
             Weight = weight;
         }
@@ -58,7 +61,8 @@ namespace Assimp {
         /// <returns>
         /// A <see cref="System.String"/> that represents this instance.
         /// </returns>
-        public override string ToString() {
+        public override string ToString()
+        {
             CultureInfo info = CultureInfo.CurrentCulture;
             return String.Format(info, "{{VertexID:{0} Weight:{1}}}",
                 new Object[] { VertexID.ToString(info), Weight.ToString(info) });

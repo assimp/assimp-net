@@ -1,5 +1,5 @@
 ﻿/*
-* Copyright (c) 2012-2013 AssimpNet - Nicholas Woodfield
+* Copyright (c) 2012-2014 AssimpNet - Nicholas Woodfield
 * 
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -24,17 +24,21 @@ using System;
 using NUnit.Framework;
 using TK = OpenTK;
 
-namespace Assimp.Test {
+namespace Assimp.Test
+{
     [TestFixture]
-    public class Matrix3x3TestFixture {
-
+    public class Matrix3x3TestFixture
+    {
         [Test]
-        public void TestIndexer() {
+        public void TestIndexer()
+        {
             float[] values = new float[] { 1.0f, 2.0f, 3.0f, 0.0f, -5.0f, .5f, .3f, .35f, .025f };
 
             Matrix3x3 m = Matrix3x3.Identity;
-            for(int i = 0; i < 3; i++) {
-                for(int j = 0; j < 3; j++) {
+            for(int i = 0; i < 3; i++)
+            {
+                for(int j = 0; j < 3; j++)
+                {
                     float value = values[(i * 3) + j];
                     //Matrix indices are one-based.
                     m[i + 1, j + 1] = value;
@@ -44,7 +48,8 @@ namespace Assimp.Test {
         }
 
         [Test]
-        public void TestEquals() {
+        public void TestEquals()
+        {
             Matrix3x3 m1 = new Matrix3x3(1.0f, 2.0f, 3.0f, 0.0f, -5.0f, .5f, .3f, .35f, .025f);
             Matrix3x3 m2 = new Matrix3x3(1.0f, 2.0f, 3.0f, 0.0f, -5.0f, .5f, .3f, .35f, .025f);
             Matrix3x3 m3 = new Matrix3x3(0.0f, 2.0f, 25.0f, 1.0f, 5.0f, 5.5f, 1.25f, 8.5f, 2.25f);
@@ -67,7 +72,8 @@ namespace Assimp.Test {
         }
 
         [Test]
-        public void TestDeterminant() {
+        public void TestDeterminant()
+        {
             float x = TK.MathHelper.Pi;
             float y = TK.MathHelper.PiOver3;
 
@@ -80,7 +86,8 @@ namespace Assimp.Test {
         }
 
         [Test]
-        public void TestFromAngleAxis() {
+        public void TestFromAngleAxis()
+        {
             TK.Matrix4 tkM = TK.Matrix4.CreateFromAxisAngle(TK.Vector3.UnitY, TK.MathHelper.Pi);
             Matrix3x3 m = Matrix3x3.FromAngleAxis(TK.MathHelper.Pi, new Vector3D(0, 1, 0));
 
@@ -88,7 +95,8 @@ namespace Assimp.Test {
         }
 
         [Test]
-        public void TestFromEulerAnglesXYZ() {
+        public void TestFromEulerAnglesXYZ()
+        {
             float x = TK.MathHelper.Pi;
             float y = 0.0f;
             float z = TK.MathHelper.PiOver4;
@@ -102,7 +110,8 @@ namespace Assimp.Test {
         }
 
         [Test]
-        public void TestFromRotationX() {
+        public void TestFromRotationX()
+        {
             float x = TK.MathHelper.Pi;
 
             TK.Matrix4 tkM = TK.Matrix4.CreateRotationX(x);
@@ -112,7 +121,8 @@ namespace Assimp.Test {
         }
 
         [Test]
-        public void TestFromRotationY() {
+        public void TestFromRotationY()
+        {
             float y = TK.MathHelper.Pi;
 
             TK.Matrix4 tkM = TK.Matrix4.CreateRotationY(y);
@@ -122,7 +132,8 @@ namespace Assimp.Test {
         }
 
         [Test]
-        public void TestFromRotationZ() {
+        public void TestFromRotationZ()
+        {
             float z = TK.MathHelper.Pi;
 
             TK.Matrix4 tkM = TK.Matrix4.CreateRotationZ(z);
@@ -132,7 +143,8 @@ namespace Assimp.Test {
         }
 
         [Test]
-        public void TestFromScaling() {
+        public void TestFromScaling()
+        {
             float x = 1.0f;
             float y = 2.0f;
             float z = 3.0f;
@@ -144,7 +156,8 @@ namespace Assimp.Test {
         }
 
         [Test]
-        public void TestFromToMatrix() {
+        public void TestFromToMatrix()
+        {
             Vector3D from = new Vector3D(1, 0, 0);
             Vector3D to = new Vector3D(0, 1, 0);
 
@@ -155,7 +168,8 @@ namespace Assimp.Test {
         }
 
         [Test]
-        public void TestToFromQuaternion() {
+        public void TestToFromQuaternion()
+        {
             Vector3D axis = new Vector3D(.25f, .5f, 0.0f);
             axis.Normalize();
 
@@ -169,7 +183,8 @@ namespace Assimp.Test {
         }
 
         [Test]
-        public void TestInverse() {
+        public void TestInverse()
+        {
             float x = TK.MathHelper.PiOver6;
             float y = TK.MathHelper.Pi;
 
@@ -183,7 +198,8 @@ namespace Assimp.Test {
         }
 
         [Test]
-        public void TestIdentity() {
+        public void TestIdentity()
+        {
             TK.Matrix4 tkM = TK.Matrix4.Identity;
             Matrix3x3 m = Matrix3x3.Identity;
 
@@ -192,7 +208,8 @@ namespace Assimp.Test {
         }
 
         [Test]
-        public void TestTranspose() {
+        public void TestTranspose()
+        {
             float x = TK.MathHelper.Pi;
             float y = TK.MathHelper.PiOver4;
 
@@ -205,7 +222,8 @@ namespace Assimp.Test {
         }
 
         [Test]
-        public void TestOpMultiply() {
+        public void TestOpMultiply()
+        {
             float x = TK.MathHelper.Pi;
             float y = TK.MathHelper.PiOver3;
 

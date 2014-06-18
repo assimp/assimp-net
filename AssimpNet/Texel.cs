@@ -1,5 +1,5 @@
 ﻿/*
-* Copyright (c) 2012-2013 AssimpNet - Nicholas Woodfield
+* Copyright (c) 2012-2014 AssimpNet - Nicholas Woodfield
 * 
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -24,13 +24,15 @@ using System;
 using System.Globalization;
 using System.Runtime.InteropServices;
 
-namespace Assimp {
+namespace Assimp
+{
     /// <summary>
     /// Represents a texel in ARGB8888 format.
     /// </summary>
     [Serializable]
     [StructLayoutAttribute(LayoutKind.Sequential)]
-    public struct Texel : IEquatable<Texel> {
+    public struct Texel : IEquatable<Texel>
+    {
         /// <summary>
         /// Blue component.
         /// </summary>
@@ -58,7 +60,8 @@ namespace Assimp {
         /// <param name="g">Green component.</param>
         /// <param name="r">Red component.</param>
         /// <param name="a">Alpha component.</param>
-        public Texel(byte b, byte g, byte r, byte a) {
+        public Texel(byte b, byte g, byte r, byte a)
+        {
             B = b;
             G = g;
             R = r;
@@ -71,7 +74,8 @@ namespace Assimp {
         /// <param name="a">First texel</param>
         /// <param name="b">Second texel</param>
         /// <returns>True if the texels are equal, false otherwise.</returns>
-        public static bool operator==(Texel a, Texel b) {
+        public static bool operator ==(Texel a, Texel b)
+        {
             return (a.B == b.B) && (a.G == b.G) && (a.R == b.R) && (a.A == b.A);
         }
 
@@ -81,7 +85,8 @@ namespace Assimp {
         /// <param name="a">First texel</param>
         /// <param name="b">Second texel</param>
         /// <returns>True if the texels are not equal, false otherwise.</returns>
-        public static bool operator!=(Texel a, Texel b) {
+        public static bool operator !=(Texel a, Texel b)
+        {
             return (a.B != b.B) && (a.G != b.G) && (a.R != b.R) && (a.A != b.A);
         }
 
@@ -90,7 +95,8 @@ namespace Assimp {
         /// </summary>
         /// <param name="texel">Texel to convert</param>
         /// <returns>Converted Color4D</returns>
-        public static implicit operator Color4D(Texel texel) {
+        public static implicit operator Color4D(Texel texel)
+        {
             return new Color4D(texel.R / 255.0f, texel.G / 255.0f, texel.B / 255.0f, texel.A / 255.0f);
         }
 
@@ -101,8 +107,10 @@ namespace Assimp {
         /// <returns>
         ///   <c>true</c> if the specified <see cref="System.Object"/> is equal to this instance; otherwise, <c>false</c>.
         /// </returns>
-        public override bool Equals(object obj) {
-            if(obj is Texel) {
+        public override bool Equals(object obj)
+        {
+            if(obj is Texel)
+            {
                 return Equals((Texel) obj);
             }
             return false;
@@ -113,7 +121,8 @@ namespace Assimp {
         /// </summary>
         /// <param name="other">Other key to test</param>
         /// <returns>True if their indices are equal</returns>
-        public bool Equals(Texel other) {
+        public bool Equals(Texel other)
+        {
             return (B == other.B) && (G == other.G) && (R == other.R) && (A == other.A);
         }
 
@@ -123,7 +132,8 @@ namespace Assimp {
         /// <returns>
         /// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table. 
         /// </returns>
-        public override int GetHashCode() {
+        public override int GetHashCode()
+        {
             return B.GetHashCode() + G.GetHashCode() + R.GetHashCode() + A.GetHashCode();
         }
 
@@ -133,7 +143,8 @@ namespace Assimp {
         /// <returns>
         /// A <see cref="System.String"/> that represents this instance.
         /// </returns>
-        public override string ToString() {
+        public override string ToString()
+        {
             CultureInfo info = CultureInfo.CurrentCulture;
             return String.Format(info, "{{B:{0} G:{1} R:{2} A:{3}}}",
                 new Object[] { B.ToString(info), G.ToString(info), R.ToString(info), A.ToString(info) });

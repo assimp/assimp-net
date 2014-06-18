@@ -1,5 +1,5 @@
 ﻿/*
-* Copyright (c) 2012-2013 AssimpNet - Nicholas Woodfield
+* Copyright (c) 2012-2014 AssimpNet - Nicholas Woodfield
 * 
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -24,12 +24,14 @@ using System;
 using System.IO;
 using NUnit.Framework;
 
-namespace Assimp.Test {
+namespace Assimp.Test
+{
     [TestFixture]
-    public class IOSystem_TestFixture {
-
+    public class IOSystem_TestFixture
+    {
         [Test]
-        public void TestMultiSearchDirectoryLoad() {
+        public void TestMultiSearchDirectoryLoad()
+        {
             String fileName = "fenris.lws";
             String[] searchPaths = { Path.Combine(TestHelper.RootPath, "TestFiles\\fenris\\scenes"), Path.Combine(TestHelper.RootPath, "TestFiles\\fenris\\objects") };
             FileIOSystem ioSystem = new FileIOSystem(searchPaths);
@@ -43,7 +45,8 @@ namespace Assimp.Test {
         }
 
         [Test]
-        public void TestMultiSearchDirectoryConvert() {
+        public void TestMultiSearchDirectoryConvert()
+        {
             String fileName = Path.Combine(TestHelper.RootPath, "TestFiles\\fenris\\scenes\\fenris.lws");
             String[] searchPaths = { Path.Combine(TestHelper.RootPath, "TestFiles\\fenris\\objects") };
             FileIOSystem ioSystem = new FileIOSystem(searchPaths);
@@ -57,14 +60,16 @@ namespace Assimp.Test {
         }
 
         [Test]
-        public void TestIOSystemError() {
+        public void TestIOSystemError()
+        {
             String fileName = "duckduck.dae"; //GOOSE!
             String[] searchPaths = { Path.Combine(TestHelper.RootPath, "TestFiles") };
             FileIOSystem ioSystem = new FileIOSystem(searchPaths);
 
             AssimpContext importer = new AssimpContext();
             importer.SetIOSystem(ioSystem);
-            Assert.Throws<AssimpException>(delegate() {
+            Assert.Throws<AssimpException>(delegate()
+            {
                 importer.ImportFile(fileName, PostProcessSteps.None);
             });
         }

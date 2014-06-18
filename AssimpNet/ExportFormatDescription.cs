@@ -1,5 +1,5 @@
 ﻿/*
-* Copyright (c) 2012-2013 AssimpNet - Nicholas Woodfield
+* Copyright (c) 2012-2014 AssimpNet - Nicholas Woodfield
 * 
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -25,12 +25,14 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using Assimp.Unmanaged;
 
-namespace Assimp {
+namespace Assimp
+{
     /// <summary>
     /// Describes a file format which Assimp can export to.
     /// </summary>
     [DebuggerDisplay("{Description}")]
-    public sealed class ExportFormatDescription {
+    public sealed class ExportFormatDescription
+    {
         private String m_formatId;
         private String m_description;
         private String m_fileExtension;
@@ -38,8 +40,10 @@ namespace Assimp {
         /// <summary>
         /// Gets a short string ID to uniquely identify the export format. E.g. "dae" or "obj".
         /// </summary>
-        public String FormatId {
-            get {
+        public String FormatId
+        {
+            get
+            {
                 return m_formatId;
             }
         }
@@ -47,8 +51,10 @@ namespace Assimp {
         /// <summary>
         /// Gets a short description of the file format to present to users.
         /// </summary>
-        public String Description {
-            get {
+        public String Description
+        {
+            get
+            {
                 return m_description;
             }
         }
@@ -56,8 +62,10 @@ namespace Assimp {
         /// <summary>
         /// Gets the recommended file extension for the exported file in lower case.
         /// </summary>
-        public String FileExtension {
-            get {
+        public String FileExtension
+        {
+            get
+            {
                 return m_fileExtension;
             }
         }
@@ -66,7 +74,8 @@ namespace Assimp {
         /// Constructs a new ExportFormatDescription.
         /// </summary>
         /// <param name="formatDesc">Unmanaged structure</param>
-        internal ExportFormatDescription(ref AiExportFormatDesc formatDesc) {
+        internal ExportFormatDescription(ref AiExportFormatDesc formatDesc)
+        {
             m_formatId = Marshal.PtrToStringAnsi(formatDesc.FormatId);
             m_description = Marshal.PtrToStringAnsi(formatDesc.Description);
             m_fileExtension = Marshal.PtrToStringAnsi(formatDesc.FileExtension);

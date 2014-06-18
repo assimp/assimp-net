@@ -1,5 +1,5 @@
 ﻿/*
-* Copyright (c) 2012-2013 AssimpNet - Nicholas Woodfield
+* Copyright (c) 2012-2014 AssimpNet - Nicholas Woodfield
 * 
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -24,13 +24,15 @@ using System;
 using System.Collections.Generic;
 using Assimp.Unmanaged;
 
-namespace Assimp {
+namespace Assimp
+{
     /// <summary>
     /// Describes vertex-based animations for a single mesh or a group of meshes. Meshes
     /// carry the animation data for each frame. The purpose of this object is to define
     /// keyframes, linking each mesh attachment to a particular point in a time.
     /// </summary>
-    public sealed class MeshAnimationChannel : IMarshalable<MeshAnimationChannel, AiMeshAnim> {
+    public sealed class MeshAnimationChannel : IMarshalable<MeshAnimationChannel, AiMeshAnim>
+    {
         private String m_name;
         private List<MeshKey> m_meshKeys;
 
@@ -39,11 +41,14 @@ namespace Assimp {
         /// animation meshes need to be named (not necessarily uniquely, the name can basically
         /// serve as a wildcard to select a group of meshes with similar animation setup).
         /// </summary>
-        public String MeshName {
-            get {
+        public String MeshName
+        {
+            get
+            {
                 return m_name;
             }
-            set {
+            set
+            {
                 m_name = value;
             }
         }
@@ -52,8 +57,10 @@ namespace Assimp {
         /// Gets the number of meshkeys in this animation channel. There will always
         /// be at least one key.
         /// </summary>
-        public int MeshKeyCount {
-            get {
+        public int MeshKeyCount
+        {
+            get
+            {
                 return m_meshKeys.Count;
             }
         }
@@ -61,8 +68,10 @@ namespace Assimp {
         /// <summary>
         /// Gets if this animation channel has mesh keys - this should always be true.
         /// </summary>
-        public bool HasMeshKeys {
-            get {
+        public bool HasMeshKeys
+        {
+            get
+            {
                 return m_meshKeys.Count > 0;
             }
         }
@@ -70,8 +79,10 @@ namespace Assimp {
         /// <summary>
         /// Gets the mesh keyframes of the animation. This should not be null.
         /// </summary>
-        public List<MeshKey> MeshKeys {
-            get {
+        public List<MeshKey> MeshKeys
+        {
+            get
+            {
                 return m_meshKeys;
             }
         }
@@ -79,7 +90,8 @@ namespace Assimp {
         /// <summary>
         /// Constructs a new instance of the <see cref="MeshAnimationChannel"/> class.
         /// </summary>
-        public MeshAnimationChannel() {
+        public MeshAnimationChannel()
+        {
             m_name = String.Empty;
             m_meshKeys = new List<MeshKey>();
         }
@@ -89,7 +101,8 @@ namespace Assimp {
         /// <summary>
         /// Gets if the native value type is blittable (that is, does not require marshaling by the runtime, e.g. has MarshalAs attributes).
         /// </summary>
-        bool IMarshalable<MeshAnimationChannel, AiMeshAnim>.IsNativeBlittable {
+        bool IMarshalable<MeshAnimationChannel, AiMeshAnim>.IsNativeBlittable
+        {
             get { return true; }
         }
 
@@ -98,7 +111,8 @@ namespace Assimp {
         /// </summary>
         /// <param name="thisPtr">Optional pointer to the memory that will hold the native value.</param>
         /// <param name="nativeValue">Output native value</param>
-        void IMarshalable<MeshAnimationChannel, AiMeshAnim>.ToNative(IntPtr thisPtr, out AiMeshAnim nativeValue) {
+        void IMarshalable<MeshAnimationChannel, AiMeshAnim>.ToNative(IntPtr thisPtr, out AiMeshAnim nativeValue)
+        {
             nativeValue.Name = new AiString(m_name);
             nativeValue.NumKeys = (uint) MeshKeyCount;
             nativeValue.Keys = IntPtr.Zero;
@@ -111,7 +125,8 @@ namespace Assimp {
         /// Reads the unmanaged data from the native value.
         /// </summary>
         /// <param name="nativeValue">Input native value</param>
-        void IMarshalable<MeshAnimationChannel, AiMeshAnim>.FromNative(ref AiMeshAnim nativeValue) {
+        void IMarshalable<MeshAnimationChannel, AiMeshAnim>.FromNative(ref AiMeshAnim nativeValue)
+        {
             m_name = nativeValue.Name.ToString();
             m_meshKeys.Clear();
 
@@ -124,7 +139,8 @@ namespace Assimp {
         /// </summary>
         /// <param name="nativeValue">Native value to free</param>
         /// <param name="freeNative">True if the unmanaged memory should be freed, false otherwise.</param>
-        public static void FreeNative(IntPtr nativeValue, bool freeNative) {
+        public static void FreeNative(IntPtr nativeValue, bool freeNative)
+        {
             if(nativeValue == IntPtr.Zero)
                 return;
 

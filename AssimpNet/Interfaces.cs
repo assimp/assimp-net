@@ -1,5 +1,5 @@
 ﻿/*
-* Copyright (c) 2012-2013 AssimpNet - Nicholas Woodfield
+* Copyright (c) 2012-2014 AssimpNet - Nicholas Woodfield
 * 
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -22,7 +22,8 @@
 
 using System;
 
-namespace Assimp {
+namespace Assimp
+{
     /// <summary>
     /// Represents an object that can be marshaled to and from a native representation.
     /// </summary>
@@ -30,7 +31,8 @@ namespace Assimp {
     /// <typeparam name="Native">Native value type</typeparam>
     public interface IMarshalable<Managed, Native>
         where Managed : class, new()
-        where Native : struct {
+        where Native : struct
+    {
 
         /// <summary>
         /// Gets if the native value type is blittable (that is, does not require marshaling by the runtime, e.g. has MarshalAs attributes).

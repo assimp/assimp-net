@@ -1,5 +1,5 @@
 ﻿/*
-* Copyright (c) 2012-2013 AssimpNet - Nicholas Woodfield
+* Copyright (c) 2012-2014 AssimpNet - Nicholas Woodfield
 * 
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -25,12 +25,14 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using Assimp.Unmanaged;
 
-namespace Assimp {
+namespace Assimp
+{
     /// <summary>
     /// Defines a custom IO handler that can be registered to an importer that will handle I/O for assimp. This includes searching/opening
     /// files to read during import, and creating/writing to files during export.
     /// </summary>
-    public abstract class IOSystem : IDisposable {
+    public abstract class IOSystem : IDisposable
+    {
         private AiFileOpenProc m_openProc;
         private AiFileCloseProc m_closeProc;
         private IntPtr m_fileIOPtr;
@@ -40,8 +42,10 @@ namespace Assimp {
         /// <summary>
         /// Gets whether or not this IOSystem has been disposed.
         /// </summary>
-        public bool IsDisposed {
-            get {
+        public bool IsDisposed
+        {
+            get
+            {
                 return m_isDisposed;
             }
         }
@@ -49,14 +53,18 @@ namespace Assimp {
         /// <summary>
         /// Gets the number of currently opened streams.
         /// </summary>
-        public int OpenFileCount {
-            get {
+        public int OpenFileCount
+        {
+            get
+            {
                 return m_openedFiles.Count;
             }
         }
 
-        internal IntPtr AiFileIO {
-            get {
+        internal IntPtr AiFileIO
+        {
+            get
+            {
                 return m_fileIOPtr;
             }
         }
@@ -64,7 +72,8 @@ namespace Assimp {
         /// <summary>
         /// Constructs a new IOSystem.
         /// </summary>
-        public IOSystem() {
+        public IOSystem()
+        {
             m_openProc = OnAiFileOpenProc;
             m_closeProc = OnAiFileCloseProc;
 
@@ -82,7 +91,8 @@ namespace Assimp {
         /// <summary>
         /// Finalizes an instance of the <see cref="IOSystem"/> class.
         /// </summary>
-        ~IOSystem() {
+        ~IOSystem()
+        {
             Dispose(false);
         }
 
@@ -98,11 +108,13 @@ namespace Assimp {
         /// Closes a stream that is owned by this IOSystem.
         /// </summary>
         /// <param name="stream">Stream to close</param>
-        public virtual void CloseFile(IOStream stream) {
+        public virtual void CloseFile(IOStream stream)
+        {
             if(stream == null)
                 return;
 
-            if(m_openedFiles.ContainsKey(stream.AiFile)) {
+            if(m_openedFiles.ContainsKey(stream.AiFile))
+            {
                 m_openedFiles.Remove(stream.AiFile);
 
                 if(!stream.IsDisposed)
@@ -113,8 +125,10 @@ namespace Assimp {
         /// <summary>
         /// Closes all outstanding streams owned by this IOSystem.
         /// </summary>
-        public virtual void CloseAllFiles() {
-            foreach(KeyValuePair<IntPtr, IOStream> kv in m_openedFiles) {
+        public virtual void CloseAllFiles()
+        {
+            foreach(KeyValuePair<IntPtr, IOStream> kv in m_openedFiles)
+            {
                 if(!kv.Value.IsDisposed)
                     kv.Value.Close();
             }
@@ -124,7 +138,8 @@ namespace Assimp {
         /// <summary>
         /// Disposes of all resources held by this object.
         /// </summary>
-        public void Dispose() {
+        public void Dispose()
+        {
             Dispose(true);
             GC.SuppressFinalize(this);
         }
@@ -133,14 +148,18 @@ namespace Assimp {
         /// Releases unmanaged and - optionally - managed resources.
         /// </summary>
         /// <param name="disposing">True to release both managed and unmanaged resources; False to release only unmanaged resources.</param>
-        protected virtual void Dispose(bool disposing) {
-            if(!m_isDisposed) {
-                if(m_fileIOPtr != IntPtr.Zero) {
+        protected virtual void Dispose(bool disposing)
+        {
+            if(!m_isDisposed)
+            {
+                if(m_fileIOPtr != IntPtr.Zero)
+                {
                     MemoryHelper.FreeMemory(m_fileIOPtr);
                     m_fileIOPtr = IntPtr.Zero;
                 }
 
-                if(disposing) {
+                if(disposing)
+                {
                     m_openProc = null;
                     m_closeProc = null;
                     CloseAllFiles();
@@ -149,7 +168,8 @@ namespace Assimp {
             }
         }
 
-        private IntPtr OnAiFileOpenProc(IntPtr fileIO, String pathToFile, String mode) {
+        private IntPtr OnAiFileOpenProc(IntPtr fileIO, String pathToFile, String mode)
+        {
             if(m_fileIOPtr != fileIO)
                 return IntPtr.Zero;
 
@@ -157,11 +177,15 @@ namespace Assimp {
             IOStream iostream = OpenFile(pathToFile, fileMode);
             IntPtr aiFilePtr = IntPtr.Zero;
 
-            if(iostream != null) {
-                if(iostream.IsValid) {
+            if(iostream != null)
+            {
+                if(iostream.IsValid)
+                {
                     aiFilePtr = iostream.AiFile;
                     m_openedFiles.Add(aiFilePtr, iostream);
-                } else {
+                }
+                else
+                {
                     iostream.Dispose();
                 }
             }
@@ -169,20 +193,24 @@ namespace Assimp {
             return aiFilePtr;
         }
 
-        private void OnAiFileCloseProc(IntPtr fileIO, IntPtr file) {
+        private void OnAiFileCloseProc(IntPtr fileIO, IntPtr file)
+        {
             if(m_fileIOPtr != fileIO)
                 return;
 
             IOStream iostream;
-            if(m_openedFiles.TryGetValue(file, out iostream)) {
+            if(m_openedFiles.TryGetValue(file, out iostream))
+            {
                 CloseFile(iostream);
             }
         }
 
-        private FileIOMode ConvertFileMode(String mode) {
+        private FileIOMode ConvertFileMode(String mode)
+        {
             FileIOMode fileMode = FileIOMode.Read;
 
-            switch(mode) {
+            switch(mode)
+            {
                 case "w":
                     fileMode = FileIOMode.Write;
                     break;

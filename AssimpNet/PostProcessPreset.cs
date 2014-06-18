@@ -1,5 +1,5 @@
 ﻿/*
-* Copyright (c) 2012-2013 AssimpNet - Nicholas Woodfield
+* Copyright (c) 2012-2014 AssimpNet - Nicholas Woodfield
 * 
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -20,19 +20,22 @@
 * THE SOFTWARE.
 */
 
-namespace Assimp {
+namespace Assimp
+{
     /// <summary>
     /// Static class containing preset properties for post processing options.
     /// </summary>
-    public static class PostProcessPreset {
-
+    public static class PostProcessPreset
+    {
         /// <summary>
         /// PostProcess configuration for (some) Direct3D conventions,
         /// left handed geometry, upper left origin for UV coordinates,
         /// and clockwise face order, suitable for CCW culling.
         /// </summary>
-        public static PostProcessSteps ConvertToLeftHanded {
-            get {
+        public static PostProcessSteps ConvertToLeftHanded
+        {
+            get
+            {
                 return PostProcessSteps.MakeLeftHanded |
                     PostProcessSteps.FlipUVs |
                     PostProcessSteps.FlipWindingOrder;
@@ -47,8 +50,10 @@ namespace Assimp {
         /// <see cref="PostProcessSteps.JoinIdenticalVertices"/>, <see cref="PostProcessSteps.Triangulate"/>,
         /// <see cref="PostProcessSteps.GenerateUVCoords"/>, and <see cref="PostProcessSteps.SortByPrimitiveType"/>
         /// </summary>
-        public static PostProcessSteps TargetRealTimeFast {
-            get {
+        public static PostProcessSteps TargetRealTimeFast
+        {
+            get
+            {
                 return PostProcessSteps.CalculateTangentSpace |
                     PostProcessSteps.GenerateNormals |
                     PostProcessSteps.JoinIdenticalVertices |
@@ -69,8 +74,10 @@ namespace Assimp {
         /// <see cref="PostProcessSteps.SplitLargeMeshes"/>, <see cref="PostProcessSteps.FindDegenerates"/>, and
         /// <see cref="PostProcessSteps.FindInvalidData"/>
         /// </summary>
-        public static PostProcessSteps TargetRealTimeQuality {
-            get {
+        public static PostProcessSteps TargetRealTimeQuality
+        {
+            get
+            {
                 return PostProcessSteps.CalculateTangentSpace |
                     PostProcessSteps.GenerateSmoothNormals |
                     PostProcessSteps.JoinIdenticalVertices |
@@ -92,8 +99,10 @@ namespace Assimp {
         /// <see cref="PostProcessSteps.FindInstances"/>, <see cref="PostProcessSteps.ValidateDataStructure"/>, and
         /// <see cref="PostProcessSteps.OptimizeMeshes"/>
         /// </summary>
-        public static PostProcessSteps TargetRealTimeMaximumQuality {
-            get {
+        public static PostProcessSteps TargetRealTimeMaximumQuality
+        {
+            get
+            {
                 return TargetRealTimeQuality |
                     PostProcessSteps.FindInstances |
                     PostProcessSteps.ValidateDataStructure |

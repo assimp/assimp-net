@@ -1,5 +1,5 @@
 ﻿/*
-* Copyright (c) 2012-2013 AssimpNet - Nicholas Woodfield
+* Copyright (c) 2012-2014 AssimpNet - Nicholas Woodfield
 * 
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -22,12 +22,14 @@
 
 using System;
 
-namespace Assimp.Unmanaged {
+namespace Assimp.Unmanaged
+{
     /// <summary>
     /// Static class that has a number of constants that are found in Assimp. These can be limits to configuration property default values. The constants
     /// are grouped according to their usage or where they're found in the Assimp include files.
     /// </summary>
-    public static class AiDefines {
+    public static class AiDefines
+    {
 
         #region Config Defaults
 

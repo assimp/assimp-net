@@ -1,5 +1,5 @@
 ﻿/*
-* Copyright (c) 2012-2013 AssimpNet - Nicholas Woodfield
+* Copyright (c) 2012-2014 AssimpNet - Nicholas Woodfield
 * 
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -24,13 +24,15 @@ using System;
 using System.Globalization;
 using System.Runtime.InteropServices;
 
-namespace Assimp {
+namespace Assimp
+{
     /// <summary>
     /// Represents a RGB color.
     /// </summary>
     [Serializable]
     [StructLayout(LayoutKind.Sequential)]
-    public struct Color3D {
+    public struct Color3D
+    {
 
         /// <summary>
         /// Red component.
@@ -54,9 +56,12 @@ namespace Assimp {
         /// </summary>
         /// <param name="index">Zero-based index.</param>
         /// <returns>The component value</returns>
-        public float this[int index] {
-            get {
-                switch(index) {
+        public float this[int index]
+        {
+            get
+            {
+                switch(index)
+                {
                     case 0:
                         return R;
                     case 1:
@@ -67,8 +72,10 @@ namespace Assimp {
                         return 0;
                 }
             }
-            set {
-                switch(index) {
+            set
+            {
+                switch(index)
+                {
                     case 0:
                         R = value;
                         break;
@@ -88,7 +95,8 @@ namespace Assimp {
         /// <param name="r">Red component</param>
         /// <param name="g">Green component</param>
         /// <param name="b">Blue component</param>
-        public Color3D(float r, float g, float b) {
+        public Color3D(float r, float g, float b)
+        {
             R = r;
             G = g;
             B = b;
@@ -99,7 +107,8 @@ namespace Assimp {
         /// set to the same value.
         /// </summary>
         /// <param name="value">Value to set R, G, B components</param>
-        public Color3D(float value) {
+        public Color3D(float value)
+        {
             R = value;
             G = value;
             B = value;
@@ -109,11 +118,12 @@ namespace Assimp {
         /// Determines if the color is black, or close to being black.
         /// </summary>
         /// <returns>True if the color is black/nearly block, false otherwise.</returns>
-        public bool IsBlack() {
+        public bool IsBlack()
+        {
             float epsilon = 10e-3f;
-            return (float)Math.Abs(R) < epsilon 
-                && (float)Math.Abs(G) < epsilon 
-                && (float)Math.Abs(B) < epsilon;
+            return (float) Math.Abs(R) < epsilon
+                && (float) Math.Abs(G) < epsilon
+                && (float) Math.Abs(B) < epsilon;
         }
 
         /// <summary>
@@ -122,7 +132,8 @@ namespace Assimp {
         /// <param name="a">First color</param>
         /// <param name="b">Second color</param>
         /// <returns>Added color</returns>
-        public static Color3D operator+(Color3D a, Color3D b) {
+        public static Color3D operator +(Color3D a, Color3D b)
+        {
             Color3D c;
             c.R = a.R + b.R;
             c.G = a.G + b.G;
@@ -136,7 +147,8 @@ namespace Assimp {
         /// <param name="color">Source color</param>
         /// <param name="value">Value to add to each component</param>
         /// <returns>Added color</returns>
-        public static Color3D operator+(Color3D color, float value) {
+        public static Color3D operator +(Color3D color, float value)
+        {
             Color3D c;
             c.R = color.R + value;
             c.G = color.G + value;
@@ -150,7 +162,8 @@ namespace Assimp {
         /// <param name="value">Value to add to each component</param>
         /// <param name="color">Source color</param>
         /// <returns>Added color</returns>
-        public static Color3D operator+(float value, Color3D color) {
+        public static Color3D operator +(float value, Color3D color)
+        {
             Color3D c;
             c.R = color.R + value;
             c.G = color.G + value;
@@ -164,7 +177,8 @@ namespace Assimp {
         /// <param name="a">First color</param>
         /// <param name="b">Second color</param>
         /// <returns>Resulting color</returns>
-        public static Color3D operator-(Color3D a, Color3D b) {
+        public static Color3D operator -(Color3D a, Color3D b)
+        {
             Color3D c;
             c.R = a.R - b.R;
             c.G = a.G - b.G;
@@ -178,7 +192,8 @@ namespace Assimp {
         /// <param name="color">Source color</param>
         /// <param name="value">Value to subtract from each component</param>
         /// <returns>Resulting color</returns>
-        public static Color3D operator-(Color3D color, float value) {
+        public static Color3D operator -(Color3D color, float value)
+        {
             Color3D c;
             c.R = color.R - value;
             c.G = color.G - value;
@@ -193,7 +208,8 @@ namespace Assimp {
         /// <param name="value">Value for each component of the first color</param>
         /// <param name="color">Second color</param>
         /// <returns>Resulting color</returns>
-        public static Color3D operator-(float value, Color3D color) {
+        public static Color3D operator -(float value, Color3D color)
+        {
             Color3D c;
             c.R = value - color.R;
             c.G = value - color.G;
@@ -207,7 +223,8 @@ namespace Assimp {
         /// <param name="a">First color</param>
         /// <param name="b">Second color</param>
         /// <returns>Multiplied color.</returns>
-        public static Color3D operator*(Color3D a, Color3D b) {
+        public static Color3D operator *(Color3D a, Color3D b)
+        {
             Color3D c;
             c.R = a.R * b.R;
             c.G = a.G * b.G;
@@ -221,7 +238,8 @@ namespace Assimp {
         /// <param name="value">Source color</param>
         /// <param name="scale">Scalar value</param>
         /// <returns>Resulting color</returns>
-        public static Color3D operator*(Color3D value, float scale) {
+        public static Color3D operator *(Color3D value, float scale)
+        {
             Color3D c;
             c.R = value.R * scale;
             c.G = value.G * scale;
@@ -235,7 +253,8 @@ namespace Assimp {
         /// <param name="scale">Scalar value</param>
         /// <param name="value">Source color</param>
         /// <returns>Resulting color</returns>
-        public static Color3D operator*(float scale, Color3D value) {
+        public static Color3D operator *(float scale, Color3D value)
+        {
             Color3D c;
             c.R = value.R * scale;
             c.G = value.G * scale;
@@ -249,7 +268,8 @@ namespace Assimp {
         /// <param name="a">First color</param>
         /// <param name="b">Second color</param>
         /// <returns>Resulting color</returns>
-        public static Color3D operator/(Color3D a, Color3D b) {
+        public static Color3D operator /(Color3D a, Color3D b)
+        {
             Color3D c;
             c.R = a.R / b.R;
             c.G = a.G / b.G;
@@ -263,7 +283,8 @@ namespace Assimp {
         /// <param name="color">Source color</param>
         /// <param name="divisor">Divisor</param>
         /// <returns>Resulting color</returns>
-        public static Color3D operator/(Color3D color, float divisor) {
+        public static Color3D operator /(Color3D color, float divisor)
+        {
             float invDivisor = 1.0f / divisor;
             Color3D c;
             c.R = color.R * invDivisor;
@@ -278,7 +299,8 @@ namespace Assimp {
         /// <param name="a">First color</param>
         /// <param name="b">Second color</param>
         /// <returns>True if the colors are equal, false otherwise</returns>
-        public static bool operator==(Color3D a, Color3D b) {
+        public static bool operator ==(Color3D a, Color3D b)
+        {
             return (a.R == b.R) && (a.G == b.G) && (a.B == b.B);
         }
 
@@ -288,7 +310,8 @@ namespace Assimp {
         /// <param name="a">First color</param>
         /// <param name="b">Second color</param>
         /// <returns>True if the colors are not equal, false otherwise</returns>
-        public static bool operator!=(Color3D a, Color3D b) {
+        public static bool operator !=(Color3D a, Color3D b)
+        {
             return (a.R != b.R) || (a.G != b.G) || (a.B != b.B);
         }
 
@@ -297,7 +320,8 @@ namespace Assimp {
         /// </summary>
         /// <param name="other">Color to test against</param>
         /// <returns>True if components are equal</returns>
-        public bool Equals(Color3D other) {
+        public bool Equals(Color3D other)
+        {
             return (R == other.R) && (G == other.G) && (B == other.B);
         }
 
@@ -306,8 +330,10 @@ namespace Assimp {
         /// </summary>
         /// <param name="obj">Object to test against</param>
         /// <returns>True if the object is a color and the components are equal</returns>
-        public override bool Equals(object obj) {
-            if(obj is Color3D) {
+        public override bool Equals(object obj)
+        {
+            if(obj is Color3D)
+            {
                 return Equals((Color3D) obj);
             }
             return false;
@@ -319,7 +345,8 @@ namespace Assimp {
         /// <returns>
         /// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table. 
         /// </returns>
-        public override int GetHashCode() {
+        public override int GetHashCode()
+        {
             return R.GetHashCode() + G.GetHashCode() + B.GetHashCode();
         }
 
@@ -329,7 +356,8 @@ namespace Assimp {
         /// <returns>
         /// A <see cref="System.String"/> that represents this instance.
         /// </returns>
-        public override string ToString() {
+        public override string ToString()
+        {
             CultureInfo info = CultureInfo.CurrentCulture;
             return String.Format(info, "{{R:{0} G:{1} B:{2}}}",
                 new Object[] { R.ToString(info), G.ToString(info), B.ToString(info) });

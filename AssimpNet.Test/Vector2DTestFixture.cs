@@ -1,5 +1,5 @@
 ﻿/*
-* Copyright (c) 2012-2013 AssimpNet - Nicholas Woodfield
+* Copyright (c) 2012-2014 AssimpNet - Nicholas Woodfield
 * 
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -23,12 +23,14 @@
 using System;
 using NUnit.Framework;
 
-namespace Assimp.Test {
+namespace Assimp.Test
+{
     [TestFixture]
-    public class Vector2DTestFixture {
-
+    public class Vector2DTestFixture
+    {
         [Test]
-        public void TestIndexer() {
+        public void TestIndexer()
+        {
             float x = 1, y = 2;
             Vector2D v = new Vector2D();
             v[0] = x;
@@ -38,7 +40,8 @@ namespace Assimp.Test {
         }
 
         [Test]
-        public void TestSet() {
+        public void TestSet()
+        {
             float x = 10.5f, y = 109.21f;
             Vector2D v = new Vector2D();
             v.Set(x, y);
@@ -47,7 +50,8 @@ namespace Assimp.Test {
         }
 
         [Test]
-        public void TestEquals() {
+        public void TestEquals()
+        {
             float x = 1, y = 2;
             float x2 = 3, y2 = 4;
 
@@ -60,7 +64,7 @@ namespace Assimp.Test {
             Assert.IsFalse(v1.Equals(v3), "Test IEquatable equals");
 
             //Test object equals override
-            Assert.IsTrue(v1.Equals((object)v2), "Tests object equals");
+            Assert.IsTrue(v1.Equals((object) v2), "Tests object equals");
             Assert.IsFalse(v1.Equals((object) v3), "Tests object equals");
 
             //Test op equals
@@ -73,23 +77,26 @@ namespace Assimp.Test {
         }
 
         [Test]
-        public void TestLength() {
+        public void TestLength()
+        {
             float x = -62, y = 5;
 
             Vector2D v = new Vector2D(x, y);
-            Assert.AreEqual((float)Math.Sqrt(x*x + y*y), v.Length(), "Testing v.Length()");
+            Assert.AreEqual((float) Math.Sqrt(x * x + y * y), v.Length(), "Testing v.Length()");
         }
 
         [Test]
-        public void TestLengthSquared() {
+        public void TestLengthSquared()
+        {
             float x = -5, y = 25f;
 
             Vector2D v = new Vector2D(x, y);
-            Assert.AreEqual((float)(x*x + y*y), v.LengthSquared(), "Testing v.LengthSquared()");
+            Assert.AreEqual((float) (x * x + y * y), v.LengthSquared(), "Testing v.LengthSquared()");
         }
 
         [Test]
-        public void TestNegate() {
+        public void TestNegate()
+        {
             float x = 2, y = 5;
 
             Vector2D v = new Vector2D(x, y);
@@ -98,7 +105,8 @@ namespace Assimp.Test {
         }
 
         [Test]
-        public void TestNormalize() {
+        public void TestNormalize()
+        {
             float x = 5, y = 12;
             Vector2D v = new Vector2D(x, y);
             v.Normalize();
@@ -110,7 +118,8 @@ namespace Assimp.Test {
         }
 
         [Test]
-        public void TestOpAdd() {
+        public void TestOpAdd()
+        {
             float x1 = 2, y1 = 5;
             float x2 = 10, y2 = 15;
             float x = x1 + x2;
@@ -125,7 +134,8 @@ namespace Assimp.Test {
         }
 
         [Test]
-        public void TestOpSubtract() {
+        public void TestOpSubtract()
+        {
             float x1 = 2, y1 = 5;
             float x2 = 10, y2 = 15;
             float x = x1 - x2;
@@ -140,7 +150,8 @@ namespace Assimp.Test {
         }
 
         [Test]
-        public void TestOpNegate() {
+        public void TestOpNegate()
+        {
             float x = 22, y = 75;
 
             Vector2D v = -(new Vector2D(x, y));
@@ -149,7 +160,8 @@ namespace Assimp.Test {
         }
 
         [Test]
-        public void TestOpMultiply() {
+        public void TestOpMultiply()
+        {
             float x1 = 2, y1 = 5;
             float x2 = 10, y2 = 15;
             float x = x1 * x2;
@@ -164,7 +176,8 @@ namespace Assimp.Test {
         }
 
         [Test]
-        public void TestOpMultiplyByScalar() {
+        public void TestOpMultiplyByScalar()
+        {
             float x1 = 2, y1 = 5;
             float scalar = 25;
 
@@ -183,7 +196,8 @@ namespace Assimp.Test {
         }
 
         [Test]
-        public void TestOpDivide() {
+        public void TestOpDivide()
+        {
             float x1 = 105f, y1 = 4.5f;
             float x2 = 22f, y2 = 25.2f;
 
@@ -199,7 +213,8 @@ namespace Assimp.Test {
         }
 
         [Test]
-        public void TestOpDivideByFactor() {
+        public void TestOpDivideByFactor()
+        {
             float x1 = 55f, y1 = 2f;
             float divisor = 5f;
 

@@ -1,5 +1,5 @@
 ﻿/*
-* Copyright (c) 2012-2013 AssimpNet - Nicholas Woodfield
+* Copyright (c) 2012-2014 AssimpNet - Nicholas Woodfield
 * 
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -24,13 +24,14 @@ using System;
 using System.IO;
 using NUnit.Framework;
 
-namespace Assimp.Test {
-
+namespace Assimp.Test
+{
     [TestFixture]
-    public class ExportDataBlobTestFixture {
-
+    public class ExportDataBlobTestFixture
+    {
         [Test]
-        public void TestToStream() {
+        public void TestToStream()
+        {
             String path = Path.Combine(TestHelper.RootPath, "TestFiles\\duck.dae");
 
             AssimpContext importer = new AssimpContext();
@@ -49,7 +50,8 @@ namespace Assimp.Test {
             Assert.IsNotNull(blob2);
             Assert.IsTrue(blob.Data.Length == blob.Data.Length);
 
-            if(blob.NextBlob != null) {
+            if(blob.NextBlob != null)
+            {
                 Assert.IsTrue(blob2.NextBlob != null);
                 Assert.IsTrue(blob2.NextBlob.Name.Equals(blob.NextBlob.Name));
                 Assert.IsTrue(blob2.NextBlob.Data.Length == blob.NextBlob.Data.Length);

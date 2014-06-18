@@ -1,5 +1,5 @@
 ﻿/*
-* Copyright (c) 2012-2013 AssimpNet - Nicholas Woodfield
+* Copyright (c) 2012-2014 AssimpNet - Nicholas Woodfield
 * 
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -24,13 +24,15 @@ using System;
 using System.Globalization;
 using System.Runtime.InteropServices;
 
-namespace Assimp {
+namespace Assimp
+{
     /// <summary>
     /// Binds an anim mesh (referenced by an index) to a specific point in time.
     /// </summary>
     [Serializable]
     [StructLayoutAttribute(LayoutKind.Sequential)]
-    public struct MeshKey : IEquatable<MeshKey> {
+    public struct MeshKey : IEquatable<MeshKey>
+    {
         /// <summary>
         /// The time of this key.
         /// </summary>
@@ -46,7 +48,8 @@ namespace Assimp {
         /// </summary>
         /// <param name="time">The time of this key.</param>
         /// <param name="index">Index of the anim mesh that corresponds to this keyframe.</param>
-        public MeshKey(double time, int index) {
+        public MeshKey(double time, int index)
+        {
             Time = time;
             Value = index;
         }
@@ -57,7 +60,8 @@ namespace Assimp {
         /// <param name="a">The first key</param>
         /// <param name="b">The second key</param>
         /// <returns>True if the key's indices are the same, false otherwise</returns>
-        public static bool operator==(MeshKey a, MeshKey b) {
+        public static bool operator ==(MeshKey a, MeshKey b)
+        {
             return a.Value == b.Value;
         }
 
@@ -67,7 +71,8 @@ namespace Assimp {
         /// <param name="a">The first key</param>
         /// <param name="b">The second key</param>
         /// <returns>True if the key's indices are not equal, false otherwise.</returns>
-        public static bool operator!=(MeshKey a, MeshKey b) {
+        public static bool operator !=(MeshKey a, MeshKey b)
+        {
             return a.Value != b.Value;
         }
 
@@ -77,7 +82,8 @@ namespace Assimp {
         /// <param name="a">The first key</param>
         /// <param name="b">The second key</param>
         /// <returns>True if the first key's time is less than the second key's.</returns>
-        public static bool operator<(MeshKey a, MeshKey b) {
+        public static bool operator <(MeshKey a, MeshKey b)
+        {
             return a.Time < b.Time;
         }
 
@@ -87,7 +93,8 @@ namespace Assimp {
         /// <param name="a">The first key</param>
         /// <param name="b">The second key</param>
         /// <returns>True if the first key's time is greater than the second key's.</returns>
-        public static bool operator>(MeshKey a, MeshKey b) {
+        public static bool operator >(MeshKey a, MeshKey b)
+        {
             return a.Time > b.Time;
         }
 
@@ -98,8 +105,10 @@ namespace Assimp {
         /// <returns>
         ///   <c>true</c> if the specified <see cref="System.Object"/> is equal to this instance; otherwise, <c>false</c>.
         /// </returns>
-        public override bool Equals(object obj) {
-            if(obj is MeshKey) {
+        public override bool Equals(object obj)
+        {
+            if(obj is MeshKey)
+            {
                 return Equals((MeshKey) obj);
             }
             return false;
@@ -110,7 +119,8 @@ namespace Assimp {
         /// </summary>
         /// <param name="key">Other key to test</param>
         /// <returns>True if their indices are equal</returns>
-        public bool Equals(MeshKey key) {
+        public bool Equals(MeshKey key)
+        {
             return Value == key.Value;
         }
 
@@ -120,7 +130,8 @@ namespace Assimp {
         /// <returns>
         /// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table. 
         /// </returns>
-        public override int GetHashCode() {
+        public override int GetHashCode()
+        {
             return Value.GetHashCode();
         }
 
@@ -130,7 +141,8 @@ namespace Assimp {
         /// <returns>
         /// A <see cref="System.String"/> that represents this instance.
         /// </returns>
-        public override string ToString() {
+        public override string ToString()
+        {
             CultureInfo info = CultureInfo.CurrentCulture;
             return String.Format(info, "{{Time:{0} Index:{1}}}",
                 new Object[] { Time.ToString(info), Value.ToString(info) });

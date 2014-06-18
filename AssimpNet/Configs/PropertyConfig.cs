@@ -1,5 +1,5 @@
 ﻿/*
-* Copyright (c) 2012-2013 AssimpNet - Nicholas Woodfield
+* Copyright (c) 2012-2014 AssimpNet - Nicholas Woodfield
 * 
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -24,18 +24,22 @@ using System;
 using System.Text;
 using Assimp.Unmanaged;
 
-namespace Assimp.Configs {
+namespace Assimp.Configs
+{
     /// <summary>
     /// Base property config.
     /// </summary>
-    public abstract class PropertyConfig {
+    public abstract class PropertyConfig
+    {
         private String m_name;
 
         /// <summary>
         /// Gets the property name.
         /// </summary>
-        public String Name {
-            get {
+        public String Name
+        {
+            get
+            {
                 return m_name;
             }
         }
@@ -44,7 +48,8 @@ namespace Assimp.Configs {
         /// Creates a new property config that has no active Assimp property store.
         /// </summary>
         /// <param name="name">Name of the property.</param>
-        protected PropertyConfig(String name) {
+        protected PropertyConfig(String name)
+        {
             m_name = name;
         }
 
@@ -57,7 +62,8 @@ namespace Assimp.Configs {
         /// Applies the property value to the given Assimp property store.
         /// </summary>
         /// <param name="propStore">Assimp property store</param>
-        internal void ApplyValue(IntPtr propStore) {
+        internal void ApplyValue(IntPtr propStore)
+        {
             OnApplyValue(propStore);
         }
 
@@ -71,18 +77,22 @@ namespace Assimp.Configs {
     /// <summary>
     /// Describes an integer configuration property.
     /// </summary>
-    public class IntegerPropertyConfig : PropertyConfig {
+    public class IntegerPropertyConfig : PropertyConfig
+    {
         private int m_value;
         private int m_defaultValue;
 
         /// <summary>
         /// Gets the property value.
         /// </summary>
-        public int Value {
-            get {
+        public int Value
+        {
+            get
+            {
                 return m_value;
             }
-            set {
+            set
+            {
                 m_value = value;
             }
         }
@@ -90,8 +100,10 @@ namespace Assimp.Configs {
         /// <summary>
         /// Gets the default property value.
         /// </summary>
-        public int DefaultValue {
-            get {
+        public int DefaultValue
+        {
+            get
+            {
                 return m_defaultValue;
             }
         }
@@ -111,7 +123,8 @@ namespace Assimp.Configs {
         /// <param name="value">Property value</param>
         /// <param name="defaultValue">The default property value</param>
         public IntegerPropertyConfig(String name, int value, int defaultValue)
-            : base(name) {
+            : base(name)
+        {
             m_value = value;
             m_defaultValue = defaultValue;
         }
@@ -119,7 +132,8 @@ namespace Assimp.Configs {
         /// <summary>
         /// Sets the current value to the default value.
         /// </summary>
-        public override void  SetDefaultValue() {
+        public override void SetDefaultValue()
+        {
             m_value = m_defaultValue;
         }
 
@@ -127,8 +141,10 @@ namespace Assimp.Configs {
         /// Applies the property value to the given Assimp property store.
         /// </summary>
         /// <param name="propStore">Assimp property store</param>
-        protected override void OnApplyValue(IntPtr propStore) {
-            if(propStore != IntPtr.Zero) {
+        protected override void OnApplyValue(IntPtr propStore)
+        {
+            if(propStore != IntPtr.Zero)
+            {
                 AssimpLibrary.Instance.SetImportPropertyInteger(propStore, Name, m_value);
             }
         }
@@ -137,18 +153,22 @@ namespace Assimp.Configs {
     /// <summary>
     /// Describes a float configuration property.
     /// </summary>
-    public class FloatPropertyConfig : PropertyConfig {
+    public class FloatPropertyConfig : PropertyConfig
+    {
         private float m_value;
         private float m_defaultValue;
 
         /// <summary>
         /// Gets the property value.
         /// </summary>
-        public float Value {
-            get {
+        public float Value
+        {
+            get
+            {
                 return m_value;
             }
-            set {
+            set
+            {
                 m_value = value;
             }
         }
@@ -156,8 +176,10 @@ namespace Assimp.Configs {
         /// <summary>
         /// Gets the default property value.
         /// </summary>
-        public float DefaultValue {
-            get {
+        public float DefaultValue
+        {
+            get
+            {
                 return m_defaultValue;
             }
         }
@@ -177,7 +199,8 @@ namespace Assimp.Configs {
         /// <param name="value">Property value</param>
         /// <param name="defaultValue">The default property value</param>
         public FloatPropertyConfig(String name, float value, float defaultValue)
-            : base(name) {
+            : base(name)
+        {
             m_value = value;
             m_defaultValue = defaultValue;
         }
@@ -185,7 +208,8 @@ namespace Assimp.Configs {
         /// <summary>
         /// Sets the current value to the default value.
         /// </summary>
-        public override void  SetDefaultValue() {
+        public override void SetDefaultValue()
+        {
             m_value = m_defaultValue;
         }
 
@@ -193,28 +217,34 @@ namespace Assimp.Configs {
         /// Applies the property value to the given Assimp property store.
         /// </summary>
         /// <param name="propStore">Assimp property store</param>
-        protected override void OnApplyValue(IntPtr propStore) {
-            if(propStore != IntPtr.Zero) {
+        protected override void OnApplyValue(IntPtr propStore)
+        {
+            if(propStore != IntPtr.Zero)
+            {
                 AssimpLibrary.Instance.SetImportPropertyFloat(propStore, Name, m_value);
             }
         }
     }
 
     /// <summary>
-    /// Describes a boolean configuration property.
+    /// Describes a <see cref="Matrix4x4"/> configuration property.
     /// </summary>
-    public class BooleanPropertyConfig : PropertyConfig {
-        private bool m_value;
-        private bool m_defaultValue;
+    public class MatrixPropertyConfig : PropertyConfig
+    {
+        private Matrix4x4 m_value;
+        private Matrix4x4 m_defaultValue;
 
         /// <summary>
         /// Gets the property value.
         /// </summary>
-        public bool Value {
-            get {
+        public Matrix4x4 Value
+        {
+            get
+            {
                 return m_value;
             }
-            set {
+            set
+            {
                 m_value = value;
             }
         }
@@ -222,8 +252,86 @@ namespace Assimp.Configs {
         /// <summary>
         /// Gets the default property value.
         /// </summary>
-        public bool DefaultValue {
-            get {
+        public Matrix4x4 DefaultValue
+        {
+            get
+            {
+                return m_defaultValue;
+            }
+        }
+
+        /// <summary>
+        /// Constructs a new MatrixPropertyConfig.
+        /// </summary>
+        /// <param name="name">Name of the property</param>
+        /// <param name="value">Property value</param>
+        public MatrixPropertyConfig(String name, Matrix4x4 value)
+            : this(name, value, Matrix4x4.Identity) { }
+
+        /// <summary>
+        /// Constructs a new MatrixPropertyConfig.
+        /// </summary>
+        /// <param name="name">Name of the property</param>
+        /// <param name="value">Property value</param>
+        /// <param name="defaultValue">The default property value</param>
+        public MatrixPropertyConfig(String name, Matrix4x4 value, Matrix4x4 defaultValue)
+            : base(name)
+        {
+            m_value = value;
+            m_defaultValue = defaultValue;
+        }
+
+        /// <summary>
+        /// Sets the current value to the default value.
+        /// </summary>
+        public override void SetDefaultValue()
+        {
+            m_value = m_defaultValue;
+        }
+
+        /// <summary>
+        /// Applies the property value to the given Assimp property store.
+        /// </summary>
+        /// <param name="propStore">Assimp property store</param>
+        protected override void OnApplyValue(IntPtr propStore)
+        {
+            if(propStore != IntPtr.Zero)
+            {
+                AssimpLibrary.Instance.SetImportPropertyMatrix(propStore, Name, m_value);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Describes a boolean configuration property.
+    /// </summary>
+    public class BooleanPropertyConfig : PropertyConfig
+    {
+        private bool m_value;
+        private bool m_defaultValue;
+
+        /// <summary>
+        /// Gets the property value.
+        /// </summary>
+        public bool Value
+        {
+            get
+            {
+                return m_value;
+            }
+            set
+            {
+                m_value = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets the default property value.
+        /// </summary>
+        public bool DefaultValue
+        {
+            get
+            {
                 return m_defaultValue;
             }
         }
@@ -243,7 +351,8 @@ namespace Assimp.Configs {
         /// <param name="value">Property value</param>
         /// <param name="defaultValue">The default property value</param>
         public BooleanPropertyConfig(String name, bool value, bool defaultValue)
-            : base(name) {
+            : base(name)
+        {
             m_value = value;
             m_defaultValue = defaultValue;
         }
@@ -251,7 +360,8 @@ namespace Assimp.Configs {
         /// <summary>
         /// Sets the current value to the default value.
         /// </summary>
-        public override void  SetDefaultValue() {
+        public override void SetDefaultValue()
+        {
             m_value = m_defaultValue;
         }
 
@@ -259,8 +369,10 @@ namespace Assimp.Configs {
         /// Applies the property value to the given Assimp property store.
         /// </summary>
         /// <param name="propStore">Assimp property store</param>
-        protected override void OnApplyValue(IntPtr propStore) {
-            if(propStore != IntPtr.Zero) {
+        protected override void OnApplyValue(IntPtr propStore)
+        {
+            if(propStore != IntPtr.Zero)
+            {
                 int aiBool = (m_value) ? 1 : 0;
                 AssimpLibrary.Instance.SetImportPropertyInteger(propStore, Name, aiBool);
             }
@@ -270,18 +382,22 @@ namespace Assimp.Configs {
     /// <summary>
     /// Describes a string configuration property.
     /// </summary>
-    public class StringPropertyConfig : PropertyConfig {
+    public class StringPropertyConfig : PropertyConfig
+    {
         private String m_value;
         private String m_defaultValue;
 
         /// <summary>
         /// Gets the property value.
         /// </summary>
-        public String Value {
-            get {
+        public String Value
+        {
+            get
+            {
                 return m_value;
             }
-            set {
+            set
+            {
                 m_value = value;
             }
         }
@@ -289,8 +405,10 @@ namespace Assimp.Configs {
         /// <summary>
         /// Gets the default property value.
         /// </summary>
-        public String DefaultValue {
-            get {
+        public String DefaultValue
+        {
+            get
+            {
                 return m_defaultValue;
             }
         }
@@ -310,7 +428,8 @@ namespace Assimp.Configs {
         /// <param name="value">Property value</param>
         /// <param name="defaultValue">The default property value</param>
         public StringPropertyConfig(String name, String value, String defaultValue)
-            : base(name) {
+            : base(name)
+        {
             m_value = value;
             m_defaultValue = defaultValue;
         }
@@ -318,7 +437,8 @@ namespace Assimp.Configs {
         /// <summary>
         /// Sets the current value to the default value.
         /// </summary>
-        public override void  SetDefaultValue() {
+        public override void SetDefaultValue()
+        {
             m_value = m_defaultValue;
         }
 
@@ -326,8 +446,10 @@ namespace Assimp.Configs {
         /// Applies the property value to the given Assimp property store.
         /// </summary>
         /// <param name="propStore">Assimp property store</param>
-        protected override void OnApplyValue(IntPtr propStore) {
-            if(propStore != IntPtr.Zero) {
+        protected override void OnApplyValue(IntPtr propStore)
+        {
+            if(propStore != IntPtr.Zero)
+            {
                 AssimpLibrary.Instance.SetImportPropertyString(propStore, Name, m_value);
             }
         }
@@ -337,14 +459,18 @@ namespace Assimp.Configs {
         /// </summary>
         /// <param name="names">Array of names</param>
         /// <returns>White-space delimited list as a string</returns>
-        protected static String ProcessNames(String[] names) {
-            if(names == null || names.Length == 0) {
+        protected static String ProcessNames(String[] names)
+        {
+            if(names == null || names.Length == 0)
+            {
                 return String.Empty;
             }
 
             StringBuilder builder = new StringBuilder();
-            foreach(String name in names) {
-                if(!String.IsNullOrEmpty(name)) {
+            foreach(String name in names)
+            {
+                if(!String.IsNullOrEmpty(name))
+                {
                     builder.Append(name);
                     builder.Append(' ');
                 }
@@ -357,15 +483,18 @@ namespace Assimp.Configs {
 
     /// <summary>
     /// Configuration to enable time measurements. If enabled, each
-    /// part of the loading process is timed and logged.
+    /// part of the loading process is timed and logged. Default value is false.
     /// </summary>
-    public sealed class MeasureTimeConfig : BooleanPropertyConfig {
+    public sealed class MeasureTimeConfig : BooleanPropertyConfig
+    {
 
         /// <summary>
         /// Gets the string name used by MeasureTimeConfig.
         /// </summary>
-        public static String MeasureTimeConfigName {
-            get {
+        public static String MeasureTimeConfigName
+        {
+            get
+            {
                 return AiConfigs.AI_CONFIG_GLOB_MEASURE_TIME;
             }
         }
@@ -374,7 +503,7 @@ namespace Assimp.Configs {
         /// Constructs a new MeasureTimeConfig.
         /// </summary>
         /// <param name="measureTime">True if the loading process should be timed or not.</param>
-        public MeasureTimeConfig(bool measureTime) 
+        public MeasureTimeConfig(bool measureTime)
             : base(MeasureTimeConfigName, measureTime, false) { }
     }
 
@@ -382,27 +511,56 @@ namespace Assimp.Configs {
     /// Configuration to set Assimp's multithreading policy. Possible
     /// values are -1 to let Assimp decide, 0 to disable multithreading, or
     /// any number larger than zero to force a specific number of threads. This
-    /// is only a hint and may be ignored by Assimp.
+    /// is only a hint and may be ignored by Assimp. Default value is -1.
     /// </summary>
-    public sealed class MultithreadingConfig : IntegerPropertyConfig {
+    public sealed class MultithreadingConfig : IntegerPropertyConfig
+    {
 
         /// <summary>
         /// Gets the string name used by MultithreadingConfig.
         /// </summary>
-        public static String MultithreadingConfigName {
-            get {
+        public static String MultithreadingConfigName
+        {
+            get
+            {
                 return AiConfigs.AI_CONFIG_GLOB_MULTITHREADING;
             }
         }
-        
+
         /// <summary>
         /// Constructs a new MultithreadingConfig.
         /// </summary>
         /// <param name="value">A value of -1 will let Assimp decide,
         /// a value of zero to disable multithreading, and a value greater than zero
         /// to force a specific number of threads.</param>
-        public MultithreadingConfig(int value) 
+        public MultithreadingConfig(int value)
             : base(MultithreadingConfigName, value, -1) { }
+    }
+
+    /// <summary>
+    /// Global setting to disable generation of skeleton dummy meshes. These are generated as a visualization aid
+    /// in cases which the input data contains no geometry, but only animation data. So the geometry are visualizing
+    /// the bones. Default value is false.
+    /// </summary>
+    public sealed class NoSkeletonMeshesConfig : BooleanPropertyConfig
+    {
+        /// <summary>
+        /// Gets the string name used by NoSkeletonMeshConfig.
+        /// </summary>
+        public static String NoSkeletonMeshesConfigName
+        {
+            get
+            {
+                return AiConfigs.AI_CONFIG_IMPORT_NO_SKELETON_MESHES;
+            }
+        }
+
+        /// <summary>
+        /// Constructs a new NoSkeletonMeshConfig.
+        /// </summary>
+        /// <param name="disableDummySkeletonMeshes">True if dummy skeleton mesh generation should be disabled, false otherwise.</param>
+        public NoSkeletonMeshesConfig(bool disableDummySkeletonMeshes)
+            : base(NoSkeletonMeshesConfigName, disableDummySkeletonMeshes, false) { }
     }
 
     #endregion
@@ -414,13 +572,16 @@ namespace Assimp.Configs {
     /// when they are smoothed during the step to calculate the tangent basis. The default
     /// value is 45 degrees.
     /// </summary>
-    public sealed class TangentSmoothingAngleConfig : FloatPropertyConfig {
+    public sealed class TangentSmoothingAngleConfig : FloatPropertyConfig
+    {
 
         /// <summary>
         /// Gets the string name used by TangentSmoothingAngleConfig.
         /// </summary>
-        public static String TangentSmoothingAngleConfigName {
-            get {
+        public static String TangentSmoothingAngleConfigName
+        {
+            get
+            {
                 return AiConfigs.AI_CONFIG_PP_CT_MAX_SMOOTHING_ANGLE;
             }
         }
@@ -438,13 +599,16 @@ namespace Assimp.Configs {
     /// they are smoothed during the step to calculate smooth normals. This is frequently
     /// called the "crease angle". The maximum and default value is 175 degrees.
     /// </summary>
-    public sealed class NormalSmoothingAngleConfig : FloatPropertyConfig {
+    public sealed class NormalSmoothingAngleConfig : FloatPropertyConfig
+    {
 
         /// <summary>
         /// Gets the string name used by NormalSmoothingAngleConfig.
         /// </summary>
-        public static String NormalSmoothingAngleConfigName {
-            get {
+        public static String NormalSmoothingAngleConfigName
+        {
+            get
+            {
                 return AiConfigs.AI_CONFIG_PP_GSN_MAX_SMOOTHING_ANGLE;
             }
         }
@@ -462,13 +626,16 @@ namespace Assimp.Configs {
     /// RGB triplets for each of the 256 palette entries. If the file is not found, a
     /// default palette (from Quake 1) is used. The default value is "colormap.lmp".
     /// </summary>
-    public sealed class MDLColorMapConfig : StringPropertyConfig {
+    public sealed class MDLColorMapConfig : StringPropertyConfig
+    {
 
         /// <summary>
         /// Gets the string name used by MDLColorMapConfig.
         /// </summary>
-        public static String MDLColorMapConfigName {
-            get {
+        public static String MDLColorMapConfigName
+        {
+            get
+            {
                 return AiConfigs.AI_CONFIG_IMPORT_MDL_COLORMAP;
             }
         }
@@ -477,7 +644,7 @@ namespace Assimp.Configs {
         /// Constructs a new MDLColorMapConfig.
         /// </summary>
         /// <param name="fileName">Colormap filename</param>
-        public MDLColorMapConfig(String fileName) 
+        public MDLColorMapConfig(String fileName)
             : base(MDLColorMapConfigName, (String.IsNullOrEmpty(fileName)) ? "colormap.lmp" : fileName, "colormap.lmp") { }
     }
 
@@ -486,13 +653,16 @@ namespace Assimp.Configs {
     /// to determine what materials to keep. If a material matches one of these names it will not
     /// be modified or removed by the post processing step. Default is an empty string.
     /// </summary>
-    public sealed class MaterialExcludeListConfig : StringPropertyConfig {
+    public sealed class MaterialExcludeListConfig : StringPropertyConfig
+    {
 
         /// <summary>
         /// Gets the string name used by MaterialExcludeListConfig.
         /// </summary>
-        public static String MaterialExcludeListConfigName {
-            get {
+        public static String MaterialExcludeListConfigName
+        {
+            get
+            {
                 return AiConfigs.AI_CONFIG_PP_RRM_EXCLUDE_LIST;
             }
         }
@@ -513,13 +683,16 @@ namespace Assimp.Configs {
     /// if you have a scene hierarchy that contains important additional information
     /// which you intend to parse. The default value is false.
     /// </summary>
-    public sealed class KeepSceneHierarchyConfig : BooleanPropertyConfig {
+    public sealed class KeepSceneHierarchyConfig : BooleanPropertyConfig
+    {
 
         /// <summary>
         /// Gets the string name used by KeepSceneHierarchyConfig.
         /// </summary>
-        public static String KeepSceneHierarchyConfigName {
-            get {
+        public static String KeepSceneHierarchyConfigName
+        {
+            get
+            {
                 return AiConfigs.AI_CONFIG_PP_PTV_KEEP_HIERARCHY;
             }
         }
@@ -537,13 +710,16 @@ namespace Assimp.Configs {
     /// to normalize all vertex components into the -1...1 range. The default value is
     /// false.
     /// </summary>
-    public sealed class NormalizeVertexComponentsConfig : BooleanPropertyConfig {
+    public sealed class NormalizeVertexComponentsConfig : BooleanPropertyConfig
+    {
 
         /// <summary>
         /// Gets the string name used by NormalizeVertexComponentsConfig.
         /// </summary>
-        public static String NormalizeVertexComponentsConfigName {
-            get {
+        public static String NormalizeVertexComponentsConfigName
+        {
+            get
+            {
                 return AiConfigs.AI_CONFIG_PP_PTV_NORMALIZE;
             }
         }
@@ -552,7 +728,7 @@ namespace Assimp.Configs {
         /// Constructs a new NormalizeVertexComponentsConfig.
         /// </summary>
         /// <param name="normalizeVertexComponents">True if the post process step should normalize vertex components, false otherwise.</param>
-        public NormalizeVertexComponentsConfig(bool normalizeVertexComponents) 
+        public NormalizeVertexComponentsConfig(bool normalizeVertexComponents)
             : base(NormalizeVertexComponentsConfigName, normalizeVertexComponents, false) { }
     }
 
@@ -561,13 +737,16 @@ namespace Assimp.Configs {
     /// remove degenerted primitives from the import immediately. The default value is false,
     /// where degenerated triangles are converted to lines, and degenerated lines to points.
     /// </summary>
-    public sealed class RemoveDegeneratePrimitivesConfig : BooleanPropertyConfig {
+    public sealed class RemoveDegeneratePrimitivesConfig : BooleanPropertyConfig
+    {
 
         /// <summary>
         /// Gets the string name used by RemoveDegeneratePrimitivesConfig.
         /// </summary>
-        public static String RemoveDegeneratePrimitivesConfigName {
-            get {
+        public static String RemoveDegeneratePrimitivesConfigName
+        {
+            get
+            {
                 return AiConfigs.AI_CONFIG_PP_FD_REMOVE;
             }
         }
@@ -576,8 +755,8 @@ namespace Assimp.Configs {
         /// Constructs a new RemoveDegeneratePrimitivesConfig.
         /// </summary>
         /// <param name="removeDegenerates">True if the post process step should remove degenerate primitives, false otherwise.</param>
-        public RemoveDegeneratePrimitivesConfig(bool removeDegenerates) 
-            : base (RemoveDegeneratePrimitivesConfigName, removeDegenerates, false) { }
+        public RemoveDegeneratePrimitivesConfig(bool removeDegenerates)
+            : base(RemoveDegeneratePrimitivesConfigName, removeDegenerates, false) { }
     }
 
     /// <summary>
@@ -587,13 +766,16 @@ namespace Assimp.Configs {
     /// <c>must</c> be enclosed in single quotation marks. The default value is an
     /// empty string.
     /// </summary>
-    public sealed class NodeExcludeListConfig : StringPropertyConfig {
+    public sealed class NodeExcludeListConfig : StringPropertyConfig
+    {
 
         /// <summary>
         /// Gets the string name used by NodeExcludeListConfig.
         /// </summary>
-        public static String NodeExcludeListConfigName {
-            get {
+        public static String NodeExcludeListConfigName
+        {
+            get
+            {
                 return AiConfigs.AI_CONFIG_PP_OG_EXCLUDE_LIST;
             }
         }
@@ -602,7 +784,7 @@ namespace Assimp.Configs {
         /// Constructs a new NodeExcludeListConfig.
         /// </summary>
         /// <param name="nodeNames">List of node names</param>
-        public NodeExcludeListConfig(params String[] nodeNames) 
+        public NodeExcludeListConfig(params String[] nodeNames)
             : base(NodeExcludeListConfigName, ProcessNames(nodeNames), String.Empty) { }
     }
 
@@ -611,13 +793,16 @@ namespace Assimp.Configs {
     /// that specifies the maximum number of triangles a mesh can contain. The
     /// default value is MeshTriangleLimitConfigDefaultValue.
     /// </summary>
-    public sealed class MeshTriangleLimitConfig : IntegerPropertyConfig {
+    public sealed class MeshTriangleLimitConfig : IntegerPropertyConfig
+    {
 
         /// <summary>
         /// Gets the string name used by MeshTriangleLimitConfig.
         /// </summary>
-        public static String MeshTriangleLimitConfigName {
-            get {
+        public static String MeshTriangleLimitConfigName
+        {
+            get
+            {
                 return AiConfigs.AI_CONFIG_PP_SLM_TRIANGLE_LIMIT;
             }
         }
@@ -626,8 +811,10 @@ namespace Assimp.Configs {
         /// Gets the defined default limit value, this corresponds to the
         /// <see cref="AiDefines.AI_SLM_DEFAULT_MAX_TRIANGLES"/> constant.
         /// </summary>
-        public static int MeshTriangleLimitConfigDefaultValue {
-            get {
+        public static int MeshTriangleLimitConfigDefaultValue
+        {
+            get
+            {
                 return AiDefines.AI_SLM_DEFAULT_MAX_TRIANGLES;
             }
         }
@@ -636,7 +823,7 @@ namespace Assimp.Configs {
         /// Constructs a new MeshTriangleLimitConfig.
         /// </summary>
         /// <param name="maxTriangleLimit">Max number of triangles a mesh can contain.</param>
-        public MeshTriangleLimitConfig(int maxTriangleLimit) 
+        public MeshTriangleLimitConfig(int maxTriangleLimit)
             : base(MeshTriangleLimitConfigName, maxTriangleLimit, MeshTriangleLimitConfigDefaultValue) { }
     }
 
@@ -645,13 +832,16 @@ namespace Assimp.Configs {
     /// that specifies the maximum number of vertices a mesh can contain. The
     /// default value is MeshVertexLimitConfigDefaultValue.
     /// </summary>
-    public sealed class MeshVertexLimitConfig : IntegerPropertyConfig {
+    public sealed class MeshVertexLimitConfig : IntegerPropertyConfig
+    {
 
         /// <summary>
         /// Gets the string name used by MeshVertexLimitConfig.
         /// </summary>
-        public static String MeshVertexLimitConfigName {
-            get {
+        public static String MeshVertexLimitConfigName
+        {
+            get
+            {
                 return AiConfigs.AI_CONFIG_PP_SLM_VERTEX_LIMIT;
             }
         }
@@ -660,8 +850,10 @@ namespace Assimp.Configs {
         /// Gets the defined default limit value, this corresponds to the
         /// <see cref="AiDefines.AI_SLM_DEFAULT_MAX_VERTICES"/> constant.
         /// </summary>
-        public static int MeshVertexLimitConfigDefaultValue {
-            get {
+        public static int MeshVertexLimitConfigDefaultValue
+        {
+            get
+            {
                 return AiDefines.AI_SLM_DEFAULT_MAX_VERTICES;
             }
         }
@@ -670,7 +862,7 @@ namespace Assimp.Configs {
         /// Constructs a new MeshVertexLimitConfig.
         /// </summary>
         /// <param name="maxVertexLimit">Max number of vertices a mesh can contain.</param>
-        public MeshVertexLimitConfig(int maxVertexLimit) 
+        public MeshVertexLimitConfig(int maxVertexLimit)
             : base(MeshVertexLimitConfigName, maxVertexLimit, MeshVertexLimitConfigDefaultValue) { }
     }
 
@@ -679,13 +871,16 @@ namespace Assimp.Configs {
     /// that specifies the maximum number of bone weights per vertex. The default
     /// value is VertexBoneWeightLimitConfigDefaultValue.
     /// </summary>
-    public sealed class VertexBoneWeightLimitConfig : IntegerPropertyConfig {
+    public sealed class VertexBoneWeightLimitConfig : IntegerPropertyConfig
+    {
 
         /// <summary>
         /// gets the string name used by VertexBoneWeightLimitConfig.
         /// </summary>
-        public static String VertexBoneWeightLimitConfigName {
-            get {
+        public static String VertexBoneWeightLimitConfigName
+        {
+            get
+            {
                 return AiConfigs.AI_CONFIG_PP_LBW_MAX_WEIGHTS;
             }
         }
@@ -694,8 +889,10 @@ namespace Assimp.Configs {
         /// Gets the defined default limit value, this corresponds to the
         /// <see cref="AiDefines.AI_LBW_MAX_WEIGHTS"/> constant.
         /// </summary>
-        public static int VertexBoneWeightLimitConfigDefaultValue {
-            get {
+        public static int VertexBoneWeightLimitConfigDefaultValue
+        {
+            get
+            {
                 return AiDefines.AI_LBW_MAX_WEIGHTS;
             }
         }
@@ -704,7 +901,7 @@ namespace Assimp.Configs {
         /// Constructs a new VertexBoneWeightLimitConfig.
         /// </summary>
         /// <param name="maxBoneWeights">Max number of bone weights per vertex.</param>
-        public VertexBoneWeightLimitConfig(int maxBoneWeights) 
+        public VertexBoneWeightLimitConfig(int maxBoneWeights)
             : base(VertexBoneWeightLimitConfigName, maxBoneWeights, VertexBoneWeightLimitConfigDefaultValue) { }
     }
 
@@ -713,13 +910,16 @@ namespace Assimp.Configs {
     /// that specifies the size of the post-transform vertex cache. The size is
     /// given in number of vertices and the default value is VertexCacheSizeConfigDefaultValue.
     /// </summary>
-    public sealed class VertexCacheSizeConfig : IntegerPropertyConfig {
-        
+    public sealed class VertexCacheSizeConfig : IntegerPropertyConfig
+    {
+
         /// <summary>
         /// Gets the string name used by VertexCacheConfig.
         /// </summary>
-        public static String VertexCacheSizeConfigName {
-            get {
+        public static String VertexCacheSizeConfigName
+        {
+            get
+            {
                 return AiConfigs.AI_CONFIG_PP_ICL_PTCACHE_SIZE;
             }
         }
@@ -728,8 +928,10 @@ namespace Assimp.Configs {
         /// Gets the defined default vertex cache size, this corresponds to 
         /// the <see cref="AiDefines.PP_ICL_PTCACHE_SIZE"/>.
         /// </summary>
-        public static int VertexCacheSizeConfigDefaultValue {
-            get {
+        public static int VertexCacheSizeConfigDefaultValue
+        {
+            get
+            {
                 return AiDefines.PP_ICL_PTCACHE_SIZE;
             }
         }
@@ -738,7 +940,7 @@ namespace Assimp.Configs {
         /// Constructs a new VertexCacheSizeConfig.
         /// </summary>
         /// <param name="vertexCacheSize">Size of the post-transform vertex cache, in number of vertices.</param>
-        public VertexCacheSizeConfig(int vertexCacheSize) 
+        public VertexCacheSizeConfig(int vertexCacheSize)
             : base(VertexCacheSizeConfigName, vertexCacheSize, VertexCacheSizeConfigDefaultValue) { }
     }
 
@@ -747,13 +949,16 @@ namespace Assimp.Configs {
     /// specifies which parts of the data structure is to be removed. If no valid mesh
     /// remains after the step, the import fails. The default value i <see cref="ExcludeComponent.None"/>.
     /// </summary>
-    public sealed class RemoveComponentConfig : IntegerPropertyConfig {
+    public sealed class RemoveComponentConfig : IntegerPropertyConfig
+    {
 
         /// <summary>
         /// Gets the string name used by RemoveComponentConfig.
         /// </summary>
-        public static String RemoveComponentConfigName {
-            get {
+        public static String RemoveComponentConfigName
+        {
+            get
+            {
                 return AiConfigs.AI_CONFIG_PP_RVC_FLAGS;
             }
         }
@@ -762,7 +967,7 @@ namespace Assimp.Configs {
         /// Constructs a new RemoveComponentConfig.
         /// </summary>
         /// <param name="componentsToExclude">Bit-wise combination of components to exclude.</param>
-        public RemoveComponentConfig(ExcludeComponent componentsToExclude) 
+        public RemoveComponentConfig(ExcludeComponent componentsToExclude)
             : base(RemoveComponentConfigName, (int) componentsToExclude, (int) ExcludeComponent.None) { }
     }
 
@@ -771,13 +976,16 @@ namespace Assimp.Configs {
     /// specifies which primitive types are to be removed by the step. Specifying all
     /// primitive types is illegal. The default value is zero specifying none.
     /// </summary>
-    public sealed class SortByPrimitiveTypeConfig : IntegerPropertyConfig {
+    public sealed class SortByPrimitiveTypeConfig : IntegerPropertyConfig
+    {
 
         /// <summary>
         /// Gets the string name used by SortByPrimitiveTypeConfig.
         /// </summary>
-        public static String SortByPrimitiveTypeConfigName {
-            get {
+        public static String SortByPrimitiveTypeConfigName
+        {
+            get
+            {
                 return AiConfigs.AI_CONFIG_PP_SBP_REMOVE;
             }
         }
@@ -795,13 +1003,16 @@ namespace Assimp.Configs {
     /// specifies the floating point accuracy for animation values, specifically
     /// the episilon during comparisons. The default value is 0.0f.
     /// </summary>
-    public sealed class AnimationAccuracyConfig : FloatPropertyConfig {
+    public sealed class AnimationAccuracyConfig : FloatPropertyConfig
+    {
 
         /// <summary>
         /// Gets the string name used by AnimationAccuracyConfig.
         /// </summary>
-        public static String AnimationAccuracyConfigName {
-            get {
+        public static String AnimationAccuracyConfigName
+        {
+            get
+            {
                 return AiConfigs.AI_CONFIG_PP_FID_ANIM_ACCURACY;
             }
         }
@@ -810,7 +1021,7 @@ namespace Assimp.Configs {
         /// Constructs a new AnimationAccuracyConfig.
         /// </summary>
         /// <param name="episilon">Episilon for animation value comparisons.</param>
-        public AnimationAccuracyConfig(float episilon) 
+        public AnimationAccuracyConfig(float episilon)
             : base(AnimationAccuracyConfigName, episilon, 0.0f) { }
     }
 
@@ -819,13 +1030,16 @@ namespace Assimp.Configs {
     /// specifies which UV transformations are to be evaluated. The default value
     /// is for all combinations (scaling, rotation, translation).
     /// </summary>
-    public sealed class TransformUVConfig : IntegerPropertyConfig {
+    public sealed class TransformUVConfig : IntegerPropertyConfig
+    {
 
         /// <summary>
         /// Gets the string name used by TransformUVConfig.
         /// </summary>
-        public static String TransformUVConfigName {
-            get {
+        public static String TransformUVConfigName
+        {
+            get
+            {
                 return AiConfigs.AI_CONFIG_PP_TUV_EVALUATE;
             }
         }
@@ -843,13 +1057,16 @@ namespace Assimp.Configs {
     /// option may result in faster loading, or it may not. It is just a hint to loaders
     /// and post-process steps to use faster code paths if possible. The default value is false.
     /// </summary>
-    public sealed class FavorSpeedConfig : BooleanPropertyConfig {
+    public sealed class FavorSpeedConfig : BooleanPropertyConfig
+    {
 
         /// <summary>
         /// Gets the string name used by FavorSpeedConfig.
         /// </summary>
-        public static String FavorSpeedConfigName {
-            get {
+        public static String FavorSpeedConfigName
+        {
+            get
+            {
                 return AiConfigs.AI_CONFIG_FAVOUR_SPEED;
             }
         }
@@ -858,7 +1075,7 @@ namespace Assimp.Configs {
         /// Constructs a new FavorSpeedConfig.
         /// </summary>
         /// <param name="favorSpeed">True if Assimp should favor speed at the expense of quality, false otherwise.</param>
-        public FavorSpeedConfig(bool favorSpeed) 
+        public FavorSpeedConfig(bool favorSpeed)
             : base(FavorSpeedConfigName, favorSpeed, false) { }
     }
 
@@ -866,13 +1083,16 @@ namespace Assimp.Configs {
     /// Configures the maximum bone count per mesh for the <see cref="PostProcessSteps.SplitByBoneCount"/> step. Meshes are
     /// split until the maximum number of bones is reached.
     /// </summary>
-    public sealed class MaxBoneCountConfig : IntegerPropertyConfig {
+    public sealed class MaxBoneCountConfig : IntegerPropertyConfig
+    {
 
         /// <summary>
         /// Gets the string name used by MaxBoneCountConfig.
         /// </summary>
-        public static String MaxBoneCountConfigName {
-            get {
+        public static String MaxBoneCountConfigName
+        {
+            get
+            {
                 return AiConfigs.AI_CONFIG_PP_SBBC_MAX_BONES;
             }
         }
@@ -888,13 +1108,16 @@ namespace Assimp.Configs {
     /// <summary>
     /// Configures which texture channel is used for tangent space computations. The channel must exist or an error will be raised.
     /// </summary>
-    public sealed class TangentTextureChannelIndexConfig : IntegerPropertyConfig {
+    public sealed class TangentTextureChannelIndexConfig : IntegerPropertyConfig
+    {
 
         /// <summary>
         /// Gets the string name used by TangentTextureChannelIndexConfig.
         /// </summary>
-        public static String TangentTextureChannelIndexConfigName {
-            get {
+        public static String TangentTextureChannelIndexConfigName
+        {
+            get
+            {
                 return AiConfigs.AI_CONFIG_PP_CT_TEXTURE_CHANNEL_INDEX;
             }
         }
@@ -910,13 +1133,16 @@ namespace Assimp.Configs {
     /// <summary>
     /// Configures the <see cref="PostProcessSteps.Debone"/> threshold that is used to determine what bones are removed.
     /// </summary>
-    public sealed class DeboneThresholdConfig : FloatPropertyConfig {
+    public sealed class DeboneThresholdConfig : FloatPropertyConfig
+    {
 
         /// <summary>
         /// Gets the string name used by DeboneThresholdConfig.
         /// </summary>
-        public static String DeboneThresholdConfigName {
-            get {
+        public static String DeboneThresholdConfigName
+        {
+            get
+            {
                 return AiConfigs.AI_CONFIG_PP_DB_THRESHOLD;
             }
         }
@@ -933,13 +1159,16 @@ namespace Assimp.Configs {
     /// <summary>
     /// Configuration that requires all bones to qualify for deboning before any are removed.
     /// </summary>
-    public sealed class DeboneAllOrNoneConfig : BooleanPropertyConfig {
+    public sealed class DeboneAllOrNoneConfig : BooleanPropertyConfig
+    {
 
         /// <summary>
         /// Gets the string name used by DeboneAllOrNoneConfig.
         /// </summary>
-        public static String DeboneAllOrNoneConfigName {
-            get {
+        public static String DeboneAllOrNoneConfigName
+        {
+            get
+            {
                 return AiConfigs.AI_CONFIG_PP_DB_ALL_OR_NONE;
             }
         }
@@ -952,6 +1181,46 @@ namespace Assimp.Configs {
             : base(DeboneAllOrNoneConfigName, allOrNone, false) { }
     }
 
+    /// <summary>
+    /// Configuration for <see cref="PostProcessSteps.PreTransformVertices"/> that sets a user defined matrix as the scene root node transformation before
+    /// transforming vertices. Default value is the identity matrix.
+    /// </summary>
+    public sealed class RootTransformationConfig : MatrixPropertyConfig
+    {
+        /// <summary>
+        /// Gets the string name used by RootTransformationConfig.
+        /// </summary>
+        public static String RootTransformationConfigName
+        {
+            get
+            {
+                return AiConfigs.AI_CONFIG_PP_PTV_ROOT_TRANSFORMATION;
+            }
+        }
+
+        /// <summary>
+        /// Constructs a new RootTransformationConfig.
+        /// </summary>
+        /// <param name="rootTransform">Root transformation matrix to be set to the root scene node during the pretransform post process step.</param>
+        public RootTransformationConfig(Matrix4x4 rootTransform)
+            : base(RootTransformationConfigName, rootTransform, Matrix4x4.Identity) { }
+
+        /// <summary>
+        /// Applies the property value to the given Assimp property store.
+        /// </summary>
+        /// <param name="propStore">Assimp property store</param>
+        protected override void OnApplyValue(IntPtr propStore)
+        {
+            if(propStore != IntPtr.Zero)
+            {
+                //Technically this is TWO configs, a boolean that we want to do it and a config with the actual matrix. Most likely if we're setting the actual matrix, then we really do want
+                //to apply the root transformation, so this config actually represents two configs.
+                AssimpLibrary.Instance.SetImportPropertyInteger(propStore, AiConfigs.AI_CONFIG_PP_PTV_ADD_ROOT_TRANSFORMATION, 1); //TRUE = 1
+                AssimpLibrary.Instance.SetImportPropertyMatrix(propStore, RootTransformationConfigName, Value);
+            }
+        }
+    }
+
     #endregion
 
     #region Importer Settings
@@ -962,13 +1231,16 @@ namespace Assimp.Configs {
     /// first frame. This config sets the "global" keyframe that will be imported. There are other configs
     /// for specific importers that will override the global setting.
     /// </summary>
-    public sealed class GlobalKeyFrameImportConfig : IntegerPropertyConfig {
-        
+    public sealed class GlobalKeyFrameImportConfig : IntegerPropertyConfig
+    {
+
         /// <summary>
         /// Gets the string name used by GlobalKeyFrameImportConfig.
         /// </summary>
-        public static String GlobalKeyFrameImportConfigName {
-            get {
+        public static String GlobalKeyFrameImportConfigName
+        {
+            get
+            {
                 return AiConfigs.AI_CONFIG_IMPORT_GLOBAL_KEYFRAME;
             }
         }
@@ -986,13 +1258,16 @@ namespace Assimp.Configs {
     /// bone animation is supported). the library reads only one keyframe with vertex animations. By default this is the
     /// first frame. This config sets the global override for the MD3 format.
     /// </summary>
-    public sealed class MD3KeyFrameImportConfig : IntegerPropertyConfig {
+    public sealed class MD3KeyFrameImportConfig : IntegerPropertyConfig
+    {
 
         /// <summary>
         /// Gets the string name used by MD3KeyFrameImportConfig.
         /// </summary>
-        public static String MD3KeyFrameImportConfigName {
-            get {
+        public static String MD3KeyFrameImportConfigName
+        {
+            get
+            {
                 return AiConfigs.AI_CONFIG_IMPORT_MD3_KEYFRAME;
             }
         }
@@ -1010,13 +1285,16 @@ namespace Assimp.Configs {
     /// bone animation is supported). the library reads only one keyframe with vertex animations. By default this is the
     /// first frame. This config sets the global override for the MD2 format.
     /// </summary>
-    public sealed class MD2KeyFrameImportConfig : IntegerPropertyConfig {
+    public sealed class MD2KeyFrameImportConfig : IntegerPropertyConfig
+    {
 
         /// <summary>
         /// Gets the string name used by MD2KeyFrameImportConfig.
         /// </summary>
-        public static String MD2KeyFrameImportConfigName {
-            get {
+        public static String MD2KeyFrameImportConfigName
+        {
+            get
+            {
                 return AiConfigs.AI_CONFIG_IMPORT_MD2_KEYFRAME;
             }
         }
@@ -1034,13 +1312,16 @@ namespace Assimp.Configs {
     /// bone animation is supported). the library reads only one keyframe with vertex animations. By default this is the
     /// first frame. This config sets the global override for the MDL format.
     /// </summary>
-    public sealed class MDLKeyFrameImportConfig : IntegerPropertyConfig {
+    public sealed class MDLKeyFrameImportConfig : IntegerPropertyConfig
+    {
 
         /// <summary>
         /// Gets the string name used by MDLKeyFrameImportConfig.
         /// </summary>
-        public static String MDLKeyFrameImportConfigName {
-            get {
+        public static String MDLKeyFrameImportConfigName
+        {
+            get
+            {
                 return AiConfigs.AI_CONFIG_IMPORT_MDL_KEYFRAME;
             }
         }
@@ -1058,13 +1339,16 @@ namespace Assimp.Configs {
     /// bone animation is supported). the library reads only one keyframe with vertex animations. By default this is the
     /// first frame. This config sets the global override for the SMD format.
     /// </summary>
-    public sealed class SMDKeyFrameImportConfig : IntegerPropertyConfig {
+    public sealed class SMDKeyFrameImportConfig : IntegerPropertyConfig
+    {
 
         /// <summary>
         /// Gets the string name used by SMDKeyFrameImportConfig.
         /// </summary>
-        public static String SMDKeyFrameImportConfigName {
-            get {
+        public static String SMDKeyFrameImportConfigName
+        {
+            get
+            {
                 return AiConfigs.AI_CONFIG_IMPORT_SMD_KEYFRAME;
             }
         }
@@ -1082,13 +1366,16 @@ namespace Assimp.Configs {
     /// bone animation is supported). the library reads only one keyframe with vertex animations. By default this is the
     /// first frame. This config sets the global override for the Unreal format.
     /// </summary>
-    public sealed class UnrealKeyFrameImportConfig : IntegerPropertyConfig {
+    public sealed class UnrealKeyFrameImportConfig : IntegerPropertyConfig
+    {
 
         /// <summary>
         /// Gets the string name used by UnrealKeyFrameImportConfig.
         /// </summary>
-        public static String UnrealKeyFrameImportConfigName {
-            get {
+        public static String UnrealKeyFrameImportConfigName
+        {
+            get
+            {
                 return AiConfigs.AI_CONFIG_IMPORT_UNREAL_KEYFRAME;
             }
         }
@@ -1105,13 +1392,16 @@ namespace Assimp.Configs {
     /// Configures the AC loader to collect all surfaces which have the "Backface cull" flag set in separate
     /// meshes. The default value is true.
     /// </summary>
-    public sealed class ACSeparateBackfaceCullConfig : BooleanPropertyConfig {
+    public sealed class ACSeparateBackfaceCullConfig : BooleanPropertyConfig
+    {
 
         /// <summary>
         /// Gets the string name used by ACSeparateBackfaceCullConfig.
         /// </summary>
-        public static String ACSeparateBackfaceCullConfigName {
-            get {
+        public static String ACSeparateBackfaceCullConfigName
+        {
+            get
+            {
                 return AiConfigs.AI_CONFIG_IMPORT_AC_SEPARATE_BFCULL;
             }
         }
@@ -1129,13 +1419,16 @@ namespace Assimp.Configs {
     /// of the 'subdiv' attribute in the file). By default, Assimp performs
     /// the subdivision using the standard Catmull-Clark algorithm. The default value is true.
     /// </summary>
-    public sealed class ACEvaluateSubdivisionConfig : BooleanPropertyConfig {
+    public sealed class ACEvaluateSubdivisionConfig : BooleanPropertyConfig
+    {
 
         /// <summary>
         /// Gets the string name used by ACEvaluateSubdivisionConfig.
         /// </summary>
-        public static String ACEvaluateSubdivisionConfigName {
-            get {
+        public static String ACEvaluateSubdivisionConfigName
+        {
+            get
+            {
                 return AiConfigs.AI_CONFIG_IMPORT_AC_EVAL_SUBDIVISION;
             }
         }
@@ -1144,7 +1437,7 @@ namespace Assimp.Configs {
         /// Constructs a new ACEvaluateSubdivisionConfig.
         /// </summary>
         /// <param name="evaluateSubdivision">True if the AC loader should evaluate subdivisions, false otherwise.</param>
-        public ACEvaluateSubdivisionConfig(bool evaluateSubdivision) 
+        public ACEvaluateSubdivisionConfig(bool evaluateSubdivision)
             : base(ACEvaluateSubdivisionConfigName, evaluateSubdivision, true) { }
     }
 
@@ -1152,13 +1445,16 @@ namespace Assimp.Configs {
     /// Configures the UNREAL 3D loader to separate faces with different surface flags (e.g. two-sided vs single-sided).
     /// The default value is true.
     /// </summary>
-    public sealed class UnrealHandleFlagsConfig : BooleanPropertyConfig {
+    public sealed class UnrealHandleFlagsConfig : BooleanPropertyConfig
+    {
 
         /// <summary>
         /// Gets the string name used by UnrealHandleFlagsConfig.
         /// </summary>
-        public static String UnrealHandleFlagsConfigName {
-            get {
+        public static String UnrealHandleFlagsConfigName
+        {
+            get
+            {
                 return AiConfigs.AI_CONFIG_IMPORT_UNREAL_HANDLE_FLAGS;
             }
         }
@@ -1167,7 +1463,7 @@ namespace Assimp.Configs {
         /// Constructs a new UnrealHandleFlagsConfig.
         /// </summary>
         /// <param name="handleFlags">True if the unreal loader should separate faces with different surface flags, false otherwise.</param>
-        public UnrealHandleFlagsConfig(bool handleFlags) 
+        public UnrealHandleFlagsConfig(bool handleFlags)
             : base(UnrealHandleFlagsConfigName, handleFlags, true) { }
     }
 
@@ -1178,13 +1474,16 @@ namespace Assimp.Configs {
     /// want to compute them on your own, if you need them. This option is intended for model viewers which
     /// want to offer an easy way to apply textures to terrains.</para>
     /// </summary>
-    public sealed class TerragenComputeTexCoordsConfig : BooleanPropertyConfig {
+    public sealed class TerragenComputeTexCoordsConfig : BooleanPropertyConfig
+    {
 
         /// <summary>
         /// Gets the string name used by TerragenComputeTexCoordsConfig.
         /// </summary>
-        public static String TerragenComputeTexCoordsConfigName {
-            get {
+        public static String TerragenComputeTexCoordsConfigName
+        {
+            get
+            {
                 return AiConfigs.AI_CONFIG_IMPORT_TER_MAKE_UVS;
             }
         }
@@ -1193,7 +1492,7 @@ namespace Assimp.Configs {
         /// Constructs a new TerragenComputeTexCoordsConfig.
         /// </summary>
         /// <param name="computeTexCoords">True if terran UV coordinates should be computed, false otherwise.</param>
-        public TerragenComputeTexCoordsConfig(bool computeTexCoords) 
+        public TerragenComputeTexCoordsConfig(bool computeTexCoords)
             : base(TerragenComputeTexCoordsConfigName, computeTexCoords, false) { }
     }
 
@@ -1201,13 +1500,16 @@ namespace Assimp.Configs {
     /// Configures the ASE loader to always reconstruct normal vectors basing on the smoothing groups
     /// loaded from the file. Some ASE files carry invalid normals, others don't. The default value is true.
     /// </summary>
-    public sealed class ASEReconstructNormalsConfig : BooleanPropertyConfig {
+    public sealed class ASEReconstructNormalsConfig : BooleanPropertyConfig
+    {
 
         /// <summary>
         /// Gets the string name used by ASEReconstructNormalsConfig.
         /// </summary>
-        public static String ASEReconstructNormalsConfigName {
-            get {
+        public static String ASEReconstructNormalsConfigName
+        {
+            get
+            {
                 return AiConfigs.AI_CONFIG_IMPORT_ASE_RECONSTRUCT_NORMALS;
             }
         }
@@ -1216,7 +1518,7 @@ namespace Assimp.Configs {
         /// Constructs a new ASEReconstructNormalsConfig.
         /// </summary>
         /// <param name="reconstructNormals">True if normals should be re-computed, false otherwise.</param>
-        public ASEReconstructNormalsConfig(bool reconstructNormals) 
+        public ASEReconstructNormalsConfig(bool reconstructNormals)
             : base(ASEReconstructNormalsConfigName, reconstructNormals, true) { }
     }
 
@@ -1226,13 +1528,16 @@ namespace Assimp.Configs {
     /// set to true, Assimp will try to load and combine all three files if one of them is loaded. The
     /// default value is true.
     /// </summary>
-    public sealed class MD3HandleMultiPartConfig : BooleanPropertyConfig {
+    public sealed class MD3HandleMultiPartConfig : BooleanPropertyConfig
+    {
 
         /// <summary>
         /// Gets the string name used by MD3HandleMultiPartConfig.
         /// </summary>
-        public static String MD3HandleMultiPartConfigName {
-            get {
+        public static String MD3HandleMultiPartConfigName
+        {
+            get
+            {
                 return AiConfigs.AI_CONFIG_IMPORT_MD3_HANDLE_MULTIPART;
             }
         }
@@ -1241,7 +1546,7 @@ namespace Assimp.Configs {
         /// Constructs a new MD3HandleMultiPartConfig.
         /// </summary>
         /// <param name="handleMultiParts">True if the split files should be loaded and combined, false otherwise.</param>
-        public MD3HandleMultiPartConfig(bool handleMultiParts) 
+        public MD3HandleMultiPartConfig(bool handleMultiParts)
             : base(MD3HandleMultiPartConfigName, handleMultiParts, true) { }
     }
 
@@ -1251,13 +1556,16 @@ namespace Assimp.Configs {
     /// Quake III to be able to assign different skins (e.g. red and blue team) to models. 'default', 'red', 'blue'
     /// are typical skin names. The default string value is "default".
     /// </summary>
-    public sealed class MD3SkinNameConfig : StringPropertyConfig {
+    public sealed class MD3SkinNameConfig : StringPropertyConfig
+    {
 
         /// <summary>
         /// Gets the string name used by MD3SkinNameConfig.
         /// </summary>
-        public static String MD3SkinNameConfigName {
-            get {
+        public static String MD3SkinNameConfigName
+        {
+            get
+            {
                 return AiConfigs.AI_CONFIG_IMPORT_MD3_SKIN_NAME;
             }
         }
@@ -1274,13 +1582,16 @@ namespace Assimp.Configs {
     /// Specifies the Quake 3 shader file to be used for a particular MD3 file. This can be a full path or
     /// relative to where all MD3 shaders reside. the default string value is an empty string.
     /// </summary>
-    public sealed class MD3ShaderSourceConfig : StringPropertyConfig {
+    public sealed class MD3ShaderSourceConfig : StringPropertyConfig
+    {
 
         /// <summary>
         /// Gets the string name used by MD3ShaderSourceConfig.
         /// </summary>
-        public static String MD3ShaderSourceConfigName {
-            get {
+        public static String MD3ShaderSourceConfigName
+        {
+            get
+            {
                 return AiConfigs.AI_CONFIG_IMPORT_MD3_SHADER_SRC;
             }
         }
@@ -1301,13 +1612,16 @@ namespace Assimp.Configs {
     /// if the requested layer is not vailable. The layer index is zero-based and the layer name may not be empty</para>
     /// The default value is false (all layers are loaded).
     /// </summary>
-    public sealed class LWOImportOneLayerConfig : BooleanPropertyConfig {
+    public sealed class LWOImportOneLayerConfig : BooleanPropertyConfig
+    {
 
         /// <summary>
         /// Gets the string name used by LWOImportOneLayerConfig.
         /// </summary>
-        public static String LWOImportOneLayerConfigName {
-            get {
+        public static String LWOImportOneLayerConfigName
+        {
+            get
+            {
                 return AiConfigs.AI_CONFIG_IMPORT_LWO_ONE_LAYER_ONLY;
             }
         }
@@ -1316,7 +1630,7 @@ namespace Assimp.Configs {
         /// Constructs a new LWOImportOneLayerConfig.
         /// </summary>
         /// <param name="importOneLayerOnly">True if only one layer should be imported, false if all layers should be imported.</param>
-        public LWOImportOneLayerConfig(bool importOneLayerOnly) 
+        public LWOImportOneLayerConfig(bool importOneLayerOnly)
             : base(LWOImportOneLayerConfigName, importOneLayerOnly, false) { }
     }
 
@@ -1327,13 +1641,16 @@ namespace Assimp.Configs {
     /// in the same directory. If it is found it is loaded and combined with the MD5MESH file. This configuration
     /// option can be used to disable this behavior.</para>
     /// </summary>
-    public sealed class MD5NoAnimationAutoLoadConfig : BooleanPropertyConfig {
+    public sealed class MD5NoAnimationAutoLoadConfig : BooleanPropertyConfig
+    {
 
         /// <summary>
         /// Gets the string name used by MD5NoAnimationAutoLoadConfig.
         /// </summary>
-        public static String MD5NoAnimationAutoLoadConfigName {
-            get {
+        public static String MD5NoAnimationAutoLoadConfigName
+        {
+            get
+            {
                 return AiConfigs.AI_CONFIG_IMPORT_MD5_NO_ANIM_AUTOLOAD;
             }
         }
@@ -1342,7 +1659,7 @@ namespace Assimp.Configs {
         /// Constructs a new MD5NoAnimationAutoLoadConfig.
         /// </summary>
         /// <param name="noAutoLoadAnim">True if animations should not be automatically loaded, false if they should be.</param>
-        public MD5NoAnimationAutoLoadConfig(bool noAutoLoadAnim) 
+        public MD5NoAnimationAutoLoadConfig(bool noAutoLoadAnim)
             : base(MD5NoAnimationAutoLoadConfigName, noAutoLoadAnim, false) { }
     }
 
@@ -1357,13 +1674,16 @@ namespace Assimp.Configs {
     /// if this property is not set, the importer takes the animation start from the input LWS
     /// file ('FirstFrame' line)</para>
     /// </summary>
-    public sealed class LWSAnimationStartConfig : IntegerPropertyConfig {
+    public sealed class LWSAnimationStartConfig : IntegerPropertyConfig
+    {
 
         /// <summary>
         /// Gets the string name used by LWSAnimationStartConfig.
         /// </summary>
-        public static String LWSAnimationStartConfigName {
-            get {
+        public static String LWSAnimationStartConfigName
+        {
+            get
+            {
                 return AiConfigs.AI_CONFIG_IMPORT_LWS_ANIM_START;
             }
         }
@@ -1387,13 +1707,16 @@ namespace Assimp.Configs {
     /// if this property is not set, the importer takes the animation end from the input LWS
     /// file.</para>
     /// </summary>
-    public sealed class LWSAnimationEndConfig : IntegerPropertyConfig {
+    public sealed class LWSAnimationEndConfig : IntegerPropertyConfig
+    {
 
         /// <summary>
         /// Gets the string name used by LWSAnimationEndConfig.
         /// </summary>
-        public static String LWSAnimationEndConfigName {
-            get {
+        public static String LWSAnimationEndConfigName
+        {
+            get
+            {
                 return AiConfigs.AI_CONFIG_IMPORT_LWS_ANIM_END;
             }
         }
@@ -1412,13 +1735,16 @@ namespace Assimp.Configs {
     /// a loss of quality. This setting defines how many keys per second are returned by the converter.</para>
     /// The default value is 100 frames per second.
     /// </summary>
-    public sealed class IRRAnimationFrameRateConfig : IntegerPropertyConfig {
+    public sealed class IRRAnimationFrameRateConfig : IntegerPropertyConfig
+    {
 
         /// <summary>
         /// Gets the string name used by IRRAnimationFrameRateConfig.
         /// </summary>
-        public static String IRRAnimationFrameRateConfigName {
-            get {
+        public static String IRRAnimationFrameRateConfigName
+        {
+            get
+            {
                 return AiConfigs.AI_CONFIG_IMPORT_IRR_ANIM_FPS;
             }
         }
@@ -1427,22 +1753,25 @@ namespace Assimp.Configs {
         /// Constructs a new IRRAnimationFramerateConfig.
         /// </summary>
         /// <param name="frameRate">Number of frames per second to output.</param>
-        public IRRAnimationFrameRateConfig(int frameRate) 
+        public IRRAnimationFrameRateConfig(int frameRate)
             : base(IRRAnimationFrameRateConfigName, frameRate, 100) { }
     }
 
     /// <summary>
-    /// The Ogre importer will try to load this MaterialFile. If a material file does not
-    /// exist with the same name as a material to load, the ogre importer will try to load this file
-    /// and searches for the material in it. The default string value is an empty string.
+    /// The Ogre importer will try to load this MaterialFile. Ogre meshes reference with material names, this does not tell Assimp
+    /// where the file is located. Assimp will try to find the source file in the following order: [material-name].material, [mesh-filename-base].material,
+    /// and lastly the material name defined by this config property. The default value is "Scene.Material".
     /// </summary>
-    public sealed class OgreMaterialFileConfig : StringPropertyConfig {
+    public sealed class OgreMaterialFileConfig : StringPropertyConfig
+    {
 
         /// <summary>
         /// Gets the string name used by OgreMaterialFileConfig.
         /// </summary>
-        public static String OgreMaterialFileConfigName {
-            get {
+        public static String OgreMaterialFileConfigName
+        {
+            get
+            {
                 return AiConfigs.AI_CONFIG_IMPORT_OGRE_MATERIAL_FILE;
             }
         }
@@ -1452,20 +1781,32 @@ namespace Assimp.Configs {
         /// </summary>
         /// <param name="materialFileName">Material file name to load.</param>
         public OgreMaterialFileConfig(String materialFileName)
-            : base(OgreMaterialFileConfigName, materialFileName, String.Empty) { }
+            : base(OgreMaterialFileConfigName, materialFileName, "Scene.Material") { }
     }
 
     /// <summary>
     /// The Ogre importer will detect the texture usage from the filename. Normally a texture is loaded as a color map, if no target is specified
-    /// in the material file. If this is enabled, texture names ending with _n, _l, _s are used as normal maps, light maps, or specular maps.
+    /// in the material file. If this is enabled, then Assimp will try to detect the type from the texture filename postfix: 
+    /// <list type="bullet">
+    /// <item><description>Normal Maps: _n, _nrm, _nrml, _normal, _normals, _normalmap</description></item>
+    /// <item><description>Specular Maps: _s, _spec, _specular, _specularmap</description></item>
+    /// <item><description>Light Maps: _l, _light, _lightmap, _occ, _occlusion</description></item>
+    /// <item><description>Displacement Maps: _dis, _displacement</description></item>
+    /// </list>
+    /// The matching is case insensitive. Postfix is taken between the last "_" and last ".". The default behavior is to detect type from lower cased
+    /// texture unit name by matching against: normalmap, specularmap, lightmap, and displacementmap. For both cases if no match is found then,
+    /// <see cref="TextureType.Diffuse"/> is used. The default value is false.
     /// </summary>
-    public sealed class OgreTextureTypeFromFilenameConfig : BooleanPropertyConfig {
+    public sealed class OgreTextureTypeFromFilenameConfig : BooleanPropertyConfig
+    {
 
         /// <summary>
         /// Gets the string name used by OgreTextureTypeFromFilenameConfig.
         /// </summary>
-        public static String OgreTextureTypeFromFilenameConfigName {
-            get {
+        public static String OgreTextureTypeFromFilenameConfigName
+        {
+            get
+            {
                 return AiConfigs.AI_CONFIG_IMPORT_OGRE_TEXTURETYPE_FROM_FILENAME;
             }
         }
@@ -1475,20 +1816,23 @@ namespace Assimp.Configs {
         /// </summary>
         /// <param name="fileNameDefinesTextureUsage">True if the filename defines texture usage, false otherwise.</param>
         public OgreTextureTypeFromFilenameConfig(bool fileNameDefinesTextureUsage)
-            : base(OgreTextureTypeFromFilenameConfigName, fileNameDefinesTextureUsage, true) { }
+            : base(OgreTextureTypeFromFilenameConfigName, fileNameDefinesTextureUsage, false) { }
     }
 
     /// <summary>
     /// Specifies whether the IFC loader skips over shape representations of type 'Curve2D'. A lot of files contain both a faceted mesh representation and a outline 
     /// with a presentation type of 'Curve2D'. Currently Assimp does not convert those, so turning this option off just clutters the log with errors.
     /// </summary>
-    public sealed class IFCSkipCurveShapesConfig : BooleanPropertyConfig {
+    public sealed class IFCSkipCurveShapesConfig : BooleanPropertyConfig
+    {
 
         /// <summary>
         /// Gets the string name used by IFCSkipCurveShapesConfig.
         /// </summary>
-        public static String IFCSkipCurveShapesConfigName {
-            get {
+        public static String IFCSkipCurveShapesConfigName
+        {
+            get
+            {
                 return AiConfigs.AI_CONFIG_IMPORT_IFC_SKIP_CURVE_REPRESENTATIONS;
             }
         }
@@ -1507,23 +1851,271 @@ namespace Assimp.Configs {
     /// with the outer boundary using a dummy edge). It is highly recommended to leave this property set to true as the default post process has some known
     /// issues with these kind of polygons.
     /// </summary>
-    public sealed class IFCUseCustomTriangulationConfig : BooleanPropertyConfig {
+    public sealed class IFCUseCustomTriangulationConfig : BooleanPropertyConfig
+    {
 
         /// <summary>
         /// Gets the string name used by IFCUseCustomTriangulationConfig.
         /// </summary>
-        public static String IFCUseCustomTriangulationConfigName {
-            get {
+        public static String IFCUseCustomTriangulationConfigName
+        {
+            get
+            {
                 return AiConfigs.AI_CONFIG_IMPORT_IFC_CUSTOM_TRIANGULATION;
             }
         }
 
         /// <summary>
-        /// Constructs a new IFCUseCustomTriangulationConfig..
+        /// Constructs a new IFCUseCustomTriangulationConfig.
         /// </summary>
         /// <param name="useCustomTriangulation">True if the loader should use its own triangulation routine for walls/floors, false otherwise.</param>
         public IFCUseCustomTriangulationConfig(bool useCustomTriangulation)
             : base(IFCUseCustomTriangulationConfigName, useCustomTriangulation, true) { }
+    }
+
+    /// <summary>
+    /// Specifies whether the collada loader will ignore the up direction. Default is false.
+    /// </summary>
+    public sealed class ColladaIgnoreUpDirectionConfig : BooleanPropertyConfig
+    {
+        /// <summary>
+        /// Gets the string name used by ColladaIgnoreUpDirectionConfig.
+        /// </summary>
+        public static String ColladaIgnoreUpDirectionConfigName
+        {
+            get
+            {
+                return AiConfigs.AI_CONFIG_IMPORT_COLLADA_IGNORE_UP_DIRECTION;
+            }
+        }
+
+        /// <summary>
+        /// Constructs a new ColladaIgnoreUpDirectionConfig.
+        /// </summary>
+        /// <param name="ignoreUpDirection">True if the loader should ignore the up direction, false otherwise.</param>
+        public ColladaIgnoreUpDirectionConfig(bool ignoreUpDirection)
+            : base(ColladaIgnoreUpDirectionConfigName, ignoreUpDirection, false) { }
+    }
+
+    /// <summary>
+    /// Specifies whether the FBX importer will merge all geometry layers present in the source file or import only the first. Default is true.
+    /// </summary>
+    public sealed class FBXImportAllGeometryLayersConfig : BooleanPropertyConfig
+    {
+        /// <summary>
+        /// Gets the string name used by FBXImportAllGeometryLayersConfig.
+        /// </summary>
+        public static String FBXImportAllGeometryLayersConfigName
+        {
+            get
+            {
+                return AiConfigs.AI_CONFIG_IMPORT_FBX_READ_ALL_GEOMETRY_LAYERS;
+            }
+        }
+
+        /// <summary>
+        /// Constructs a new FBXImportAllGeometryLayersConfig.
+        /// </summary>
+        /// <param name="importAllGeometryLayers">True if all geometry layers should be merged, false otherwise to take only the first layer.</param>
+        public FBXImportAllGeometryLayersConfig(bool importAllGeometryLayers)
+            : base(FBXImportAllGeometryLayersConfigName, importAllGeometryLayers, true) { }
+    }
+
+    /// <summary>
+    /// Specifies whether the FBX importer will import all materials present in the source file or take only the referenced materials,
+    /// if the importer is configured to import materials at all. Otherwise this will have no effect. Default is false.
+    /// </summary>
+    public sealed class FBXImportAllMaterialsConfig : BooleanPropertyConfig
+    {
+        /// <summary>
+        /// Gets the string name used by FBXImportAllMaterialsConfig.
+        /// </summary>
+        public static String FBXImportAllMaterialsConfigName
+        {
+            get
+            {
+                return AiConfigs.AI_CONFIG_IMPORT_FBX_READ_ALL_MATERIALS;
+            }
+        }
+
+        /// <summary>
+        /// Constructs a new FBXImportAllMaterialsConfig.
+        /// </summary>
+        /// <param name="importAllMaterials">True if the FBX importer should import ALL materials even if not referenced, false otherwise (take only the referenced materials).</param>
+        public FBXImportAllMaterialsConfig(bool importAllMaterials)
+            : base(FBXImportAllMaterialsConfigName, importAllMaterials, false) { }
+    }
+
+    /// <summary>
+    /// Specifies whether the FBX importer will import materials. Default is true.
+    /// </summary>
+    public sealed class FBXImportMaterialsConfig : BooleanPropertyConfig
+    {
+        /// <summary>
+        /// Gets the string name used by FBXImportMaterialsConfig.
+        /// </summary>
+        public static String FBXImportMaterialsConfigName
+        {
+            get
+            {
+                return AiConfigs.AI_CONFIG_IMPORT_FBX_READ_MATERIALS;
+            }
+        }
+
+        /// <summary>
+        /// Constructs a new FBXImportMaterialsConfig.
+        /// </summary>
+        /// <param name="importMaterials">True if the FBX importer should import materials, false otherwise.</param>
+        public FBXImportMaterialsConfig(bool importMaterials)
+            : base(FBXImportMaterialsConfigName, importMaterials, true) { }
+    }
+
+    /// <summary>
+    /// Specifies whether the FBX importer will import cameras. Default is true.
+    /// </summary>
+    public sealed class FBXImportCamerasConfig : BooleanPropertyConfig
+    {
+        /// <summary>
+        /// Gets the string name used by FBXImportCamerasConfig.
+        /// </summary>
+        public static String FBXImportCamerasConfigName
+        {
+            get
+            {
+                return AiConfigs.AI_CONFIG_IMPORT_FBX_READ_CAMERAS;
+            }
+        }
+
+        /// <summary>
+        /// Constructs a new FBXImportCamerasConfig.
+        /// </summary>
+        /// <param name="importCameras">True if the FBX importer should import cameras, false otherwise.</param>
+        public FBXImportCamerasConfig(bool importCameras)
+            : base(FBXImportCamerasConfigName, importCameras, true) { }
+    }
+
+    /// <summary>
+    /// Specifies whether the FBX importer will import lights. Default is true.
+    /// </summary>
+    public sealed class FBXImportLightsConfig : BooleanPropertyConfig
+    {
+        /// <summary>
+        /// Gets the string name used by FBXImportLightsConfig.
+        /// </summary>
+        public static String FBXImportLightsConfigName
+        {
+            get
+            {
+                return AiConfigs.AI_CONFIG_IMPORT_FBX_READ_LIGHTS;
+            }
+        }
+
+        /// <summary>
+        /// Constructs a new FBXImportLightsConfig.
+        /// </summary>
+        /// <param name="importLights">True if the FBX importer should import lights, false otherwise.</param>
+        public FBXImportLightsConfig(bool importLights)
+            : base(FBXImportLightsConfigName, importLights, true) { }
+    }
+
+    /// <summary>
+    /// Specifies whether the FBX importer will import animations. Default is true.
+    /// </summary>
+    public sealed class FBXImportAnimationsConfig : BooleanPropertyConfig
+    {
+        /// <summary>
+        /// Gets the string name used by FBXImportAnimationsConfig.
+        /// </summary>
+        public static String FBXImportAnimationsConfigName
+        {
+            get
+            {
+                return AiConfigs.AI_CONFIG_IMPORT_FBX_READ_ANIMATIONS;
+            }
+        }
+
+        /// <summary>
+        /// Constructs a new FBXImportAnimationsConfig.
+        /// </summary>
+        /// <param name="importAnimations">True if the FBX importer should import animations, false otherwise.</param>
+        public FBXImportAnimationsConfig(bool importAnimations)
+            : base(FBXImportAnimationsConfigName, importAnimations, true) { }
+    }
+
+    /// <summary>
+    /// Specifies whether the FBX importer will act in strict mode in which only the FBX 2013
+    /// format is supported and any other sub formats are rejected. FBX 2013 is the primary target for the importer, so this
+    /// format is best supported and well-tested. Default is false.
+    /// </summary>
+    public sealed class FBXStrictModeConfig : BooleanPropertyConfig
+    {
+        /// <summary>
+        /// Gets the string name used by FBXStrictModeConfig.
+        /// </summary>
+        public static String FBXStrictModeConfigName
+        {
+            get
+            {
+                return AiConfigs.AI_CONFIG_IMPORT_FBX_STRICT_MODE;
+            }
+        }
+
+        /// <summary>
+        /// Constructs a new FBXStrictModeConfig.
+        /// </summary>
+        /// <param name="useStrictMode">True if FBX strict mode should be used, false otherwise.</param>
+        public FBXStrictModeConfig(bool useStrictMode)
+            : base(FBXStrictModeConfigName, useStrictMode, false) { }
+    }
+
+    /// <summary>
+    /// Specifies whether the FBX importer will preserve pivot points for transformations (as extra nodes). If set to false, pivots
+    /// and offsets will be evaluated whenever possible. Default value is true.
+    /// </summary>
+    public sealed class FBXPreservePivotsConfig : BooleanPropertyConfig
+    {
+        /// <summary>
+        /// Gets the string name used by FBXPreservePivotsConfig.
+        /// </summary>
+        public static String FBXPreservePivotsConfigName
+        {
+            get
+            {
+                return AiConfigs.AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS;
+            }
+        }
+
+        /// <summary>
+        /// Constructs a new FBXPreservePivotsConfig.
+        /// </summary>
+        /// <param name="preservePivots">True if pivots should be preserved, false otherwise.</param>
+        public FBXPreservePivotsConfig(bool preservePivots)
+            : base(FBXPreservePivotsConfigName, preservePivots, true) { }
+    }
+
+    /// <summary>
+    /// Specifies whether the importer will drop empty animation curves or animation curves which match the bind pose 
+    /// transformation over their entire defined range. Default value is true.
+    /// </summary>
+    public sealed class FBXOptimizeEmptyAnimationCurvesConfig : BooleanPropertyConfig
+    {
+        /// <summary>
+        /// Gets the string name used by FBXOptimizeEmptyAnimationCurvesConfig.
+        /// </summary>
+        public static String FBXOptimizeEmptyAnimationCurvesConfigName
+        {
+            get
+            {
+                return AiConfigs.AI_CONFIG_IMPORT_FBX_OPTIMIZE_EMPTY_ANIMATION_CURVES;
+            }
+        }
+
+        /// <summary>
+        /// Constructs a new FBXOptimizeEmptyAnimationCurvesConfig.
+        /// </summary>
+        /// <param name="optimizeEmptyAnimations">True if empty animation curves should be dropped, false otherwise.</param>
+        public FBXOptimizeEmptyAnimationCurvesConfig(bool optimizeEmptyAnimations)
+            : base(FBXOptimizeEmptyAnimationCurvesConfigName, optimizeEmptyAnimations, true) { }
     }
 
     #endregion
