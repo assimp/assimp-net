@@ -1,5 +1,5 @@
 ﻿/*
-* Copyright (c) 2012-2013 AssimpNet - Nicholas Woodfield
+* Copyright (c) 2012-2014 AssimpNet - Nicholas Woodfield
 * 
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -23,13 +23,15 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace Assimp {
+namespace Assimp
+{
     /// <summary>
     /// Defines how an UV channel is transformed.
     /// </summary>
     [Serializable]
     [StructLayoutAttribute(LayoutKind.Sequential)]
-    public struct UVTransform {
+    public struct UVTransform
+    {
         /// <summary>
         /// Translation on the U and V axes. Default is 0|0
         /// </summary>

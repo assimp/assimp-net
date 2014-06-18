@@ -1,5 +1,5 @@
 ﻿/*
-* Copyright (c) 2012-2013 AssimpNet - Nicholas Woodfield
+* Copyright (c) 2012-2014 AssimpNet - Nicholas Woodfield
 * 
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -24,14 +24,16 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace Assimp {
+namespace Assimp
+{
     /// <summary>
     /// Simple implementation of an IOSystem that searches for files on the disk. This implementation
     /// can be given a number of search directories that it will attempt to locate the file in first, before
     /// using the file path given by Assimp. That way, you can load models that have files distributed in a number of other
     /// directories besides the root model's.
     /// </summary>
-    public class FileIOSystem : IOSystem {
+    public class FileIOSystem : IOSystem
+    {
         private List<DirectoryInfo> m_searchDirectories;
 
         /// <summary>
@@ -43,7 +45,8 @@ namespace Assimp {
         /// Constructs a new FileIOSystem that uses the specified search directories.
         /// </summary>
         /// <param name="searchPaths">Search directories to search for files in</param>
-        public FileIOSystem(params String[] searchPaths) {
+        public FileIOSystem(params String[] searchPaths)
+        {
             m_searchDirectories = new List<DirectoryInfo>();
 
             SetSearchDirectories(searchPaths);
@@ -53,11 +56,14 @@ namespace Assimp {
         /// Sets the search directories the FileIOSystem will use when searching for files.
         /// </summary>
         /// <param name="searchPaths">Directory paths</param>
-        public void SetSearchDirectories(params String[] searchPaths) {
+        public void SetSearchDirectories(params String[] searchPaths)
+        {
             m_searchDirectories.Clear();
 
-            if(searchPaths != null && searchPaths.Length != 0) {
-                foreach(String path in searchPaths) {
+            if(searchPaths != null && searchPaths.Length != 0)
+            {
+                foreach(String path in searchPaths)
+                {
                     if(!String.IsNullOrEmpty(path) && Directory.Exists(path))
                         m_searchDirectories.Add(new DirectoryInfo(path));
                 }
@@ -68,10 +74,12 @@ namespace Assimp {
         /// Gets the search directories the FileIOSystem is using.
         /// </summary>
         /// <returns>Directory paths</returns>
-        public String[] GetSearchDirectories() {
+        public String[] GetSearchDirectories()
+        {
             List<String> searchPaths = new List<String>();
 
-            foreach(DirectoryInfo dir in m_searchDirectories) {
+            foreach(DirectoryInfo dir in m_searchDirectories)
+            {
                 searchPaths.Add(dir.FullName);
             }
 
@@ -84,7 +92,8 @@ namespace Assimp {
         /// <param name="pathToFile">Path to the file</param>
         /// <param name="fileMode">Desired file access mode</param>
         /// <returns>The IO stream</returns>
-        public override IOStream OpenFile(String pathToFile, FileIOMode fileMode) {
+        public override IOStream OpenFile(String pathToFile, FileIOMode fileMode)
+        {
             return new FileIOStream(this, pathToFile, fileMode);
         }
 
@@ -104,7 +113,8 @@ namespace Assimp {
             foreach(DirectoryInfo dir in m_searchDirectories)
             {
                 String fullPath = Path.Combine(dir.FullName, fileName);
-                if(File.Exists(fullPath)) {
+                if(File.Exists(fullPath))
+                {
                     pathToFile = fullPath;
                     return true;
                 }
@@ -117,21 +127,26 @@ namespace Assimp {
     /// <summary>
     /// Wraps a FileStream.
     /// </summary>
-    internal class FileIOStream : IOStream {
+    internal class FileIOStream : IOStream
+    {
         private FileIOSystem m_parent;
         private FileStream m_fileStream;
 
-        public override bool IsValid {
-            get {
+        public override bool IsValid
+        {
+            get
+            {
                 return m_fileStream != null;
             }
         }
 
         public FileIOStream(FileIOSystem parent, String pathToFile, FileIOMode fileMode)
-            : base(pathToFile, fileMode) {
+            : base(pathToFile, fileMode)
+        {
             m_parent = parent;
 
-            switch(fileMode) {
+            switch(fileMode)
+            {
                 case FileIOMode.Read:
                 case FileIOMode.ReadBinary:
                 case FileIOMode.ReadText:
@@ -145,7 +160,8 @@ namespace Assimp {
             }
         }
 
-        public override long Write(byte[] dataToWrite, long count) {
+        public override long Write(byte[] dataToWrite, long count)
+        {
             if(dataToWrite == null)
                 throw new ArgumentOutOfRangeException("dataToWrite", "Data to write cannot be null.");
 
@@ -160,7 +176,8 @@ namespace Assimp {
             return count;
         }
 
-        public override long Read(byte[] dataRead, long count) {
+        public override long Read(byte[] dataRead, long count)
+        {
             if(dataRead == null)
                 throw new ArgumentOutOfRangeException("dataRead", "Array to store data in cannot be null.");
 
@@ -175,7 +192,8 @@ namespace Assimp {
             return count;
         }
 
-        public override ReturnCode Seek(long offset, Origin seekOrigin) {
+        public override ReturnCode Seek(long offset, Origin seekOrigin)
+        {
             if(m_fileStream == null || !m_fileStream.CanSeek)
                 throw new IOException("Stream does not support seeking.");
 
@@ -196,24 +214,27 @@ namespace Assimp {
             m_fileStream.Seek(offset, orig);
 
             return ReturnCode.Success;
-            
+
         }
 
-        public override long GetPosition() {
+        public override long GetPosition()
+        {
             if(m_fileStream == null)
                 return -1;
 
             return m_fileStream.Position;
         }
 
-        public override long GetFileSize() {
+        public override long GetFileSize()
+        {
             if(m_fileStream == null)
                 return 0;
 
             return m_fileStream.Length;
         }
 
-        public override void Flush() {
+        public override void Flush()
+        {
             if(m_fileStream == null)
                 return;
 
@@ -233,7 +254,8 @@ namespace Assimp {
             }
         }
 
-        private void OpenRead(String pathToFile, FileIOMode fileMode) {
+        private void OpenRead(String pathToFile, FileIOMode fileMode)
+        {
             String fileName = Path.GetFileName(pathToFile);
 
             String foundPath;
@@ -244,7 +266,8 @@ namespace Assimp {
                 m_fileStream = File.OpenRead(pathToFile);
         }
 
-        private void OpenWrite(String pathToFile, FileIOMode fileMode) {
+        private void OpenWrite(String pathToFile, FileIOMode fileMode)
+        {
             m_fileStream = File.OpenWrite(pathToFile);
         }
     }

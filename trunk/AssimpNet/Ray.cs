@@ -1,5 +1,5 @@
 ﻿/*
-* Copyright (c) 2012-2013 AssimpNet - Nicholas Woodfield
+* Copyright (c) 2012-2014 AssimpNet - Nicholas Woodfield
 * 
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -23,15 +23,15 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace Assimp {
-
+namespace Assimp
+{
     /// <summary>
     /// Defines a 3D ray with a point of origin and a direction.
     /// </summary>
     [Serializable]
     [StructLayout(LayoutKind.Sequential)]
-    public struct Ray {
-
+    public struct Ray
+    {
         /// <summary>
         /// Origin of the ray in space.
         /// </summary>
@@ -47,7 +47,8 @@ namespace Assimp {
         /// </summary>
         /// <param name="pos"></param>
         /// <param name="dir"></param>
-        public Ray(Vector3D pos, Vector3D dir) {
+        public Ray(Vector3D pos, Vector3D dir)
+        {
             Position = pos;
             Direction = dir;
         }

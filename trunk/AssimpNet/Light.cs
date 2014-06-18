@@ -1,5 +1,5 @@
 ﻿/*
-* Copyright (c) 2012-2013 AssimpNet - Nicholas Woodfield
+* Copyright (c) 2012-2014 AssimpNet - Nicholas Woodfield
 * 
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -23,7 +23,8 @@
 using System;
 using Assimp.Unmanaged;
 
-namespace Assimp {
+namespace Assimp
+{
     /// <summary>
     /// Describes a light source in the scene. Assimp supports multiple light sources
     /// including spot, point, and directional lights. All are defined by a single structure
@@ -33,7 +34,8 @@ namespace Assimp {
     /// of a spotlight's main node called "spotName.Target". However, this is just additional information
     /// then, the transform tracks of the main node make the spot light already point in the right direction.</para>
     /// </summary>
-    public sealed class Light : IMarshalable<Light, AiLight> {
+    public sealed class Light : IMarshalable<Light, AiLight>
+    {
         private String m_name;
         private LightSourceType m_lightType;
         private float m_angleInnerCone;
@@ -50,11 +52,14 @@ namespace Assimp {
         /// <summary>
         /// Gets or sets the name of the light source. This corresponds to a node present in the scenegraph.
         /// </summary>
-        public String Name {
-            get {
+        public String Name
+        {
+            get
+            {
                 return m_name;
             }
-            set {
+            set
+            {
                 m_name = value;
             }
         }
@@ -62,11 +67,14 @@ namespace Assimp {
         /// <summary>
         /// Gets or sets the type of light source. This should never be undefined.
         /// </summary>
-        public LightSourceType LightType {
-            get {
+        public LightSourceType LightType
+        {
+            get
+            {
                 return m_lightType;
             }
-            set {
+            set
+            {
                 m_lightType = value;
             }
         }
@@ -76,11 +84,14 @@ namespace Assimp {
         /// maximum influence on objects inside this angle. The angle is given in radians, it
         /// is 2PI for point lights and defined for directional lights.
         /// </summary>
-        public float AngleInnerCone {
-            get {
+        public float AngleInnerCone
+        {
+            get
+            {
                 return m_angleInnerCone;
             }
-            set {
+            set
+            {
                 m_angleInnerCone = value;
             }
         }
@@ -90,11 +101,14 @@ namespace Assimp {
         /// this angle. The angle is given in radians. It is 2PI for point lights and undefined for
         /// directional lights. The outer angle must be greater than or equal to the inner angle.
         /// </summary>
-        public float AngleOuterCone {
-            get {
+        public float AngleOuterCone
+        {
+            get
+            {
                 return m_angleOuterCone;
             }
-            set {
+            set
+            {
                 m_angleOuterCone = value;
             }
         }
@@ -104,11 +118,14 @@ namespace Assimp {
         /// at a given distance 'd' from the light position is <code>Atten = 1 / (att0 + att1 * d + att2 * d*d)</code>.
         /// <para>This member corresponds to the att0 variable in the equation and is undefined for directional lights.</para>
         /// </summary>
-        public float AttenuationConstant {
-            get {
+        public float AttenuationConstant
+        {
+            get
+            {
                 return m_attConstant;
             }
-            set {
+            set
+            {
                 m_attConstant = value;
             }
         }
@@ -118,11 +135,14 @@ namespace Assimp {
         /// at a given distance 'd' from the light position is <code>Atten = 1 / (att0 + att1 * d + att2 * d*d)</code>
         /// <para>This member corresponds to the att1 variable in the equation and is undefined for directional lights.</para>
         /// </summary>
-        public float AttenuationLinear {
-            get {
+        public float AttenuationLinear
+        {
+            get
+            {
                 return m_attLinear;
             }
-            set {
+            set
+            {
                 m_attLinear = value;
             }
         }
@@ -132,11 +152,14 @@ namespace Assimp {
         /// at a given distance 'd' from the light position is <code>Atten = 1 / (att0 + att1 * d + att2 * d*d)</code>.
         /// <para>This member corresponds to the att2 variable in the equation and is undefined for directional lights.</para>
         /// </summary>
-        public float AttenuationQuadratic {
-            get {
+        public float AttenuationQuadratic
+        {
+            get
+            {
                 return m_attQuadratic;
             }
-            set {
+            set
+            {
                 m_attQuadratic = value;
             }
         }
@@ -146,11 +169,14 @@ namespace Assimp {
         /// transformation of the node corresponding to the light. This is undefined for
         /// directional lights.
         /// </summary>
-        public Vector3D Position {
-            get {
+        public Vector3D Position
+        {
+            get
+            {
                 return m_position;
             }
-            set {
+            set
+            {
                 m_position = value;
             }
         }
@@ -159,11 +185,14 @@ namespace Assimp {
         /// Gets or sets the direction of the light source in space, relative to the transformation
         /// of the node corresponding to the light. This is undefined for point lights.
         /// </summary>
-        public Vector3D Direction {
-            get {
+        public Vector3D Direction
+        {
+            get
+            {
                 return m_direction;
             }
-            set {
+            set
+            {
                 m_direction = value;
             }
         }
@@ -172,11 +201,14 @@ namespace Assimp {
         /// Gets or sets the diffuse color of the light source.  The diffuse light color is multiplied with
         /// the diffuse material color to obtain the final color that contributes to the diffuse shading term.
         /// </summary>
-        public Color3D ColorDiffuse {
-            get {
+        public Color3D ColorDiffuse
+        {
+            get
+            {
                 return m_diffuse;
             }
-            set {
+            set
+            {
                 m_diffuse = value;
             }
         }
@@ -185,11 +217,14 @@ namespace Assimp {
         /// Gets or sets the specular color of the light source. The specular light color is multiplied with the
         /// specular material color to obtain the final color that contributes to the specular shading term.
         /// </summary>
-        public Color3D ColorSpecular {
-            get {
+        public Color3D ColorSpecular
+        {
+            get
+            {
                 return m_specular;
             }
-            set {
+            set
+            {
                 m_specular = value;
             }
         }
@@ -198,11 +233,14 @@ namespace Assimp {
         /// Gets or sets the ambient color of the light source. The ambient light color is multiplied with the ambient
         /// material color to obtain the final color that contributes to the ambient shading term.
         /// </summary>
-        public Color3D ColorAmbient {
-            get {
+        public Color3D ColorAmbient
+        {
+            get
+            {
                 return m_ambient;
             }
-            set {
+            set
+            {
                 m_ambient = value;
             }
         }
@@ -211,7 +249,8 @@ namespace Assimp {
         /// Constructs a new Light.
         /// </summary>
         /// <param name="light">Unmanaged AiLight struct</param>
-        internal Light(ref AiLight light) {
+        internal Light(ref AiLight light)
+        {
             m_name = light.Name.GetString();
             m_lightType = light.Type;
             m_angleInnerCone = light.AngleInnerCone;
@@ -229,7 +268,8 @@ namespace Assimp {
         /// <summary>
         /// Constructs a new instance of the <see cref="Light"/> class.
         /// </summary>
-        public Light() {
+        public Light()
+        {
             m_lightType = LightSourceType.Undefined;
         }
 
@@ -238,7 +278,8 @@ namespace Assimp {
         /// <summary>
         /// Gets if the native value type is blittable (that is, does not require marshaling by the runtime, e.g. has MarshalAs attributes).
         /// </summary>
-        bool IMarshalable<Light, AiLight>.IsNativeBlittable {
+        bool IMarshalable<Light, AiLight>.IsNativeBlittable
+        {
             get { return true; }
         }
 
@@ -247,7 +288,8 @@ namespace Assimp {
         /// </summary>
         /// <param name="thisPtr">Optional pointer to the memory that will hold the native value.</param>
         /// <param name="nativeValue">Output native value</param>
-        void IMarshalable<Light, AiLight>.ToNative(IntPtr thisPtr, out AiLight nativeValue) {
+        void IMarshalable<Light, AiLight>.ToNative(IntPtr thisPtr, out AiLight nativeValue)
+        {
             nativeValue.Name = new AiString(m_name);
             nativeValue.Type = m_lightType;
             nativeValue.AngleInnerCone = m_angleInnerCone;
@@ -266,7 +308,8 @@ namespace Assimp {
         /// Reads the unmanaged data from the native value.
         /// </summary>
         /// <param name="nativeValue">Input native value</param>
-        void IMarshalable<Light, AiLight>.FromNative(ref AiLight nativeValue) {
+        void IMarshalable<Light, AiLight>.FromNative(ref AiLight nativeValue)
+        {
             m_name = nativeValue.Name.GetString();
             m_lightType = nativeValue.Type;
             m_angleInnerCone = nativeValue.AngleInnerCone;
@@ -286,7 +329,8 @@ namespace Assimp {
         /// </summary>
         /// <param name="nativeValue">Native value to free</param>
         /// <param name="freeNative">True if the unmanaged memory should be freed, false otherwise.</param>
-        public static void FreeNative(IntPtr nativeValue, bool freeNative) {
+        public static void FreeNative(IntPtr nativeValue, bool freeNative)
+        {
             if(nativeValue != IntPtr.Zero && freeNative)
                 MemoryHelper.FreeMemory(nativeValue);
         }

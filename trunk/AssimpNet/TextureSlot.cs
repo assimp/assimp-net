@@ -1,5 +1,5 @@
 ﻿/*
-* Copyright (c) 2012-2013 AssimpNet - Nicholas Woodfield
+* Copyright (c) 2012-2014 AssimpNet - Nicholas Woodfield
 * 
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -22,12 +22,14 @@
 
 using System;
 
-namespace Assimp {
+namespace Assimp
+{
     /// <summary>
     /// Describes all the values pertaining to a particular texture slot in a material.
     /// </summary>
     [Serializable]
-    public struct TextureSlot {
+    public struct TextureSlot
+    {
         /// <summary>
         /// Gets the texture file path.
         /// </summary>
@@ -51,7 +53,7 @@ namespace Assimp {
         /// <summary>
         /// Gets the UV channel index that corresponds to this texture from the mesh.
         /// </summary>
-        public int UVIndex; 
+        public int UVIndex;
 
         /// <summary>
         /// Gets the blend factor.
@@ -92,17 +94,18 @@ namespace Assimp {
         /// <param name="wrapModeV">Texture wrap mode for V coordinate</param>
         /// <param name="flags">Misc flags</param>
         public TextureSlot(String filePath, TextureType typeSemantic, int texIndex, TextureMapping mapping, int uvIndex, float blendFactor,
-            TextureOperation texOp, TextureWrapMode wrapModeU, TextureWrapMode wrapModeV, int flags) {
-                FilePath = (filePath == null) ? String.Empty : filePath;
-                TextureType = typeSemantic;
-                TextureIndex = texIndex;
-                Mapping = mapping;
-                UVIndex = uvIndex;
-                BlendFactor = blendFactor;
-                Operation = texOp;
-                WrapModeU = wrapModeU;
-                WrapModeV = wrapModeV;
-                Flags = flags;
+            TextureOperation texOp, TextureWrapMode wrapModeU, TextureWrapMode wrapModeV, int flags)
+        {
+            FilePath = (filePath == null) ? String.Empty : filePath;
+            TextureType = typeSemantic;
+            TextureIndex = texIndex;
+            Mapping = mapping;
+            UVIndex = uvIndex;
+            BlendFactor = blendFactor;
+            Operation = texOp;
+            WrapModeU = wrapModeU;
+            WrapModeV = wrapModeV;
+            Flags = flags;
         }
     }
 }

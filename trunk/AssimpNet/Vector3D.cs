@@ -1,5 +1,5 @@
 ﻿/*
-* Copyright (c) 2012-2013 AssimpNet - Nicholas Woodfield
+* Copyright (c) 2012-2014 AssimpNet - Nicholas Woodfield
 * 
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -24,13 +24,15 @@ using System;
 using System.Globalization;
 using System.Runtime.InteropServices;
 
-namespace Assimp {
+namespace Assimp
+{
     /// <summary>
     /// Represents a three-dimensional vector.
     /// </summary>
     [Serializable]
     [StructLayout(LayoutKind.Sequential)]
-    public struct Vector3D : IEquatable<Vector3D> {
+    public struct Vector3D : IEquatable<Vector3D>
+    {
         /// <summary>
         /// X component.
         /// </summary>
@@ -53,9 +55,12 @@ namespace Assimp {
         /// </summary>
         /// <param name="index">Zero-based index.</param>
         /// <returns>The component value</returns>
-        public float this[int index] {
-            get {
-                switch(index) {
+        public float this[int index]
+        {
+            get
+            {
+                switch(index)
+                {
                     case 0:
                         return X;
                     case 1:
@@ -66,8 +71,10 @@ namespace Assimp {
                         return 0;
                 }
             }
-            set {
-                switch(index) {
+            set
+            {
+                switch(index)
+                {
                     case 0:
                         X = value;
                         break;
@@ -87,7 +94,8 @@ namespace Assimp {
         /// <param name="x">X component</param>
         /// <param name="y">Y component</param>
         /// <param name="z">Z component</param>
-        public Vector3D(float x, float y, float z) {
+        public Vector3D(float x, float y, float z)
+        {
             X = x;
             Y = y;
             Z = z;
@@ -98,7 +106,8 @@ namespace Assimp {
         /// </summary>
         /// <param name="value">Vector2D containing the X, Y values</param>
         /// <param name="z">Z component</param>
-        public Vector3D(Vector2D value, float z) {
+        public Vector3D(Vector2D value, float z)
+        {
             X = value.X;
             Y = value.Y;
             Z = z;
@@ -109,7 +118,8 @@ namespace Assimp {
         /// to the same value.
         /// </summary>
         /// <param name="value">Value to set X, Y, and Z to</param>
-        public Vector3D(float value) {
+        public Vector3D(float value)
+        {
             X = value;
             Y = value;
             Z = value;
@@ -121,7 +131,8 @@ namespace Assimp {
         /// <param name="x">X component</param>
         /// <param name="y">Y component</param>
         /// <param name="z">Z component</param>
-        public void Set(float x, float y, float z) {
+        public void Set(float x, float y, float z)
+        {
             X = x;
             Y = y;
             Z = z;
@@ -131,7 +142,8 @@ namespace Assimp {
         /// Calculates the length of the vector.
         /// </summary>
         /// <returns>Vector's length</returns>
-        public float Length() {
+        public float Length()
+        {
             return (float) Math.Sqrt(LengthSquared());
         }
 
@@ -139,7 +151,8 @@ namespace Assimp {
         /// Calculates the length of the vector squared.
         /// </summary>
         /// <returns>Vector's length squared</returns>
-        public float LengthSquared() {
+        public float LengthSquared()
+        {
             return (X * X) + (Y * Y) + (Z * Z);
         }
 
@@ -147,7 +160,8 @@ namespace Assimp {
         /// Normalizes the vector where all components add to one (Unit Vector), but preserves
         /// the direction that the vector represents.
         /// </summary>
-        public void Normalize() {
+        public void Normalize()
+        {
             float invLength = 1.0f / (float) Math.Sqrt((X * X) + (Y * Y) + (Z * Z));
             X *= invLength;
             Y *= invLength;
@@ -157,7 +171,8 @@ namespace Assimp {
         /// <summary>
         /// Negates the vector.
         /// </summary>
-        public void Negate() {
+        public void Negate()
+        {
             X = -X;
             Y = -Y;
             Z = -Z;
@@ -169,7 +184,8 @@ namespace Assimp {
         /// <param name="a">First vector</param>
         /// <param name="b">Second vector</param>
         /// <returns>Resulting vector</returns>
-        public static Vector3D Cross(Vector3D a, Vector3D b) {
+        public static Vector3D Cross(Vector3D a, Vector3D b)
+        {
             Vector3D v;
             v.X = (a.Y * b.Z) - (a.Z * b.Y);
             v.Y = (a.Z * b.X) - (a.X * b.Z);
@@ -183,7 +199,8 @@ namespace Assimp {
         /// <param name="a">First vector</param>
         /// <param name="b">Second vector</param>
         /// <returns>Resulting vector</returns>
-        public static float Dot(Vector3D a, Vector3D b) {
+        public static float Dot(Vector3D a, Vector3D b)
+        {
             return (a.X * b.X) + (a.Y * b.Y) + (a.Z * b.Z);
         }
 
@@ -193,7 +210,8 @@ namespace Assimp {
         /// <param name="a">First vector</param>
         /// <param name="b">Second vector</param>
         /// <returns>Added vector</returns>
-        public static Vector3D operator+(Vector3D a, Vector3D b) {
+        public static Vector3D operator +(Vector3D a, Vector3D b)
+        {
             Vector3D v;
             v.X = a.X + b.X;
             v.Y = a.Y + b.Y;
@@ -207,7 +225,8 @@ namespace Assimp {
         /// <param name="a">First vector</param>
         /// <param name="b">Second vector</param>
         /// <returns>Resulting vector</returns>
-        public static Vector3D operator-(Vector3D a, Vector3D b) {
+        public static Vector3D operator -(Vector3D a, Vector3D b)
+        {
             Vector3D v;
             v.X = a.X - b.X;
             v.Y = a.Y - b.Y;
@@ -221,7 +240,8 @@ namespace Assimp {
         /// <param name="a">First vector</param>
         /// <param name="b">Second vector</param>
         /// <returns>Multiplied vector</returns>
-        public static Vector3D operator*(Vector3D a, Vector3D b) {
+        public static Vector3D operator *(Vector3D a, Vector3D b)
+        {
             Vector3D v;
             v.X = a.X * b.X;
             v.Y = a.Y * b.Y;
@@ -235,7 +255,8 @@ namespace Assimp {
         /// <param name="value">Source vector</param>
         /// <param name="scale">Scalar value</param>
         /// <returns>Scaled vector</returns>
-        public static Vector3D operator*(Vector3D value, float scale) {
+        public static Vector3D operator *(Vector3D value, float scale)
+        {
             Vector3D v;
             v.X = value.X * scale;
             v.Y = value.Y * scale;
@@ -249,7 +270,8 @@ namespace Assimp {
         /// <param name="scale">Scalar value</param>
         /// <param name="value">Source vector</param>
         /// <returns>Scaled vector</returns>
-        public static Vector3D operator*(float scale, Vector3D value) {
+        public static Vector3D operator *(float scale, Vector3D value)
+        {
             Vector3D v;
             v.X = value.X * scale;
             v.Y = value.Y * scale;
@@ -263,7 +285,8 @@ namespace Assimp {
         /// <param name="matrix">Source matrix</param>
         /// <param name="vector">Source vector</param>
         /// <returns>Transformed vector</returns>
-        public static Vector3D operator*(Matrix3x3 matrix, Vector3D vector) {
+        public static Vector3D operator *(Matrix3x3 matrix, Vector3D vector)
+        {
             Vector3D v;
             v.X = (vector.X * matrix.A1) + (vector.Y * matrix.A2) + (vector.Z * matrix.A3);
             v.Y = (vector.X * matrix.B1) + (vector.Y * matrix.B2) + (vector.Z * matrix.B3);
@@ -277,7 +300,8 @@ namespace Assimp {
         /// <param name="matrix">Source matrix</param>
         /// <param name="vector">Source vector</param>
         /// <returns>Transformed vector</returns>
-        public static Vector3D operator*(Matrix4x4 matrix, Vector3D vector) {
+        public static Vector3D operator *(Matrix4x4 matrix, Vector3D vector)
+        {
             Vector3D v;
             v.X = (vector.X * matrix.A1) + (vector.Y * matrix.A2) + (vector.Z * matrix.A3) + matrix.A4;
             v.Y = (vector.X * matrix.B1) + (vector.Y * matrix.B2) + (vector.Z * matrix.B3) + matrix.B4;
@@ -291,7 +315,8 @@ namespace Assimp {
         /// <param name="a">First vector</param>
         /// <param name="b">Second vector</param>
         /// <returns>Divided vector</returns>
-        public static Vector3D operator/(Vector3D a, Vector3D b) {
+        public static Vector3D operator /(Vector3D a, Vector3D b)
+        {
             Vector3D v;
             v.X = a.X / b.X;
             v.Y = a.Y / b.Y;
@@ -305,7 +330,8 @@ namespace Assimp {
         /// <param name="value">Source vector</param>
         /// <param name="divisor">Divisor</param>
         /// <returns>Divided vector</returns>
-        public static Vector3D operator/(Vector3D value, float divisor) {
+        public static Vector3D operator /(Vector3D value, float divisor)
+        {
             float invDivisor = 1.0f / divisor;
             Vector3D v;
             v.X = value.X * invDivisor;
@@ -319,7 +345,8 @@ namespace Assimp {
         /// </summary>
         /// <param name="value">Source vector</param>
         /// <returns>Negated vector</returns>
-        public static Vector3D operator-(Vector3D value) {
+        public static Vector3D operator -(Vector3D value)
+        {
             Vector3D v;
             v.X = -value.X;
             v.Y = -value.Y;
@@ -333,7 +360,8 @@ namespace Assimp {
         /// <param name="a">First vector</param>
         /// <param name="b">Second vector</param>
         /// <returns>True if the vectors are equal, false otherwise</returns>
-        public static bool operator==(Vector3D a, Vector3D b) {
+        public static bool operator ==(Vector3D a, Vector3D b)
+        {
             return (a.X == b.X) && (a.Y == b.Y) && (a.Z == b.Z);
         }
 
@@ -343,7 +371,8 @@ namespace Assimp {
         /// <param name="a">First vector</param>
         /// <param name="b">Second vector</param>
         /// <returns>True if the vectors are not equal, false otherwise</returns>
-        public static bool operator!=(Vector3D a, Vector3D b) {
+        public static bool operator !=(Vector3D a, Vector3D b)
+        {
             return (a.X != b.X) || (a.Y != b.Y) || (a.Z != b.Z);
         }
 
@@ -352,7 +381,8 @@ namespace Assimp {
         /// </summary>
         /// <param name="other">Vector to test against</param>
         /// <returns>True if components are equal</returns>
-        public bool Equals(Vector3D other) {
+        public bool Equals(Vector3D other)
+        {
             return (X == other.X) && (Y == other.Y) && (Z == other.Z);
         }
 
@@ -361,8 +391,10 @@ namespace Assimp {
         /// </summary>
         /// <param name="obj">Object to test against</param>
         /// <returns>True if the object is a vector and the components are equal</returns>
-        public override bool Equals(object obj) {
-            if(obj is Vector3D) {
+        public override bool Equals(object obj)
+        {
+            if(obj is Vector3D)
+            {
                 return Equals((Vector3D) obj);
             }
             return false;
@@ -374,7 +406,8 @@ namespace Assimp {
         /// <returns>
         /// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table. 
         /// </returns>
-        public override int GetHashCode() {
+        public override int GetHashCode()
+        {
             return (X.GetHashCode() + Y.GetHashCode());
         }
 
@@ -384,7 +417,8 @@ namespace Assimp {
         /// <returns>
         /// A <see cref="System.String"/> that represents this instance.
         /// </returns>
-        public override string ToString() {
+        public override string ToString()
+        {
             CultureInfo info = CultureInfo.CurrentCulture;
             return String.Format(info, "{{X:{0} Y:{1} Z:{2}}}",
                 new Object[] { X.ToString(info), Y.ToString(info), Z.ToString(info) });

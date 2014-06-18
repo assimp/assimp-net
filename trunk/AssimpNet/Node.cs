@@ -1,5 +1,5 @@
 ﻿/*
-* Copyright (c) 2012-2013 AssimpNet - Nicholas Woodfield
+* Copyright (c) 2012-2014 AssimpNet - Nicholas Woodfield
 * 
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -24,11 +24,13 @@ using System;
 using System.Collections.Generic;
 using Assimp.Unmanaged;
 
-namespace Assimp {
+namespace Assimp
+{
     /// <summary>
     /// A node in the imported model hierarchy.
     /// </summary>
-    public sealed class Node : IMarshalable<Node, AiNode> {
+    public sealed class Node : IMarshalable<Node, AiNode>
+    {
         private String m_name;
         private Matrix4x4 m_transform;
         private Node m_parent;
@@ -38,11 +40,14 @@ namespace Assimp {
         /// <summary>
         /// Gets or sets the name of the node.
         /// </summary>
-        public String Name {
-            get {
+        public String Name
+        {
+            get
+            {
                 return m_name;
             }
-            set {
+            set
+            {
                 m_name = value;
             }
         }
@@ -50,11 +55,14 @@ namespace Assimp {
         /// <summary>
         /// Gets or sets the transformation of the node relative to its parent.
         /// </summary>
-        public Matrix4x4 Transform {
-            get {
+        public Matrix4x4 Transform
+        {
+            get
+            {
                 return m_transform;
             }
-            set {
+            set
+            {
                 m_transform = value;
             }
         }
@@ -62,8 +70,10 @@ namespace Assimp {
         /// <summary>
         /// Gets the node's parent, if it exists. 
         /// </summary>
-        public Node Parent {
-            get {
+        public Node Parent
+        {
+            get
+            {
                 return m_parent;
             }
         }
@@ -71,8 +81,10 @@ namespace Assimp {
         /// <summary>
         /// Gets the number of children that is owned by this node.
         /// </summary>
-        public int ChildCount {
-            get {
+        public int ChildCount
+        {
+            get
+            {
                 return m_children.Count;
             }
         }
@@ -80,8 +92,10 @@ namespace Assimp {
         /// <summary>
         /// Gets if the node contains children.
         /// </summary>
-        public bool HasChildren {
-            get {
+        public bool HasChildren
+        {
+            get
+            {
                 return m_children.Count > 0;
             }
         }
@@ -89,8 +103,10 @@ namespace Assimp {
         /// <summary>
         /// Gets the node's children.
         /// </summary>
-        public NodeCollection Children {
-            get {
+        public NodeCollection Children
+        {
+            get
+            {
                 return m_children;
             }
         }
@@ -98,8 +114,10 @@ namespace Assimp {
         /// <summary>
         /// Gets the number of meshes referenced by this node.
         /// </summary>
-        public int MeshCount {
-            get {
+        public int MeshCount
+        {
+            get
+            {
                 return m_meshes.Count;
             }
         }
@@ -107,8 +125,10 @@ namespace Assimp {
         /// <summary>
         /// Gets if the node contains mesh references.
         /// </summary>
-        public bool HasMeshes {
-            get {
+        public bool HasMeshes
+        {
+            get
+            {
                 return m_meshes.Count > 0;
             }
         }
@@ -118,8 +138,10 @@ namespace Assimp {
         /// shared between nodes, so there is a mesh collection owned by the scene
         /// that each node can reference.
         /// </summary>
-        public List<int> MeshIndices {
-            get {
+        public List<int> MeshIndices
+        {
+            get
+            {
                 return m_meshes;
             }
         }
@@ -127,7 +149,8 @@ namespace Assimp {
         /// <summary>
         /// Constructs a new instance of the <see cref="Node"/> class.
         /// </summary>
-        public Node() {
+        public Node()
+        {
             m_name = String.Empty;
             m_transform = Matrix4x4.Identity;
             m_parent = null;
@@ -140,7 +163,8 @@ namespace Assimp {
         /// </summary>
         /// <param name="name">Name of the node</param>
         public Node(String name)
-            : this() {
+            : this()
+        {
             m_name = name;
         }
 
@@ -150,13 +174,15 @@ namespace Assimp {
         /// <param name="name">Name of the node</param>
         /// <param name="parent">Parent of the node</param>
         public Node(String name, Node parent)
-            : this() {
-                m_name = name;
+            : this()
+        {
+            m_name = name;
             m_parent = parent;
         }
 
         //Internal use - sets the node parent in NodeCollection
-        internal void SetParent(Node parent) {
+        internal void SetParent(Node parent)
+        {
             m_parent = parent;
         }
 
@@ -166,14 +192,19 @@ namespace Assimp {
         /// </summary>
         /// <param name="name">Node name</param>
         /// <returns>The node or null if it does not exist</returns>
-        public Node FindNode(String name) {
-            if(name.Equals(m_name)) {
+        public Node FindNode(String name)
+        {
+            if(name.Equals(m_name))
+            {
                 return this;
             }
-            if(HasChildren) {
-                foreach(Node child in m_children) {
+            if(HasChildren)
+            {
+                foreach(Node child in m_children)
+                {
                     Node found = child.FindNode(name);
-                    if(found != null) {
+                    if(found != null)
+                    {
                         return found;
                     }
                 }
@@ -182,7 +213,8 @@ namespace Assimp {
             return null;
         }
 
-        private IntPtr ToNativeRecursive(IntPtr parentPtr, Node node) {
+        private IntPtr ToNativeRecursive(IntPtr parentPtr, Node node)
+        {
             if(node == null)
                 return IntPtr.Zero;
 
@@ -199,6 +231,7 @@ namespace Assimp {
 
             nativeValue.NumMeshes = (uint) node.m_meshes.Count;
             nativeValue.Meshes = MemoryHelper.ToNativeArray<int>(node.m_meshes.ToArray());
+            nativeValue.MetaData = IntPtr.Zero; //TODO
 
             //Now descend through the children
             nativeValue.NumChildren = (uint) node.m_children.Count;
@@ -208,17 +241,20 @@ namespace Assimp {
 
             IntPtr childrenPtr = IntPtr.Zero;
 
-            if(numChildren > 0) {
+            if(numChildren > 0)
+            {
                 childrenPtr = MemoryHelper.AllocateMemory(numChildren * IntPtr.Size);
 
-                for(int i = 0; i < numChildren; i++) {
+                for(int i = 0; i < numChildren; i++)
+                {
                     IntPtr currPos = MemoryHelper.AddIntPtr(childrenPtr, stride * i);
                     Node child = node.m_children[i];
 
                     IntPtr childPtr = IntPtr.Zero;
 
                     //Recursively create the children and its children
-                    if(child != null) {
+                    if(child != null)
+                    {
                         childPtr = ToNativeRecursive(nodePtr, child);
                     }
 
@@ -236,7 +272,8 @@ namespace Assimp {
 
         #region IMarshalable Implemention
 
-        bool IMarshalable<Node, AiNode>.IsNativeBlittable {
+        bool IMarshalable<Node, AiNode>.IsNativeBlittable
+        {
             get { return true; }
         }
 
@@ -245,14 +282,16 @@ namespace Assimp {
         /// </summary>
         /// <param name="thisPtr">Optional pointer to the memory that will hold the native value.</param>
         /// <param name="nativeValue">Output native value</param>
-        void IMarshalable<Node, AiNode>.ToNative(IntPtr thisPtr, out AiNode nativeValue) {
+        void IMarshalable<Node, AiNode>.ToNative(IntPtr thisPtr, out AiNode nativeValue)
+        {
             nativeValue.Name = new AiString(m_name);
             nativeValue.Transformation = m_transform;
             nativeValue.Parent = IntPtr.Zero;
 
             nativeValue.NumMeshes = (uint) m_meshes.Count;
             nativeValue.Meshes = IntPtr.Zero;
-            
+            nativeValue.MetaData = IntPtr.Zero; //TODO
+
             if(nativeValue.NumMeshes > 0)
                 nativeValue.Meshes = MemoryHelper.ToNativeArray<int>(m_meshes.ToArray());
 
@@ -264,17 +303,20 @@ namespace Assimp {
 
             IntPtr childrenPtr = IntPtr.Zero;
 
-            if(numChildren > 0) {
+            if(numChildren > 0)
+            {
                 childrenPtr = MemoryHelper.AllocateMemory(numChildren * IntPtr.Size);
 
-                for(int i = 0; i < numChildren; i++) {
+                for(int i = 0; i < numChildren; i++)
+                {
                     IntPtr currPos = MemoryHelper.AddIntPtr(childrenPtr, stride * i);
                     Node child = m_children[i];
 
                     IntPtr childPtr = IntPtr.Zero;
 
                     //Recursively create the children and its children
-                    if(child != null) {
+                    if(child != null)
+                    {
                         childPtr = ToNativeRecursive(thisPtr, child);
                     }
 
@@ -291,7 +333,8 @@ namespace Assimp {
         /// Reads the unmanaged data from the native value.
         /// </summary>
         /// <param name="nativeValue">Input native value</param>
-        void IMarshalable<Node, AiNode>.FromNative(ref AiNode nativeValue) {
+        void IMarshalable<Node, AiNode>.FromNative(ref AiNode nativeValue)
+        {
             m_name = nativeValue.Name.GetString();
             m_transform = nativeValue.Transformation;
             m_parent = null;
@@ -310,7 +353,8 @@ namespace Assimp {
         /// </summary>
         /// <param name="nativeValue">Native value to free</param>
         /// <param name="freeNative">True if the unmanaged memory should be freed, false otherwise.</param>
-        public static void FreeNative(IntPtr nativeValue, bool freeNative) {
+        public static void FreeNative(IntPtr nativeValue, bool freeNative)
+        {
             if(nativeValue == IntPtr.Zero)
                 return;
 

@@ -1,5 +1,5 @@
 ﻿/*
-* Copyright (c) 2012-2013 AssimpNet - Nicholas Woodfield
+* Copyright (c) 2012-2014 AssimpNet - Nicholas Woodfield
 * 
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -22,15 +22,17 @@
 
 using System;
 
-namespace Assimp.Unmanaged {
+namespace Assimp.Unmanaged
+{
     /// <summary>
     /// Defines configurable properties for importing models. All properties
     /// have default values. Setting config properties are done via the SetProperty*
     /// methods in AssimpMethods.
     /// </summary>
-    public static class AiConfigs {
+    public static class AiConfigs
+    {
         #region Library Settings - General/Global settings
-        
+
         /// <summary>
         /// Enables time measurements. If enabled the time needed for each
         /// part of the loading process is timed and logged.
@@ -47,7 +49,15 @@ namespace Assimp.Unmanaged {
         /// <para>Type: integer. Default: -1</para>
         /// </summary>
         public const String AI_CONFIG_GLOB_MULTITHREADING = "GLOB_MULTITHREADING";
-        
+
+        /// <summary>
+        /// Global setting to disable generation of skeleton dummy meshes. These are generated as a visualization aid
+        /// in cases which the input data contains no geometry, but only animation data. So the geometry are visualizing
+        /// the bones.
+        /// <para>Type: Bool. Default: false.</para>
+        /// </summary>
+        public const String AI_CONFIG_IMPORT_NO_SKELETON_MESHES = "IMPORT_NO_SKELETON_MESHES";
+
         #endregion
 
         #region Post Processing Settings
@@ -235,6 +245,20 @@ namespace Assimp.Unmanaged {
         /// </summary>
         public const String AI_CONFIG_PP_DB_ALL_OR_NONE = "PP_DB_ALL_OR_NONE";
 
+        /// <summary>
+        /// Configures the <see cref="PostProcessSteps.PreTransformVertices"/> step to use a user defined matrix as the scene root node
+        /// transformation before transforming vertices.
+        /// <para>Type: bool. Default: false</para>
+        /// </summary>
+        public const String AI_CONFIG_PP_PTV_ADD_ROOT_TRANSFORMATION = "PP_PTV_ADD_ROOT_TRANSFORMATION";
+
+        /// <summary>
+        /// Configures the <see cref="PostProcessSteps.PreTransformVertices"/> step to use a user defined matrix as the scene root node transformation
+        /// before transforming vertices.
+        /// <para>Type: Matrix4x4. Default: Identity Matrix</para>
+        /// </summary>
+        public const String AI_CONFIG_PP_PTV_ROOT_TRANSFORMATION = "PP_PTV_ROOT_TRANSFORMATION";
+
         #endregion
 
         #region Importer Settings
@@ -399,17 +423,26 @@ namespace Assimp.Unmanaged {
         public const String AI_CONFIG_IMPORT_IRR_ANIM_FPS = "IMPORT_IRR_ANIM_FPS";
 
         /// <summary>
-        /// The Ogre importer will try to load this MaterialFile. If a material file does not
-        /// exist with the same name as a material to load, the ogre importer will try to load this file
-        /// and searches for the material in it.
-        /// <para>Type: string. Default: ""</para>
+        /// The Ogre importer will try to load this MaterialFile. Ogre meshes reference with material names, this does not tell Assimp
+        /// where the file is located. Assimp will try to find the source file in the following order: [material-name].material, [mesh-filename-base].material,
+        /// and lastly the material name defined by this config property.
+        /// <para>Type: string. Default: "Scene.Material"</para>
         /// </summary>
         public const String AI_CONFIG_IMPORT_OGRE_MATERIAL_FILE = "IMPORT_OGRE_MATERIAL_FILE";
 
         /// <summary>
         /// The Ogre importer will detect the texture usage from the filename. Normally a texture is loaded as a color map, if no target is specified
-        /// in the material file. If this is enabled, texture names ending with _n, _l, _s are used as normal maps, light maps, or specular maps.
-        /// <para>Type: Bool. Default: true.</para>
+        /// in the material file. If this is enabled, then Assimp will try to detect the type from the texture filename postfix: 
+        /// <list type="bullet">
+        /// <item><description>Normal Maps: _n, _nrm, _nrml, _normal, _normals, _normalmap</description></item>
+        /// <item><description>Specular Maps: _s, _spec, _specular, _specularmap</description></item>
+        /// <item><description>Light Maps: _l, _light, _lightmap, _occ, _occlusion</description></item>
+        /// <item><description>Displacement Maps: _dis, _displacement</description></item>
+        /// </list>
+        /// The matching is case insensitive. Postfix is taken between the last "_" and last ".". The default behavior is to detect type from lower cased
+        /// texture unit name by matching against: normalmap, specularmap, lightmap, and displacementmap. For both cases if no match is found then,
+        /// <see cref="TextureType.Diffuse"/> is used.
+        /// <para>Type: Bool. Default: false.</para>
         /// </summary>
         public const String AI_CONFIG_IMPORT_OGRE_TEXTURETYPE_FROM_FILENAME = "IMPORT_OGRE_TEXTURETYPE_FROM_FILENAME";
 
@@ -428,7 +461,72 @@ namespace Assimp.Unmanaged {
         /// <para>Type: Bool. Default: true.</para>
         /// </summary>
         public const String AI_CONFIG_IMPORT_IFC_CUSTOM_TRIANGULATION = "IMPORT_IFC_CUSTOM_TRIANGULATION";
-        
+
+        /// <summary>
+        /// Specifies whether the collada loader will ignore the up direction.
+        /// <para>Type: Bool. Default: false</para>
+        /// </summary>
+        public const String AI_CONFIG_IMPORT_COLLADA_IGNORE_UP_DIRECTION = "IMPORT_COLLADA_IGNORE_UP_DIRECTION";
+
+        /// <summary>
+        /// Specifies whether the FBX importer will merge all geometry layers present in the source file or take only the first.
+        /// <para>Type: bool. Default: true.</para>
+        /// </summary>
+        public const String AI_CONFIG_IMPORT_FBX_READ_ALL_GEOMETRY_LAYERS = "IMPORT_FBX_READ_ALL_GEOMETRY_LAYERS";
+
+        /// <summary>
+        /// Specifies whether the FBX importer will read all materials present in the source file or take only the referenced materials, if the importer
+        /// will read materials, otherwise this has no effect.
+        /// <para>Type: Bool. Default: false.</para>
+        /// </summary>
+        public const String AI_CONFIG_IMPORT_FBX_READ_ALL_MATERIALS = "IMPORT_FBX_READ_ALL_MATERIALS";
+
+        /// <summary>
+        /// Specifies whether the FBX importer will read materials.
+        /// <para>Type: Bool. Default: true.</para>
+        /// </summary>
+        public const String AI_CONFIG_IMPORT_FBX_READ_MATERIALS = "IMPORT_FBX_READ_MATERIALS";
+
+        /// <summary>
+        /// Specifies whether the FBX importer will read cameras.
+        /// <para>Type: Bool. Default: true.</para>
+        /// </summary>
+        public const String AI_CONFIG_IMPORT_FBX_READ_CAMERAS = "IMPORT_FBX_READ_CAMERAS";
+
+        /// <summary>
+        /// Specifies whether the FBX importer will read light sources.
+        /// <para>Type: Bool. Default: true.</para>
+        /// </summary>
+        public const String AI_CONFIG_IMPORT_FBX_READ_LIGHTS = "IMPORT_FBX_READ_LIGHTS";
+
+        /// <summary>
+        /// Specifies whether the FBX importer will read animations.
+        /// <para>Type: Bool. default: true.</para>
+        /// </summary>
+        public const String AI_CONFIG_IMPORT_FBX_READ_ANIMATIONS = "IMPORT_FBX_READ_ANIMATIONS";
+
+        /// <summary>
+        /// Specifies whether the FBX importer will act in strict mode in which only the FBX 2013
+        /// format is supported and any other sub formats are rejected. FBX 2013 is the primary target for the importer, so this
+        /// format is best supported and well-tested.
+        /// <para>Type: Bool. Default: false.</para>
+        /// </summary>
+        public const String AI_CONFIG_IMPORT_FBX_STRICT_MODE = "IMPORT_FBX_STRICT_MODE";
+
+        /// <summary>
+        /// Specifies whether the FBX importer will preserve pivot points for transformations (as extra nodes). If set to false, pivots
+        /// and offsets will be evaluated whenever possible.
+        /// <para>Type: Bool. Default: true.</para>
+        /// </summary>
+        public const String AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS = "IMPORT_FBX_PRESERVE_PIVOTS";
+
+        /// <summary>
+        /// Specifies whether the importer will drop empty animation curves or animation curves which match the bind pose 
+        /// transformation over their entire defined range.
+        /// <para>Type: Bool. Default: true.</para>
+        /// </summary>
+        public const String AI_CONFIG_IMPORT_FBX_OPTIMIZE_EMPTY_ANIMATION_CURVES = "IMPORT_FBX_OPTIMIZE_EMPTY_ANIMATION_CURVES";
+
         #endregion
     }
 }

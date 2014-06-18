@@ -1,5 +1,5 @@
 ﻿/*
-* Copyright (c) 2012-2013 AssimpNet - Nicholas Woodfield
+* Copyright (c) 2012-2014 AssimpNet - Nicholas Woodfield
 * 
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -24,13 +24,15 @@ using System;
 using System.Collections.Generic;
 using Assimp.Unmanaged;
 
-namespace Assimp {
+namespace Assimp
+{
     /// <summary>
     /// Represents a completely imported model or scene. Everything that was imported from the given file can be
     /// accessed from here. Once the scene is loaded from unmanaged memory, it resides solely in managed memory
     /// and Assimp's read only copy is released.
     /// </summary>
-    public sealed class Scene : IMarshalable<Scene, AiScene> {
+    public sealed class Scene : IMarshalable<Scene, AiScene>
+    {
         private SceneFlags m_flags;
         private Node m_rootNode;
         private List<Mesh> m_meshes;
@@ -44,11 +46,14 @@ namespace Assimp {
         /// Gets or sets the state of the imported scene. By default no flags are set, but
         /// issues can arise if the flag is set to incomplete.
         /// </summary>
-        public SceneFlags SceneFlags {
-            get {
+        public SceneFlags SceneFlags
+        {
+            get
+            {
                 return m_flags;
             }
-            set {
+            set
+            {
                 m_flags = value;
             }
         }
@@ -58,11 +63,14 @@ namespace Assimp {
         /// if the import was successful and no special flags have been set. Presence of further nodes
         /// depends on the format and content of the imported file.
         /// </summary>
-        public Node RootNode {
-            get {
+        public Node RootNode
+        {
+            get
+            {
                 return m_rootNode;
             }
-            set {
+            set
+            {
                 m_rootNode = value;
             }
         }
@@ -71,8 +79,10 @@ namespace Assimp {
         /// Gets if the scene contains meshes. Unless if no special scene flags are set
         /// this should always be true.
         /// </summary>
-        public bool HasMeshes {
-            get {
+        public bool HasMeshes
+        {
+            get
+            {
                 return m_meshes.Count > 0;
             }
         }
@@ -80,8 +90,10 @@ namespace Assimp {
         /// <summary>
         /// Gets the number of meshes in the scene.
         /// </summary>
-        public int MeshCount {
-            get {
+        public int MeshCount
+        {
+            get
+            {
                 return m_meshes.Count;
             }
         }
@@ -89,8 +101,10 @@ namespace Assimp {
         /// <summary>
         /// Gets the meshes contained in the scene, if any.
         /// </summary>
-        public List<Mesh> Meshes {
-            get {
+        public List<Mesh> Meshes
+        {
+            get
+            {
                 return m_meshes;
             }
         }
@@ -99,8 +113,10 @@ namespace Assimp {
         /// <summary>
         /// Gets if the scene contains any lights.
         /// </summary>
-        public bool HasLights {
-            get {
+        public bool HasLights
+        {
+            get
+            {
                 return m_lights.Count > 0;
             }
         }
@@ -108,8 +124,10 @@ namespace Assimp {
         /// <summary>
         /// Gets the number of lights in the scene.
         /// </summary>
-        public int LightCount {
-            get {
+        public int LightCount
+        {
+            get
+            {
                 return m_lights.Count;
             }
         }
@@ -117,8 +135,10 @@ namespace Assimp {
         /// <summary>
         /// Gets the lights in the scene, if any.
         /// </summary>
-        public List<Light> Lights {
-            get {
+        public List<Light> Lights
+        {
+            get
+            {
                 return m_lights;
             }
         }
@@ -126,8 +146,10 @@ namespace Assimp {
         /// <summary>
         /// Gets if the scene contains any cameras.
         /// </summary>
-        public bool HasCameras {
-            get {
+        public bool HasCameras
+        {
+            get
+            {
                 return m_cameras.Count > 0;
             }
         }
@@ -135,16 +157,20 @@ namespace Assimp {
         /// <summary>
         /// Gets the number of cameras in the scene.
         /// </summary>
-        public int CameraCount {
-            get {
+        public int CameraCount
+        {
+            get
+            {
                 return m_cameras.Count;
             }
         }
         /// <summary>
         /// Gets the cameras in the scene, if any.
         /// </summary>
-        public List<Camera> Cameras {
-            get {
+        public List<Camera> Cameras
+        {
+            get
+            {
                 return m_cameras;
             }
         }
@@ -152,8 +178,10 @@ namespace Assimp {
         /// <summary>
         /// Gets if the scene contains embedded textures.
         /// </summary>
-        public bool HasTextures {
-            get {
+        public bool HasTextures
+        {
+            get
+            {
                 return m_textures.Count > 0;
             }
         }
@@ -161,8 +189,10 @@ namespace Assimp {
         /// <summary>
         /// Gets the number of embedded textures in the scene.
         /// </summary>
-        public int TextureCount {
-            get {
+        public int TextureCount
+        {
+            get
+            {
                 return m_textures.Count;
             }
         }
@@ -170,8 +200,10 @@ namespace Assimp {
         /// <summary>
         /// Gets the embedded textures in the scene, if any.
         /// </summary>
-        public List<EmbeddedTexture> Textures {
-            get {
+        public List<EmbeddedTexture> Textures
+        {
+            get
+            {
                 return m_textures;
             }
         }
@@ -179,8 +211,10 @@ namespace Assimp {
         /// <summary>
         /// Gets if the scene contains any animations.
         /// </summary>
-        public bool HasAnimations {
-            get {
+        public bool HasAnimations
+        {
+            get
+            {
                 return m_animations.Count > 0;
             }
         }
@@ -188,8 +222,10 @@ namespace Assimp {
         /// <summary>
         /// Gets the number of animations in the scene.
         /// </summary>
-        public int AnimationCount {
-            get {
+        public int AnimationCount
+        {
+            get
+            {
                 return m_animations.Count;
             }
         }
@@ -197,8 +233,10 @@ namespace Assimp {
         /// <summary>
         /// Gets the animations in the scene, if any.
         /// </summary>
-        public List<Animation> Animations {
-            get {
+        public List<Animation> Animations
+        {
+            get
+            {
                 return m_animations;
             }
         }
@@ -207,8 +245,10 @@ namespace Assimp {
         /// Gets if the scene contains any materials. There should always be at least the
         /// default Assimp material if no materials were loaded.
         /// </summary>
-        public bool HasMaterials {
-            get {
+        public bool HasMaterials
+        {
+            get
+            {
                 return m_materials.Count > 0;
             }
         }
@@ -217,8 +257,10 @@ namespace Assimp {
         /// Gets the number of materials in the scene. There should always be at least the
         /// default Assimp material if no materials were loaded.
         /// </summary>
-        public int MaterialCount {
-            get {
+        public int MaterialCount
+        {
+            get
+            {
                 return m_materials.Count;
             }
         }
@@ -226,8 +268,10 @@ namespace Assimp {
         /// <summary>
         /// Gets the materials in the scene.
         /// </summary>
-        public List<Material> Materials {
-            get {
+        public List<Material> Materials
+        {
+            get
+            {
                 return m_materials;
             }
         }
@@ -235,7 +279,8 @@ namespace Assimp {
         /// <summary>
         /// Constructs a new instance of the <see cref="Scene"/> class.
         /// </summary>
-        public Scene() {
+        public Scene()
+        {
             m_flags = SceneFlags.None;
             m_rootNode = null;
             m_meshes = new List<Mesh>();
@@ -249,7 +294,8 @@ namespace Assimp {
         /// <summary>
         /// Clears the scene of all components.
         /// </summary>
-        public void Clear() {
+        public void Clear()
+        {
             m_rootNode = null;
             m_meshes.Clear();
             m_lights.Clear();
@@ -265,7 +311,8 @@ namespace Assimp {
         /// </summary>
         /// <param name="scene">Scene data</param>
         /// <returns>Unmanaged scene or NULL if the scene is null.</returns>
-        public static IntPtr ToUnmanagedScene(Scene scene) {
+        public static IntPtr ToUnmanagedScene(Scene scene)
+        {
             if(scene == null)
                 return IntPtr.Zero;
 
@@ -277,7 +324,8 @@ namespace Assimp {
         /// </summary>
         /// <param name="scenePtr">The unmanaged scene data</param>
         /// <returns>The managed scene, or null if the pointer is NULL</returns>
-        public static Scene FromUnmanagedScene(IntPtr scenePtr) {
+        public static Scene FromUnmanagedScene(IntPtr scenePtr)
+        {
             if(scenePtr == IntPtr.Zero)
                 return null;
 
@@ -289,7 +337,8 @@ namespace Assimp {
         /// call the appropiate <see cref="AssimpLibrary.ReleaseImport"/> function.
         /// </summary>
         /// <param name="scenePtr">Pointer to unmanaged scene data.</param>
-        public static void FreeUnmanagedScene(IntPtr scenePtr) {
+        public static void FreeUnmanagedScene(IntPtr scenePtr)
+        {
             if(scenePtr == IntPtr.Zero)
                 return;
 
@@ -301,7 +350,8 @@ namespace Assimp {
         /// <summary>
         /// Gets if the native value type is blittable (that is, does not require marshaling by the runtime, e.g. has MarshalAs attributes).
         /// </summary>
-        bool IMarshalable<Scene, AiScene>.IsNativeBlittable {
+        bool IMarshalable<Scene, AiScene>.IsNativeBlittable
+        {
             get { return true; }
         }
 
@@ -310,7 +360,8 @@ namespace Assimp {
         /// </summary>
         /// <param name="thisPtr">Optional pointer to the memory that will hold the native value.</param>
         /// <param name="nativeValue">Output native value</param>
-        void IMarshalable<Scene, AiScene>.ToNative(IntPtr thisPtr, out AiScene nativeValue) {
+        void IMarshalable<Scene, AiScene>.ToNative(IntPtr thisPtr, out AiScene nativeValue)
+        {
             nativeValue.Flags = m_flags;
             nativeValue.Materials = IntPtr.Zero;
             nativeValue.RootNode = IntPtr.Zero;
@@ -361,7 +412,8 @@ namespace Assimp {
         /// Reads the unmanaged data from the native value.
         /// </summary>
         /// <param name="nativeValue">Input native value</param>
-        void IMarshalable<Scene, AiScene>.FromNative(ref AiScene nativeValue) {
+        void IMarshalable<Scene, AiScene>.FromNative(ref AiScene nativeValue)
+        {
             Clear();
 
             m_flags = nativeValue.Flags;
@@ -401,7 +453,8 @@ namespace Assimp {
         /// </summary>
         /// <param name="nativeValue">Native value to free</param>
         /// <param name="freeNative">True if the unmanaged memory should be freed, false otherwise.</param>
-        public static void FreeNative(IntPtr nativeValue, bool freeNative) {
+        public static void FreeNative(IntPtr nativeValue, bool freeNative)
+        {
             if(nativeValue == IntPtr.Zero)
                 return;
 

@@ -1,5 +1,5 @@
 ﻿/*
-* Copyright (c) 2012-2013 AssimpNet - Nicholas Woodfield
+* Copyright (c) 2012-2014 AssimpNet - Nicholas Woodfield
 * 
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -28,12 +28,14 @@ using Assimp.Configs;
 using Assimp.Unmanaged;
 using NUnit.Framework;
 
-namespace Assimp.Test {
+namespace Assimp.Test
+{
     [TestFixture]
-    public class AssimpContextTestFixture {
-
+    public class AssimpContextTestFixture
+    {
         [Test]
-        public void TestExportToBlob() {
+        public void TestExportToBlob()
+        {
             String colladaPath = Path.Combine(TestHelper.RootPath, "TestFiles\\duck.dae");
 
             AssimpContext context = new AssimpContext();
@@ -44,9 +46,10 @@ namespace Assimp.Test {
             Assert.IsTrue(blob.NextBlob != null);
             Assert.IsTrue(blob.NextBlob.Name.Equals("mtl"));
         }
-        
+
         [Test]
-        public void TestImportExportFile() {
+        public void TestImportExportFile()
+        {
             String colladaPath = Path.Combine(TestHelper.RootPath, "TestFiles\\duck.dae");
             String plyPath = Path.Combine(TestHelper.RootPath, "TestFiles\\duck.ply");
 
@@ -56,7 +59,8 @@ namespace Assimp.Test {
         }
 
         [Test]
-        public void TestExportToFile() {
+        public void TestExportToFile()
+        {
             String path = Path.Combine(TestHelper.RootPath, "TestFiles\\ExportedTriangle.obj");
 
             //Create a very simple scene a single node with a mesh that has a single face, a triangle and a default material
@@ -72,11 +76,11 @@ namespace Assimp.Test {
 
             scene.Meshes.Add(triangle);
             scene.RootNode.MeshIndices.Add(0);
-            
+
             Material mat = new Material();
             mat.Name = "MyMaterial";
             scene.Materials.Add(mat);
-            
+
             //Export the scene then read it in and compare!
 
             AssimpContext context = new AssimpContext();
@@ -85,28 +89,32 @@ namespace Assimp.Test {
             Scene importedScene = context.ImportFile(path);
             Assert.IsTrue(importedScene.MeshCount == scene.MeshCount);
             Assert.IsTrue(importedScene.MaterialCount == 2); //Always has the default material, should also have our material
-            
+
             //Compare the meshes
             Mesh importedTriangle = importedScene.Meshes[0];
 
             Assert.IsTrue(importedTriangle.VertexCount == triangle.VertexCount);
-            for(int i = 0; i < importedTriangle.VertexCount; i++) {
+            for(int i = 0; i < importedTriangle.VertexCount; i++)
+            {
                 Assert.IsTrue(importedTriangle.Vertices[i].Equals(triangle.Vertices[i]));
             }
 
             Assert.IsTrue(importedTriangle.FaceCount == triangle.FaceCount);
-            for(int i = 0; i < importedTriangle.FaceCount; i++) {
+            for(int i = 0; i < importedTriangle.FaceCount; i++)
+            {
                 Face importedFace = importedTriangle.Faces[i];
                 Face face = triangle.Faces[i];
 
-                for(int j = 0; j < importedFace.IndexCount; j++) {
+                for(int j = 0; j < importedFace.IndexCount; j++)
+                {
                     Assert.IsTrue(importedFace.Indices[j] == face.Indices[j]);
                 }
             }
         }
 
         [Test]
-        public void TestFreeLogStreams() {
+        public void TestFreeLogStreams()
+        {
             ConsoleLogStream console1 = new ConsoleLogStream();
             ConsoleLogStream console2 = new ConsoleLogStream();
             ConsoleLogStream console3 = new ConsoleLogStream();
@@ -126,7 +134,8 @@ namespace Assimp.Test {
         }
 
         [Test]
-        public void TestImportFromFile() {
+        public void TestImportFromFile()
+        {
             String path = Path.Combine(TestHelper.RootPath, "TestFiles\\sphere.obj");
 
             AssimpContext importer = new AssimpContext();
@@ -158,7 +167,8 @@ namespace Assimp.Test {
         }
 
         [Test]
-        public void TestImportFromStream() {
+        public void TestImportFromStream()
+        {
             String path = Path.Combine(TestHelper.RootPath, "TestFiles\\duck.dae");
 
             FileStream fs = File.OpenRead(path);
@@ -166,7 +176,8 @@ namespace Assimp.Test {
             AssimpContext importer = new AssimpContext();
             LogStream.IsVerboseLoggingEnabled = true;
 
-            LogStream logstream = new LogStream(delegate(String msg, String userData) {
+            LogStream logstream = new LogStream(delegate(String msg, String userData)
+            {
                 Console.WriteLine(msg);
             });
 
@@ -181,7 +192,8 @@ namespace Assimp.Test {
         }
 
         [Test]
-        public void TestSupportedFormats() {
+        public void TestSupportedFormats()
+        {
             AssimpContext importer = new AssimpContext();
             ExportFormatDescription[] exportDescs = importer.GetSupportedExportFormats();
 
@@ -197,7 +209,8 @@ namespace Assimp.Test {
         }
 
         [Test]
-        public void TestConvertFromFile() {
+        public void TestConvertFromFile()
+        {
             String path = Path.Combine(TestHelper.RootPath, "TestFiles\\Bob.md5mesh");
             String outputPath = Path.Combine(TestHelper.RootPath, "TestFiles\\Bob.dae");
 
@@ -208,7 +221,8 @@ namespace Assimp.Test {
         }
 
         [Test]
-        public void TestConvertFromStream() {
+        public void TestConvertFromStream()
+        {
             String path = Path.Combine(TestHelper.RootPath, "TestFiles\\duck.dae");
             String outputPath = Path.Combine(TestHelper.RootPath, "TestFiles\\duck.obj");
             String outputPath2 = Path.Combine(TestHelper.RootPath, "TestFiles\\duck-fromBlob.obj");
@@ -241,12 +255,13 @@ namespace Assimp.Test {
         }
 
         [Test]
-        public void TestLoadFreeLibrary() {
+        public void TestLoadFreeLibrary()
+        {
             if(AssimpLibrary.Instance.IsLibraryLoaded)
                 AssimpLibrary.Instance.FreeLibrary();
 
             AssimpLibrary.Instance.LoadLibrary();
-            
+
             String path = Path.Combine(TestHelper.RootPath, "TestFiles\\duck.dae");
             AssimpContext importer = new AssimpContext();
             importer.ImportFile(path);
@@ -256,7 +271,8 @@ namespace Assimp.Test {
         }
 
         [Test]
-        public void TestMultipleImportersMultipleThreads() {
+        public void TestMultipleImportersMultipleThreads()
+        {
             LogStream.IsVerboseLoggingEnabled = true;
 
             Thread threadA = new Thread(new ThreadStart(LoadSceneB));
@@ -274,7 +290,8 @@ namespace Assimp.Test {
             LogStream.DetachAllLogstreams();
         }
 
-        private void LoadSceneA() {
+        private void LoadSceneA()
+        {
             Console.WriteLine("Thread A: Starting import.");
             AssimpContext importer = new AssimpContext();
             String path = Path.Combine(TestHelper.RootPath, "TestFiles\\Bob.md5mesh");
@@ -285,7 +302,8 @@ namespace Assimp.Test {
             Console.WriteLine("Thread A: Done importing");
         }
 
-        private void LoadSceneB() {
+        private void LoadSceneB()
+        {
             Console.WriteLine("Thread B: Starting import.");
             AssimpContext importer = new AssimpContext();
             String path = Path.Combine(TestHelper.RootPath, "TestFiles\\duck.dae");
@@ -297,7 +315,8 @@ namespace Assimp.Test {
             Console.WriteLine("Thread B: Done importing");
         }
 
-        private void ConvertSceneC() {
+        private void ConvertSceneC()
+        {
             Console.WriteLine("Thread C: Starting convert.");
             AssimpContext importer = new AssimpContext();
             String path = Path.Combine(TestHelper.RootPath, "TestFiles\\duck.dae");

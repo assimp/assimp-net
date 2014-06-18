@@ -1,5 +1,5 @@
 ﻿/*
-* Copyright (c) 2012-2013 AssimpNet - Nicholas Woodfield
+* Copyright (c) 2012-2014 AssimpNet - Nicholas Woodfield
 * 
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -22,7 +22,8 @@
 
 using System;
 
-namespace Assimp.Unmanaged {
+namespace Assimp.Unmanaged
+{
     /// <summary>
     /// Static class containing material key constants. A fully qualified mat key
     /// name here means that it's a string that combines the mat key (base) name, its
@@ -30,13 +31,14 @@ namespace Assimp.Unmanaged {
     /// commas. For non-texture material properties, the texture type semantic and texture
     /// index are always zero.
     /// </summary>
-    public static class AiMatKeys {
+    public static class AiMatKeys
+    {
 
         /// <summary>
         /// Material name (String)
         /// </summary>
         public const String NAME = "?mat.name,0,0";
-        
+
         /// <summary>
         /// Two sided property (boolean)
         /// </summary>
@@ -181,7 +183,8 @@ namespace Assimp.Unmanaged {
         /// <param name="texType">Texture type</param>
         /// <param name="texIndex">Texture index</param>
         /// <returns>Fully qualified texture name</returns>
-        public static String GetFullTextureName(String baseName, TextureType texType, int texIndex) {
+        public static String GetFullTextureName(String baseName, TextureType texType, int texIndex)
+        {
             return String.Format("{0},{1},{2}", baseName, (int) texType, texIndex);
         }
     }

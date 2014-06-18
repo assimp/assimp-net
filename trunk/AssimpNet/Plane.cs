@@ -1,5 +1,5 @@
 ﻿/*
-* Copyright (c) 2012-2013 AssimpNet - Nicholas Woodfield
+* Copyright (c) 2012-2014 AssimpNet - Nicholas Woodfield
 * 
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -23,7 +23,8 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace Assimp {
+namespace Assimp
+{
     /// <summary>
     /// Represents a plane in three-dimensional euclidean space where
     /// A, B, C are components of the plane normal and D is the distance along the
@@ -31,7 +32,8 @@ namespace Assimp {
     /// </summary>
     [Serializable]
     [StructLayout(LayoutKind.Sequential)]
-    public struct Plane {
+    public struct Plane
+    {
 
         /// <summary>
         /// X component of the normal vector.
@@ -60,7 +62,8 @@ namespace Assimp {
         /// <param name="b">Y component of the normal vector.</param>
         /// <param name="c">Z component of the normal vector.</param>
         /// <param name="d">Distance from the origin to the plane along the normal vector.</param>
-        public Plane(float a, float b, float c, float d) {
+        public Plane(float a, float b, float c, float d)
+        {
             A = a;
             B = b;
             C = c;

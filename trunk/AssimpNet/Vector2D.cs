@@ -1,5 +1,5 @@
 ﻿/*
-* Copyright (c) 2012-2013 AssimpNet - Nicholas Woodfield
+* Copyright (c) 2012-2014 AssimpNet - Nicholas Woodfield
 * 
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -24,13 +24,15 @@ using System;
 using System.Globalization;
 using System.Runtime.InteropServices;
 
-namespace Assimp {
+namespace Assimp
+{
     /// <summary>
     /// Represents a two-dimensional vector.
     /// </summary>
     [Serializable]
     [StructLayout(LayoutKind.Sequential)]
-    public struct Vector2D : IEquatable<Vector2D> {
+    public struct Vector2D : IEquatable<Vector2D>
+    {
         /// <summary>
         /// X component.
         /// </summary>
@@ -48,9 +50,12 @@ namespace Assimp {
         /// </summary>
         /// <param name="index">Zero-based index.</param>
         /// <returns>The component value</returns>
-        public float this[int index] {
-            get {
-                switch(index) {
+        public float this[int index]
+        {
+            get
+            {
+                switch(index)
+                {
                     case 0:
                         return X;
                     case 1:
@@ -59,8 +64,10 @@ namespace Assimp {
                         return 0;
                 }
             }
-            set {
-                switch(index) {
+            set
+            {
+                switch(index)
+                {
                     case 0:
                         X = value;
                         break;
@@ -76,7 +83,8 @@ namespace Assimp {
         /// </summary>
         /// <param name="x">X component</param>
         /// <param name="y">Y component</param>
-        public Vector2D(float x, float y) {
+        public Vector2D(float x, float y)
+        {
             X = x;
             Y = y;
         }
@@ -86,7 +94,8 @@ namespace Assimp {
         /// set the same value.
         /// </summary>
         /// <param name="value">Value to set both X and Y to</param>
-        public Vector2D(float value) {
+        public Vector2D(float value)
+        {
             X = value;
             Y = value;
         }
@@ -96,7 +105,8 @@ namespace Assimp {
         /// </summary>
         /// <param name="x">X component</param>
         /// <param name="y">Y component</param>
-        public void Set(float x, float y) {
+        public void Set(float x, float y)
+        {
             X = x;
             Y = y;
         }
@@ -105,7 +115,8 @@ namespace Assimp {
         /// Calculates the length of the vector.
         /// </summary>
         /// <returns>Vector's length</returns>
-        public float Length() {
+        public float Length()
+        {
             return (float) Math.Sqrt(LengthSquared());
         }
 
@@ -113,7 +124,8 @@ namespace Assimp {
         /// Calculates the length of the vector squared.
         /// </summary>
         /// <returns>Vector's length squared</returns>
-        public float LengthSquared() {
+        public float LengthSquared()
+        {
             return (X * X) + (Y * Y);
         }
 
@@ -121,7 +133,8 @@ namespace Assimp {
         /// Normalizes the vector where all components add to one (Unit Vector), but preserves
         /// the direction that the vector represents.
         /// </summary>
-        public void Normalize() {
+        public void Normalize()
+        {
             float invLength = 1.0f / (float) System.Math.Sqrt((X * X) + (Y * Y));
             X *= invLength;
             Y *= invLength;
@@ -130,7 +143,8 @@ namespace Assimp {
         /// <summary>
         /// Negates the vector.
         /// </summary>
-        public void Negate() {
+        public void Negate()
+        {
             X = -X;
             Y = -Y;
         }
@@ -141,7 +155,8 @@ namespace Assimp {
         /// <param name="a">First vector</param>
         /// <param name="b">Second vector</param>
         /// <returns>Added vector</returns>
-        public static Vector2D operator+(Vector2D a, Vector2D b) {
+        public static Vector2D operator +(Vector2D a, Vector2D b)
+        {
             Vector2D v;
             v.X = a.X + b.X;
             v.Y = a.Y + b.Y;
@@ -154,7 +169,8 @@ namespace Assimp {
         /// <param name="a">First vector</param>
         /// <param name="b">Second vector</param>
         /// <returns>Resulting vector</returns>
-        public static Vector2D operator-(Vector2D a, Vector2D b) {
+        public static Vector2D operator -(Vector2D a, Vector2D b)
+        {
             Vector2D v;
             v.X = a.X - b.X;
             v.Y = a.Y - b.Y;
@@ -167,7 +183,8 @@ namespace Assimp {
         /// <param name="a">First vector</param>
         /// <param name="b">Second vector</param>
         /// <returns>Multiplied vector</returns>
-        public static Vector2D operator*(Vector2D a, Vector2D b) {
+        public static Vector2D operator *(Vector2D a, Vector2D b)
+        {
             Vector2D v;
             v.X = a.X * b.X;
             v.Y = a.Y * b.Y;
@@ -180,7 +197,8 @@ namespace Assimp {
         /// <param name="value">Source vector</param>
         /// <param name="scale">Scalar value</param>
         /// <returns>Scaled vector</returns>
-        public static Vector2D operator*(Vector2D value, float scale) {
+        public static Vector2D operator *(Vector2D value, float scale)
+        {
             Vector2D v;
             v.X = value.X * scale;
             v.Y = value.Y * scale;
@@ -193,7 +211,8 @@ namespace Assimp {
         /// <param name="scale">Scalar value</param>
         /// <param name="value">Source vector</param>
         /// <returns>Scaled vector</returns>
-        public static Vector2D operator*(float scale, Vector2D value) {
+        public static Vector2D operator *(float scale, Vector2D value)
+        {
             Vector2D v;
             v.X = value.X * scale;
             v.Y = value.Y * scale;
@@ -206,7 +225,8 @@ namespace Assimp {
         /// <param name="a">First vector</param>
         /// <param name="b">Second vector</param>
         /// <returns>Divided vector</returns>
-        public static Vector2D operator/(Vector2D a, Vector2D b) {
+        public static Vector2D operator /(Vector2D a, Vector2D b)
+        {
             Vector2D v;
             v.X = a.X / b.X;
             v.Y = a.Y / b.Y;
@@ -219,7 +239,8 @@ namespace Assimp {
         /// <param name="value">Source vector</param>
         /// <param name="divisor">Divisor</param>
         /// <returns>Divided vector</returns>
-        public static Vector2D operator/(Vector2D value, float divisor) {
+        public static Vector2D operator /(Vector2D value, float divisor)
+        {
             float invDivisor = 1.0f / divisor;
             Vector2D v;
             v.X = value.X * invDivisor;
@@ -232,7 +253,8 @@ namespace Assimp {
         /// </summary>
         /// <param name="value">Source vector</param>
         /// <returns>Negated vector</returns>
-        public static Vector2D operator-(Vector2D value) {
+        public static Vector2D operator -(Vector2D value)
+        {
             Vector2D v;
             v.X = -value.X;
             v.Y = -value.Y;
@@ -245,7 +267,8 @@ namespace Assimp {
         /// <param name="a">First vector</param>
         /// <param name="b">Second vector</param>
         /// <returns>True if the vectors are equal, false otherwise</returns>
-        public static bool operator==(Vector2D a, Vector2D b) {
+        public static bool operator ==(Vector2D a, Vector2D b)
+        {
             return (a.X == b.X) && (a.Y == b.Y);
         }
 
@@ -255,7 +278,8 @@ namespace Assimp {
         /// <param name="a">First vector</param>
         /// <param name="b">Second vector</param>
         /// <returns>True if the vectors are not equal, false otherwise</returns>
-        public static bool operator!=(Vector2D a, Vector2D b) {
+        public static bool operator !=(Vector2D a, Vector2D b)
+        {
             return (a.X != b.X) || (a.Y != b.Y);
         }
 
@@ -264,7 +288,8 @@ namespace Assimp {
         /// </summary>
         /// <param name="other">Vector to test against</param>
         /// <returns>True if components are equal</returns>
-        public bool Equals(Vector2D other) {
+        public bool Equals(Vector2D other)
+        {
             return (X == other.X) && (Y == other.Y);
         }
 
@@ -273,8 +298,10 @@ namespace Assimp {
         /// </summary>
         /// <param name="obj">Object to test against</param>
         /// <returns>True if the object is a vector and the components are equal</returns>
-        public override bool Equals(object obj) {
-            if(obj is Vector2D) {
+        public override bool Equals(object obj)
+        {
+            if(obj is Vector2D)
+            {
                 return Equals((Vector2D) obj);
             }
             return false;
@@ -286,7 +313,8 @@ namespace Assimp {
         /// <returns>
         /// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table. 
         /// </returns>
-        public override int GetHashCode() {
+        public override int GetHashCode()
+        {
             return (X.GetHashCode() + Y.GetHashCode());
         }
 
@@ -296,7 +324,8 @@ namespace Assimp {
         /// <returns>
         /// A <see cref="System.String"/> that represents this instance.
         /// </returns>
-        public override string ToString() {
+        public override string ToString()
+        {
             CultureInfo info = CultureInfo.CurrentCulture;
             return String.Format(info, "{{X:{0} Y:{1}}}",
                 new Object[] { X.ToString(info), Y.ToString(info) });

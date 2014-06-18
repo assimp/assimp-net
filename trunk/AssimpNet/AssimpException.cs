@@ -1,5 +1,5 @@
 ﻿/*
-* Copyright (c) 2012-2013 AssimpNet - Nicholas Woodfield
+* Copyright (c) 2012-2014 AssimpNet - Nicholas Woodfield
 * 
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -22,22 +22,24 @@
 
 using System;
 
-namespace Assimp {
+namespace Assimp
+{
     /// <summary>
     /// AssimpNet general exception.
     /// </summary>
-    public class AssimpException : Exception {
+    public class AssimpException : Exception
+    {
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AssimpException"/> class.
         /// </summary>
-        public AssimpException() : base() {}
+        public AssimpException() : base() { }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AssimpException"/> class.
         /// </summary>
         /// <param name="msg">The error message.</param>
-        public AssimpException(String msg) : base(msg) {}
+        public AssimpException(String msg) : base(msg) { }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AssimpException"/> class.
@@ -52,6 +54,6 @@ namespace Assimp {
         /// </summary>
         /// <param name="msg">The error message</param>
         /// <param name="innerException">The inner exception.</param>
-        public AssimpException(String msg, Exception innerException) : base(msg, innerException) {}
+        public AssimpException(String msg, Exception innerException) : base(msg, innerException) { }
     }
 }

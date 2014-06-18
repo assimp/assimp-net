@@ -1,5 +1,5 @@
 ﻿/*
-* Copyright (c) 2012-2013 AssimpNet - Nicholas Woodfield
+* Copyright (c) 2012-2014 AssimpNet - Nicholas Woodfield
 * 
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -22,13 +22,16 @@
 
 using System;
 
-namespace Assimp.Sample {
-    static class Program {
+namespace Assimp.Sample
+{
+    static class Program
+    {
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
-        static void Main() {
+        static void Main()
+        {
             SimpleOpenGLSample sample = new SimpleOpenGLSample();
             sample.Run(30.0, 0.0);
         }

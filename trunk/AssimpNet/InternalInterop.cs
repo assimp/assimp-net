@@ -1,5 +1,5 @@
 ﻿/*
-* Copyright (c) 2012-2013 AssimpNet - Nicholas Woodfield
+* Copyright (c) 2012-2014 AssimpNet - Nicholas Woodfield
 * 
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -22,37 +22,45 @@
 
 using System;
 
-namespace Assimp {
+namespace Assimp
+{
     /// <summary>
     /// Internal usage only for fast-interop - used to find where we need to patch up code and is removed after the patching process.
     /// </summary>
-    internal static class InternalInterop {
-
-        public static unsafe void WriteArray<T>(IntPtr pDest, T[] data, int startIndex, int count) where T : struct {
+    internal static class InternalInterop
+    {
+        public static unsafe void WriteArray<T>(IntPtr pDest, T[] data, int startIndex, int count) where T : struct
+        {
             throw new NotImplementedException();
         }
 
-        public static unsafe void ReadArray<T>(IntPtr pSrc, T[] data, int startIndex, int count) where T : struct {
+        public static unsafe void ReadArray<T>(IntPtr pSrc, T[] data, int startIndex, int count) where T : struct
+        {
             throw new NotImplementedException();
         }
 
-        public static unsafe void WriteInline<T>(void* pDest, ref T srcData) where T : struct {
+        public static unsafe void WriteInline<T>(void* pDest, ref T srcData) where T : struct
+        {
             throw new NotImplementedException();
         }
 
-        public static unsafe T ReadInline<T>(void* pSrc) where T : struct {
+        public static unsafe T ReadInline<T>(void* pSrc) where T : struct
+        {
             throw new NotImplementedException();
         }
 
-        public static unsafe int SizeOfInline<T>() {
+        public static unsafe int SizeOfInline<T>()
+        {
             throw new NotImplementedException();
         }
 
-        public static unsafe void MemCopyInline(void* pDest, void* pSrc, int count) {
+        public static unsafe void MemCopyInline(void* pDest, void* pSrc, int count)
+        {
             throw new NotImplementedException();
         }
 
-        public static unsafe void MemSetInline(void* pDest, byte value, int count) {
+        public static unsafe void MemSetInline(void* pDest, byte value, int count)
+        {
             throw new NotImplementedException();
         }
     }

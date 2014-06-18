@@ -1,5 +1,5 @@
 ﻿/*
-* Copyright (c) 2012-2013 AssimpNet - Nicholas Woodfield
+* Copyright (c) 2012-2014 AssimpNet - Nicholas Woodfield
 * 
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -24,12 +24,14 @@ using System;
 using System.Runtime.InteropServices;
 using Assimp.Unmanaged;
 
-namespace Assimp {
+namespace Assimp
+{
     /// <summary>
     /// Defines a stream to some file input or output source. This object is responsible for reading/writing data
     /// that is used by Assimp.
     /// </summary>
-    public abstract class IOStream : IDisposable {
+    public abstract class IOStream : IDisposable
+    {
         private AiFileWriteProc m_writeProc;
         private AiFileReadProc m_readProc;
         private AiFileTellProc m_tellProc;
@@ -45,8 +47,10 @@ namespace Assimp {
         /// <summary>
         /// Gets whether or not this IOStream has been disposed.
         /// </summary>
-        public bool IsDisposed {
-            get {
+        public bool IsDisposed
+        {
+            get
+            {
                 return m_isDiposed;
             }
         }
@@ -54,8 +58,10 @@ namespace Assimp {
         /// <summary>
         /// Gets the original path to file given by Assimp.
         /// </summary>
-        public String PathToFile {
-            get {
+        public String PathToFile
+        {
+            get
+            {
                 return m_pathToFile;
             }
         }
@@ -63,8 +69,10 @@ namespace Assimp {
         /// <summary>
         /// Gets the original desired file access mode.
         /// </summary>
-        public FileIOMode FileMode {
-            get {
+        public FileIOMode FileMode
+        {
+            get
+            {
                 return m_fileMode;
             }
         }
@@ -73,12 +81,15 @@ namespace Assimp {
         /// Gets whether the stream is in fact valid - that is, the input/output has been
         /// properly located and can be read/written.
         /// </summary>
-        public abstract bool IsValid {
+        public abstract bool IsValid
+        {
             get;
         }
 
-        internal IntPtr AiFile {
-            get {
+        internal IntPtr AiFile
+        {
+            get
+            {
                 return m_filePtr;
             }
         }
@@ -88,7 +99,8 @@ namespace Assimp {
         /// </summary>
         /// <param name="pathToFile">Path to file given by Assimp</param>
         /// <param name="fileMode">Desired file access mode</param>
-        public IOStream(String pathToFile, FileIOMode fileMode) {
+        public IOStream(String pathToFile, FileIOMode fileMode)
+        {
             m_pathToFile = pathToFile;
             m_fileMode = fileMode;
 
@@ -115,14 +127,16 @@ namespace Assimp {
         /// <summary>
         /// Finalizes an instance of the <see cref="IOStream"/> class.
         /// </summary>
-        ~IOStream() {
+        ~IOStream()
+        {
             Dispose(false);
         }
 
         /// <summary>
         /// Disposes of resources held by the IOStream.
         /// </summary>
-        public void Dispose() {
+        public void Dispose()
+        {
             Dispose(true);
             GC.SuppressFinalize(this);
         }
@@ -131,14 +145,18 @@ namespace Assimp {
         /// Releases unmanaged and - optionally - managed resources.
         /// </summary>
         /// <param name="disposing">True to release both managed and unmanaged resources; False to release only unmanaged resources.</param>
-        protected virtual void Dispose(bool disposing) {
-            if(!m_isDiposed) {
-                if(m_filePtr != IntPtr.Zero) {
+        protected virtual void Dispose(bool disposing)
+        {
+            if(!m_isDiposed)
+            {
+                if(m_filePtr != IntPtr.Zero)
+                {
                     MemoryHelper.FreeMemory(m_filePtr);
                     m_filePtr = IntPtr.Zero;
                 }
 
-                if(disposing) {
+                if(disposing)
+                {
                     m_writeProc = null;
                     m_readProc = null;
                     m_tellProc = null;
@@ -195,12 +213,14 @@ namespace Assimp {
         /// <summary>
         /// Closes the stream - flushing any data not yet read/written and disposes of resources.
         /// </summary>
-        public virtual void Close() {
+        public virtual void Close()
+        {
             Flush();
             Dispose();
         }
 
-        private UIntPtr OnAiFileWriteProc(IntPtr file, IntPtr dataToWrite, UIntPtr sizeOfElemInBytes, UIntPtr numElements) {
+        private UIntPtr OnAiFileWriteProc(IntPtr file, IntPtr dataToWrite, UIntPtr sizeOfElemInBytes, UIntPtr numElements)
+        {
             if(m_filePtr != file)
                 return UIntPtr.Zero;
 
@@ -213,14 +233,17 @@ namespace Assimp {
 
             long actualCount = 0;
 
-            try {
+            try
+            {
                 actualCount = Write(byteBuffer, count);
-            } catch(Exception) { /*Assimp will report an IO error*/ }
+            }
+            catch(Exception) { /*Assimp will report an IO error*/ }
 
             return new UIntPtr((ulong) actualCount);
         }
 
-        private UIntPtr OnAiFileReadProc(IntPtr file, IntPtr dataRead, UIntPtr sizeOfElemInBytes, UIntPtr numElements) {
+        private UIntPtr OnAiFileReadProc(IntPtr file, IntPtr dataRead, UIntPtr sizeOfElemInBytes, UIntPtr numElements)
+        {
             if(m_filePtr != file)
                 return UIntPtr.Zero;
 
@@ -232,63 +255,78 @@ namespace Assimp {
 
             long actualCount = 0;
 
-            try {
+            try
+            {
                 actualCount = Read(byteBuffer, count);
                 MemoryHelper.Write<byte>(dataRead, byteBuffer, 0, (int) actualCount);
-            } catch(Exception) { /*Assimp will report an IO error*/ }
+            }
+            catch(Exception) { /*Assimp will report an IO error*/ }
 
             return new UIntPtr((ulong) actualCount);
         }
 
-        private UIntPtr OnAiFileTellProc(IntPtr file) {
+        private UIntPtr OnAiFileTellProc(IntPtr file)
+        {
             if(m_filePtr != file)
                 return UIntPtr.Zero;
 
             long pos = 0;
 
-            try {
+            try
+            {
                 pos = GetPosition();
-            } catch(Exception) { /*Assimp will report an IO error*/ }
+            }
+            catch(Exception) { /*Assimp will report an IO error*/ }
 
             return new UIntPtr((ulong) pos);
         }
 
-        private UIntPtr OnAiFileSizeProc(IntPtr file) {
+        private UIntPtr OnAiFileSizeProc(IntPtr file)
+        {
             if(m_filePtr != file)
                 return UIntPtr.Zero;
 
             long fileSize = 0;
 
-            try {
+            try
+            {
                 fileSize = GetFileSize();
-            } catch(Exception) { /*Assimp will report an IO error*/ }
+            }
+            catch(Exception) { /*Assimp will report an IO error*/ }
 
             return new UIntPtr((ulong) fileSize);
         }
 
-        private ReturnCode OnAiFileSeekProc(IntPtr file, UIntPtr offset, Origin seekOrigin) {
+        private ReturnCode OnAiFileSeekProc(IntPtr file, UIntPtr offset, Origin seekOrigin)
+        {
             if(m_filePtr != file)
                 return ReturnCode.Failure;
 
             ReturnCode code = ReturnCode.Failure;
 
-            try {
+            try
+            {
                 code = Seek((long) offset.ToUInt64(), seekOrigin);
-            } catch(Exception) { /*Assimp will report an IO error*/ }
+            }
+            catch(Exception) { /*Assimp will report an IO error*/ }
 
             return code;
         }
 
-        private void OnAiFileFlushProc(IntPtr file) {
+        private void OnAiFileFlushProc(IntPtr file)
+        {
             if(m_filePtr != file)
                 return;
 
-            try {
+            try
+            {
                 Flush();
-            } catch(Exception) { }
+            }
+            catch(Exception) { }
         }
 
-        private byte[] GetByteBuffer(long sizeOfElemInBytes, long numElements) {
+        private byte[] GetByteBuffer(long sizeOfElemInBytes, long numElements)
+        {
             //Only create a new buffer if we need it to grow or first time, otherwise re-use it
             if(m_byteBuffer == null || (m_byteBuffer.Length < sizeOfElemInBytes * numElements))
                 m_byteBuffer = new byte[sizeOfElemInBytes * numElements];

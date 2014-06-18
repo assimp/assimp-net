@@ -1,5 +1,5 @@
 ﻿/*
-* Copyright (c) 2012-2013 AssimpNet - Nicholas Woodfield
+* Copyright (c) 2012-2014 AssimpNet - Nicholas Woodfield
 * 
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -23,12 +23,14 @@
 using System;
 using NUnit.Framework;
 
-namespace Assimp.Test {
+namespace Assimp.Test
+{
     [TestFixture]
-    public class Vector3DTestFixture {
-
+    public class Vector3DTestFixture
+    {
         [Test]
-        public void TestIndexer() {
+        public void TestIndexer()
+        {
             float x = 1, y = 2, z = 3;
             Vector3D v = new Vector3D();
             v[0] = x;
@@ -40,7 +42,8 @@ namespace Assimp.Test {
         }
 
         [Test]
-        public void TestSet() {
+        public void TestSet()
+        {
             float x = 10.5f, y = 109.21f, z = 100;
             Vector3D v = new Vector3D();
             v.Set(x, y, z);
@@ -49,7 +52,8 @@ namespace Assimp.Test {
         }
 
         [Test]
-        public void TestEquals() {
+        public void TestEquals()
+        {
             float x = 1, y = 2, z = 5;
             float x2 = 3, y2 = 4, z2 = 10;
 
@@ -75,23 +79,26 @@ namespace Assimp.Test {
         }
 
         [Test]
-        public void TestLength() {
+        public void TestLength()
+        {
             float x = -62, y = 5, z = 10;
 
             Vector3D v = new Vector3D(x, y, z);
-            Assert.AreEqual((float) Math.Sqrt(x*x + y*y + z*z), v.Length(), "Testing v.Length()");
+            Assert.AreEqual((float) Math.Sqrt(x * x + y * y + z * z), v.Length(), "Testing v.Length()");
         }
 
         [Test]
-        public void TestLengthSquared() {
+        public void TestLengthSquared()
+        {
             float x = -5, y = 25f, z = 7;
 
             Vector3D v = new Vector3D(x, y, z);
-            Assert.AreEqual((float) (x*x + y*y + z*z), v.LengthSquared(), "Testing v.LengthSquared()");
+            Assert.AreEqual((float) (x * x + y * y + z * z), v.LengthSquared(), "Testing v.LengthSquared()");
         }
 
         [Test]
-        public void TestNegate() {
+        public void TestNegate()
+        {
             float x = 2, y = 5, z = -5;
 
             Vector3D v = new Vector3D(x, y, z);
@@ -100,11 +107,12 @@ namespace Assimp.Test {
         }
 
         [Test]
-        public void TestNormalize() {
+        public void TestNormalize()
+        {
             float x = 5, y = 12, z = 2;
             Vector3D v = new Vector3D(x, y, z);
             v.Normalize();
-            float invLength = 1.0f / (float) System.Math.Sqrt((x * x) + (y * y) + (z*z));
+            float invLength = 1.0f / (float) System.Math.Sqrt((x * x) + (y * y) + (z * z));
             x *= invLength;
             y *= invLength;
             z *= invLength;
@@ -113,7 +121,8 @@ namespace Assimp.Test {
         }
 
         [Test]
-        public void TestOpAdd() {
+        public void TestOpAdd()
+        {
             float x1 = 2, y1 = 5, z1 = 10;
             float x2 = 10, y2 = 15, z2 = 5.5f;
             float x = x1 + x2;
@@ -129,7 +138,8 @@ namespace Assimp.Test {
         }
 
         [Test]
-        public void TestOpSubtract() {
+        public void TestOpSubtract()
+        {
             float x1 = 2, y1 = 5, z1 = 10;
             float x2 = 10, y2 = 15, z2 = 5.5f;
             float x = x1 - x2;
@@ -145,7 +155,8 @@ namespace Assimp.Test {
         }
 
         [Test]
-        public void TestOpNegate() {
+        public void TestOpNegate()
+        {
             float x = 22, y = 75, z = -5;
 
             Vector3D v = -(new Vector3D(x, y, z));
@@ -154,7 +165,8 @@ namespace Assimp.Test {
         }
 
         [Test]
-        public void TestOpMultiply() {
+        public void TestOpMultiply()
+        {
             float x1 = 2, y1 = 5, z1 = 10;
             float x2 = 10, y2 = 15, z2 = 5.5f;
             float x = x1 * x2;
@@ -170,7 +182,8 @@ namespace Assimp.Test {
         }
 
         [Test]
-        public void TestOpMultiplyByScalar() {
+        public void TestOpMultiplyByScalar()
+        {
             float x1 = 2, y1 = 5, z1 = -10;
             float scalar = 25;
 
@@ -190,7 +203,8 @@ namespace Assimp.Test {
         }
 
         [Test]
-        public void TestOpDivide() {
+        public void TestOpDivide()
+        {
             float x1 = 105f, y1 = 4.5f, z1 = -20;
             float x2 = 22f, y2 = 25.2f, z2 = 10;
 
@@ -207,7 +221,8 @@ namespace Assimp.Test {
         }
 
         [Test]
-        public void TestOpDivideByFactor() {
+        public void TestOpDivideByFactor()
+        {
             float x1 = 55f, y1 = 2f, z1 = 50f;
             float divisor = 5f;
 
@@ -221,7 +236,8 @@ namespace Assimp.Test {
         }
 
         [Test]
-        public void TestOpTransformBy3x3() {
+        public void TestOpTransformBy3x3()
+        {
             float m11 = 2, m12 = .2f, m13 = 0;
             float m21 = .2f, m22 = 2, m23 = 0;
             float m31 = 0, m32 = 0, m33 = 2;
@@ -241,7 +257,8 @@ namespace Assimp.Test {
         }
 
         [Test]
-        public void TestOpTransformBy4x4() {
+        public void TestOpTransformBy4x4()
+        {
             float m11 = 2, m12 = .2f, m13 = 0, m14 = 0;
             float m21 = .2f, m22 = 2, m23 = 0, m24 = 0;
             float m31 = 0, m32 = 0, m33 = 2, m34 = 0;

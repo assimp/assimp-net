@@ -1,5 +1,5 @@
 ﻿/*
-* Copyright (c) 2012-2013 AssimpNet - Nicholas Woodfield
+* Copyright (c) 2012-2014 AssimpNet - Nicholas Woodfield
 * 
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -22,7 +22,43 @@
 
 using System;
 
-namespace Assimp {
+namespace Assimp
+{
+    /// <summary>
+    /// Enumerates metadata data types.
+    /// </summary>
+    public enum MetaDataType
+    {
+        /// <summary>
+        /// Metadata is a boolean.
+        /// </summary>
+        Bool = 0,
+
+        /// <summary>
+        /// Metadata is an integer.
+        /// </summary>
+        Int = 1,
+
+        /// <summary>
+        /// Metadata is an unsigned 64-bit integer.
+        /// </summary>
+        UInt64 = 2,
+
+        /// <summary>
+        /// Metadata is a float.
+        /// </summary>
+        Float = 3,
+
+        /// <summary>
+        /// Metadata is a string.
+        /// </summary>
+        String = 4,
+
+        /// <summary>
+        /// Metadata is a <see cref="Vector3D"/>.
+        /// </summary>
+        Vector3D = 5
+    }
 
     /// <summary>
     /// Post processing flag options, specifying a number of steps
@@ -30,7 +66,8 @@ namespace Assimp {
     /// data or optimize the imported data.
     /// </summary>
     [Flags]
-    public enum PostProcessSteps {
+    public enum PostProcessSteps
+    {
         /// <summary>
         /// No flags enabled.
         /// </summary>
@@ -424,7 +461,8 @@ namespace Assimp {
     /// RemoveComponent.
     /// </summary>
     [Flags]
-    public enum ExcludeComponent {
+    public enum ExcludeComponent
+    {
         /// <summary>
         /// No components to be excluded.
         /// </summary>
@@ -497,7 +535,8 @@ namespace Assimp {
     /// Enumerates geometric primitive types.
     /// </summary>
     [Flags]
-    public enum PrimitiveType : int {
+    public enum PrimitiveType : int
+    {
         /// <summary>
         /// Point primitive. This is just a single vertex
         /// in the virtual world. A face has one index for such a primitive.
@@ -526,7 +565,8 @@ namespace Assimp {
     /// time range. This corresponds to the prestate and poststates
     /// of the animation node.
     /// </summary>
-    public enum AnimationBehaviour {
+    public enum AnimationBehaviour
+    {
         /// <summary>
         /// The value from the default node transformation is taken.
         /// </summary>
@@ -553,7 +593,8 @@ namespace Assimp {
     /// <summary>
     /// Enumerates all supported light sources.
     /// </summary>
-    public enum LightSourceType {
+    public enum LightSourceType
+    {
         /// <summary>
         /// Unknown light.
         /// </summary>
@@ -590,7 +631,8 @@ namespace Assimp {
     /// and sourceColor is the material color before the
     /// transparency calculation. This corresponds to the AI_MATKEY_BLEND_FUNC property.</para>
     /// </summary>
-    public enum BlendMode {
+    public enum BlendMode
+    {
         /// <summary>
         /// Default blending: sourceColor * sourceAlpha + destColor * (1 - sourceAlpha)
         /// </summary>
@@ -609,7 +651,8 @@ namespace Assimp {
     /// documentation for more information.
     /// </para>
     /// </summary>
-    public enum ShadingMode {
+    public enum ShadingMode
+    {
         /// <summary>
         /// No shading mode defined.
         /// </summary>
@@ -620,7 +663,7 @@ namespace Assimp {
         /// as 'faceted shading'.
         /// </summary>
         Flat = 0x1,
-        
+
         /// <summary>
         /// Simple Gouraud shading.
         /// </summary>
@@ -674,7 +717,8 @@ namespace Assimp {
     /// to the AI_MAT_KEY_TEXFLAGS property.
     /// </summary>
     [Flags]
-    public enum TextureFlags {
+    public enum TextureFlags
+    {
         /// <summary>
         /// The texture's color values have to be inverted (componentwise 1-n).
         /// </summary>
@@ -700,7 +744,8 @@ namespace Assimp {
     /// Defines how UV coordinates outside the [0..1] range are handled. Commonly
     /// referred to as the 'wrapping mode'
     /// </summary>
-    public enum TextureWrapMode {
+    public enum TextureWrapMode
+    {
         /// <summary>
         /// A texture coordinate u|v is translated to u % 1| v % 1.
         /// </summary>
@@ -733,7 +778,8 @@ namespace Assimp {
     /// description of how the mapping should look like is given.
     /// </para>
     /// </summary>
-    public enum TextureMapping {
+    public enum TextureMapping
+    {
         /// <summary>
         /// Coordinates are taken from the an existing UV channel.
         /// <para>
@@ -790,7 +836,8 @@ namespace Assimp {
     /// </code>
     /// </para>
     /// </summary>
-    public enum TextureOperation {
+    public enum TextureOperation
+    {
         /// <summary>
         /// T = T1 * T2
         /// </summary>
@@ -825,7 +872,8 @@ namespace Assimp {
     /// <summary>
     /// Defines the purpose of a texture.
     /// </summary>
-    public enum TextureType : int {
+    public enum TextureType : int
+    {
         /// <summary>
         /// No texture, but the value can be used as a 'texture semantic'.
         /// </summary>
@@ -904,7 +952,8 @@ namespace Assimp {
     /// Defines the state of the imported scene data structure.
     /// </summary>
     [Flags]
-    public enum SceneFlags : int {
+    public enum SceneFlags : int
+    {
         /// <summary>
         /// Default state of the scene, it imported successfully.
         /// </summary>
@@ -955,7 +1004,8 @@ namespace Assimp {
     /// <summary>
     /// Enumerates Assimp function result codes.
     /// </summary>
-    public enum ReturnCode {
+    public enum ReturnCode
+    {
         /// <summary>
         /// Function returned successfully.
         /// </summary>
@@ -975,7 +1025,8 @@ namespace Assimp {
     /// <summary>
     /// Seek origins for Assimp's virtual file system API.
     /// </summary>
-    public enum Origin {
+    public enum Origin
+    {
         /// <summary>
         /// Beginning of the file
         /// </summary>
@@ -996,7 +1047,8 @@ namespace Assimp {
     /// Enumerates predefined log streaming destinations.
     /// </summary>
     [Flags]
-    public enum DefaultLogStream {
+    public enum DefaultLogStream
+    {
         /// <summary>
         /// Stream log to a file
         /// </summary>
@@ -1022,7 +1074,8 @@ namespace Assimp {
     /// <summary>
     /// Defines material property types.
     /// </summary>
-    public enum PropertyType {
+    public enum PropertyType
+    {
         /// <summary>
         /// Array of single-precision (32 bit) floats.
         /// </summary>
@@ -1047,7 +1100,8 @@ namespace Assimp {
     /// <summary>
     /// Enumerates how the native Assimp DLL was compiled
     /// </summary>
-    public enum CompileFlags : int {
+    public enum CompileFlags : int
+    {
         /// <summary>
         /// Assimp compiled as a shared object (Windows: DLL);
         /// </summary>
@@ -1078,7 +1132,8 @@ namespace Assimp {
     /// Defines how UV coordinates should be transformed.
     /// </summary>
     [Flags]
-    public enum UVTransformFlags {
+    public enum UVTransformFlags
+    {
         /// <summary>
         /// Scaling is evaluated.
         /// </summary>
@@ -1098,7 +1153,8 @@ namespace Assimp {
     /// <summary>
     /// Defines the desired file I/O mode is when opening a new file.
     /// </summary>
-    public enum FileIOMode {
+    public enum FileIOMode
+    {
         /// <summary>
         /// Open the file for writing.
         /// </summary>

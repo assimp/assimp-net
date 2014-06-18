@@ -1,5 +1,5 @@
 ﻿/*
-* Copyright (c) 2012-2013 AssimpNet - Nicholas Woodfield
+* Copyright (c) 2012-2014 AssimpNet - Nicholas Woodfield
 * 
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -22,12 +22,14 @@
 
 using NUnit.Framework;
 
-namespace Assimp.Test {
+namespace Assimp.Test
+{
     [TestFixture]
-    public class Color3DTestFixture {
-
+    public class Color3DTestFixture
+    {
         [Test]
-        public void TestIndexer() {
+        public void TestIndexer()
+        {
             float r = .25f, g = .5f, b = .05f;
             Color3D c = new Color3D();
             c[0] = r;
@@ -37,8 +39,10 @@ namespace Assimp.Test {
             TestHelper.AssertEquals(g, c[1], "Test Indexer, G");
             TestHelper.AssertEquals(b, c[2], "Test Indexer, B");
         }
+
         [Test]
-        public void TestEquals() {
+        public void TestEquals()
+        {
             float r1 = .25f, g1 = .1f, b1 = .75f;
             float r2 = .75f, g2 = 1.0f, b2 = 1.0f;
 
@@ -64,7 +68,8 @@ namespace Assimp.Test {
         }
 
         [Test]
-        public void TestIsBlack() {
+        public void TestIsBlack()
+        {
             Color3D c1 = new Color3D(0, 0, 0);
             Color3D c2 = new Color3D(.25f, 1.0f, .5f) * .002f;
             Color3D c3 = new Color3D(.25f, .65f, 1.0f);
@@ -75,7 +80,8 @@ namespace Assimp.Test {
         }
 
         [Test]
-        public void TestOpAdd() {
+        public void TestOpAdd()
+        {
             float r1 = .5f, g1 = .25f, b1 = .7f;
             float r2 = .2f, g2 = .1f, b2 = .05f;
             float r = r1 + r2;
@@ -90,7 +96,8 @@ namespace Assimp.Test {
         }
 
         [Test]
-        public void TestOpAddValue() {
+        public void TestOpAddValue()
+        {
             float r1 = .5f, g1 = .25f, b1 = .7f;
             float value = .2f;
             float r = r1 + value;
@@ -109,7 +116,8 @@ namespace Assimp.Test {
         }
 
         [Test]
-        public void TestOpSubtract() {
+        public void TestOpSubtract()
+        {
             float r1 = .5f, g1 = .25f, b1 = .7f;
             float r2 = .2f, g2 = .1f, b2 = .05f;
             float r = r1 - r2;
@@ -124,7 +132,8 @@ namespace Assimp.Test {
         }
 
         [Test]
-        public void TestOpSubtractByValue() {
+        public void TestOpSubtractByValue()
+        {
             float r1 = .5f, g1 = .25f, b1 = .7f;
             float value = .2f;
             float r = r1 - value;
@@ -147,7 +156,8 @@ namespace Assimp.Test {
         }
 
         [Test]
-        public void TestOpMultiply() {
+        public void TestOpMultiply()
+        {
             float r1 = .5f, g1 = .25f, b1 = .7f;
             float r2 = .2f, g2 = .1f, b2 = .05f;
             float r = r1 * r2;
@@ -162,7 +172,8 @@ namespace Assimp.Test {
         }
 
         [Test]
-        public void TestOpMultiplyByScalar() {
+        public void TestOpMultiplyByScalar()
+        {
             float r1 = .5f, g1 = .25f, b1 = .7f;
             float value = .2f;
             float r = r1 * value;
@@ -181,7 +192,8 @@ namespace Assimp.Test {
         }
 
         [Test]
-        public void TestDivide() {
+        public void TestDivide()
+        {
             float r1 = .5f, g1 = .25f, b1 = .7f;
             float r2 = .2f, g2 = .1f, b2 = .05f;
             float r = r1 / r2;
@@ -196,7 +208,8 @@ namespace Assimp.Test {
         }
 
         [Test]
-        public void TestDivideByFactor() {
+        public void TestDivideByFactor()
+        {
             float r1 = .5f, g1 = .25f, b1 = .7f;
             float value = .2f;
             float r = r1 / value;
