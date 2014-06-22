@@ -36,6 +36,7 @@ namespace Assimp
         private Node m_parent;
         private NodeCollection m_children;
         private List<int> m_meshes;
+        private Metadata m_metaData;
 
         /// <summary>
         /// Gets or sets the name of the node.
@@ -147,6 +148,17 @@ namespace Assimp
         }
 
         /// <summary>
+        /// Gets the node's metadata container.
+        /// </summary>
+        public Metadata Metadata
+        {
+            get
+            {
+                return m_metaData;
+            }
+        }
+
+        /// <summary>
         /// Constructs a new instance of the <see cref="Node"/> class.
         /// </summary>
         public Node()
@@ -156,6 +168,7 @@ namespace Assimp
             m_parent = null;
             m_children = new NodeCollection(this);
             m_meshes = new List<int>();
+            m_metaData = new Metadata();
         }
 
         /// <summary>
@@ -195,18 +208,15 @@ namespace Assimp
         public Node FindNode(String name)
         {
             if(name.Equals(m_name))
-            {
                 return this;
-            }
+
             if(HasChildren)
             {
                 foreach(Node child in m_children)
                 {
                     Node found = child.FindNode(name);
                     if(found != null)
-                    {
                         return found;
-                    }
                 }
             }
             //No child found
@@ -290,7 +300,11 @@ namespace Assimp
 
             nativeValue.NumMeshes = (uint) m_meshes.Count;
             nativeValue.Meshes = IntPtr.Zero;
-            nativeValue.MetaData = IntPtr.Zero; //TODO
+            nativeValue.MetaData = IntPtr.Zero;
+
+            //If has metadata, create it, otherwise it should be NULL
+            if(m_metaData.Count > 0)
+                nativeValue.MetaData = MemoryHelper.ToNativePointer<Metadata, AiMetadata>(m_metaData);
 
             if(nativeValue.NumMeshes > 0)
                 nativeValue.Meshes = MemoryHelper.ToNativeArray<int>(m_meshes.ToArray());
@@ -340,6 +354,14 @@ namespace Assimp
             m_parent = null;
             m_children.Clear();
             m_meshes.Clear();
+            m_metaData.Clear();
+
+            if(nativeValue.MetaData != IntPtr.Zero)
+            {
+                Metadata data = MemoryHelper.FromNativePointer<Metadata, AiMetadata>(nativeValue.MetaData);
+                foreach(KeyValuePair<String, Metadata.Entry> kv in data)
+                    m_metaData.Add(kv.Key, kv.Value);
+            }
 
             if(nativeValue.NumMeshes > 0 && nativeValue.Meshes != IntPtr.Zero)
                 m_meshes.AddRange(MemoryHelper.FromNativeArray<int>(nativeValue.Meshes, (int) nativeValue.NumMeshes));
@@ -365,6 +387,9 @@ namespace Assimp
 
             if(aiNode.NumChildren > 0 && aiNode.Children != IntPtr.Zero)
                 MemoryHelper.FreeNativeArray<AiNode>(aiNode.Children, (int) aiNode.NumChildren, FreeNative, true);
+
+            if(aiNode.MetaData != IntPtr.Zero)
+                Metadata.FreeNative(aiNode.MetaData, true);
 
             if(freeNative)
                 MemoryHelper.FreeMemory(nativeValue);
