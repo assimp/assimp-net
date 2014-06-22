@@ -87,6 +87,7 @@
     <Compile Include="MeshAnimationChannel.cs" />
     <Compile Include="MeshAnimationAttachment.cs" />
     <Compile Include="MeshKey.cs" />
+    <Compile Include="Metadata.cs" />
     <Compile Include="NodeAnimationChannel.cs" />
     <Compile Include="NodeCollection.cs" />
     <Compile Include="QuaternionKey.cs" />
