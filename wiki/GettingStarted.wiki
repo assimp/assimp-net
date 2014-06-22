@@ -48,7 +48,7 @@ namespace Example {
             //is imported, loaded into managed memory. Then the unmanaged memory is released, and everything is reset.
             Scene model = importer.ImportFile(fileName, PostProcessPreset.TargetRealTimeMaximumQuality);
 
-            //Load the model data into your own structures
+            //TODO: Load the model data into your own structures
 
             //End of example
             importer.Dispose();
