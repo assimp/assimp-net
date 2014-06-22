@@ -44,7 +44,7 @@ namespace Example {
             });
             logstream.Attach();
 
-            //Import the model - this is considered a single atomic call. All configs are set, all logstreams attached. The model
+            //Import the model. All configs are set. The model
             //is imported, loaded into managed memory. Then the unmanaged memory is released, and everything is reset.
             Scene model = importer.ImportFile(fileName, PostProcessPreset.TargetRealTimeMaximumQuality);
 
