@@ -1,4 +1,4 @@
-﻿/*
+ /*
 * Copyright (c) 2012-2014 AssimpNet - Nicholas Woodfield
 * 
 * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -241,7 +241,11 @@ namespace Assimp
 
             nativeValue.NumMeshes = (uint) node.m_meshes.Count;
             nativeValue.Meshes = MemoryHelper.ToNativeArray<int>(node.m_meshes.ToArray());
-            nativeValue.MetaData = IntPtr.Zero; //TODO
+            nativeValue.MetaData = IntPtr.Zero;
+
+            //If has metadata, create it, otherwise it should be NULL
+            if (m_metaData.Count > 0)
+                nativeValue.MetaData = MemoryHelper.ToNativePointer<Metadata, AiMetadata>(m_metaData);
 
             //Now descend through the children
             nativeValue.NumChildren = (uint) node.m_children.Count;
