@@ -1,4 +1,4 @@
-﻿/*
+ /*
 * Copyright (c) 2012-2014 AssimpNet - Nicholas Woodfield
 * 
 * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -328,7 +328,7 @@ namespace Assimp.Unmanaged
                 IntPtr formatDescPtr = func(new IntPtr(i));
                 if(formatDescPtr != null)
                 {
-                    AiExportFormatDesc desc = MemoryHelper.MarshalStructure<AiExportFormatDesc>(formatDescPtr);
+                    AiExportFormatDesc desc = MemoryHelper.Read<AiExportFormatDesc>(formatDescPtr);
                     descriptions[i] = new ExportFormatDescription(ref desc);
                 }
             }
@@ -359,7 +359,7 @@ namespace Assimp.Unmanaged
             if(blobPtr == IntPtr.Zero)
                 return null;
 
-            AiExportDataBlob blob = MemoryHelper.MarshalStructure<AiExportDataBlob>(blobPtr);
+            AiExportDataBlob blob = MemoryHelper.Read<AiExportDataBlob>(blobPtr);
             ExportDataBlob dataBlob = new ExportDataBlob(ref blob);
             releaseExportBlobFunc(blobPtr);
 
@@ -623,17 +623,14 @@ namespace Assimp.Unmanaged
                 ReturnCode code = func(ref mat, key, (uint) texType, texIndex, ptr);
                 Color4D color = new Color4D();
                 if(code == ReturnCode.Success && ptr != IntPtr.Zero)
-                {
-                    color = MemoryHelper.MarshalStructure<Color4D>(ptr);
-                }
+                    color = MemoryHelper.Read<Color4D>(ptr);
+                
                 return color;
             }
             finally
             {
                 if(ptr != IntPtr.Zero)
-                {
                     MemoryHelper.FreeMemory(ptr);
-                }
             }
         }
 
@@ -731,9 +728,8 @@ namespace Assimp.Unmanaged
             ReturnCode code = func(ref mat, key, (uint) texType, texIndex, out ptr);
             AiMaterialProperty prop = new AiMaterialProperty();
             if(code == ReturnCode.Success && ptr != IntPtr.Zero)
-            {
-                prop = MemoryHelper.MarshalStructure<AiMaterialProperty>(ptr);
-            }
+                prop = MemoryHelper.Read<AiMaterialProperty>(ptr);
+                
             return prop;
         }
 
@@ -754,9 +750,8 @@ namespace Assimp.Unmanaged
             AiString str;
             ReturnCode code = func(ref mat, key, (uint) texType, texIndex, out str);
             if(code == ReturnCode.Success)
-            {
                 return str.GetString();
-            }
+
             return String.Empty;
         }
 
