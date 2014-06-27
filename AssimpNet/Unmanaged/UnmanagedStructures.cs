@@ -767,12 +767,16 @@ namespace Assimp.Unmanaged
         /// Convienence method for setting the AiString string (and length).
         /// </summary>
         /// <param name="data">String data to set</param>
+        /// <returns>True if the operation was successful, false otherwise.</returns>
         public unsafe bool SetString(String data)
         {
             if(String.IsNullOrEmpty(data))
             {
                 Length = new UIntPtr(0);
-                return false;
+                fixed(byte* bytePtr = Data)
+                    MemoryHelper.ClearMemory(new IntPtr(bytePtr), 0, AiDefines.MAX_LENGTH);
+
+                return true;
             }
 
             //Note: aiTypes.h specifies aiString is UTF-8 encoded string.
@@ -784,9 +788,7 @@ namespace Assimp.Unmanaged
                 if(copy.Length > 0)
                 {
                     fixed(byte* bytePtr = Data)
-                    {
                         MemoryHelper.Write<byte>(new IntPtr(bytePtr), copy, 0, copy.Length);
-                    }
                 }
 
                 Length = new UIntPtr((uint) copy.Length);

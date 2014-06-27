@@ -173,7 +173,7 @@ namespace Assimp
         /// <summary>
         /// Gets all active logstreams that are currently attached to the library.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Collection of active logstreams attached to the library.</returns>
         public static IEnumerable<LogStream> GetAttachedLogStreams()
         {
             lock(s_sync)

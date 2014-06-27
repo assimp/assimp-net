@@ -196,7 +196,7 @@ namespace Assimp
         /// <summary>
         /// Gets the current file position pointer (in bytes).
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Current file position pointer (in bytes)</returns>
         public abstract long GetPosition();
 
         /// <summary>

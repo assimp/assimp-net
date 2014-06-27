@@ -1048,8 +1048,8 @@ namespace Assimp
         /// the "base name", as in it should not contain texture type/texture index information. E.g. "$clr.diffuse" rather than "$clr.diffuse,0,0". The extra
         /// data will be filled in automatically.
         /// </summary>
-        /// <param name="baseName"></param>
-        /// <returns></returns>
+        /// <param name="baseName">Key basename</param>
+        /// <returns>True if the property exists, false otherwise.</returns>
         public bool HasNonTextureProperty(String baseName)
         {
             if(String.IsNullOrEmpty(baseName))
@@ -1144,7 +1144,7 @@ namespace Assimp
         /// Removes a property from the material.
         /// </summary>
         /// <param name="fullyQualifiedName">Fully qualified name of the property ({basename},{texType},{texIndex})</param>
-        /// <returns></returns>
+        /// <returns>True if the property was removed, false otherwise</returns>
         public bool RemoveProperty(String fullyQualifiedName)
         {
             if(String.IsNullOrEmpty(fullyQualifiedName))
@@ -1293,6 +1293,7 @@ namespace Assimp
         /// If the texture has no file path, nothing is removed
         /// </summary>
         /// <param name="texture">Texture to remove</param>
+        /// <returns>True if the texture was removed, false otherwise.</returns>
         public bool RemoveMaterialTexture(ref TextureSlot texture)
         {
             if(String.IsNullOrEmpty(texture.FilePath))
