@@ -255,7 +255,7 @@ namespace Assimp.Unmanaged
         /// <param name="flags">Post processing flags</param>
         /// <param name="formatHint">A hint to Assimp to decide which importer to use to process the data</param>
         /// <param name="propStore">Property store containing the config name-values, may be null.</param>
-        /// <returns></returns>
+        /// <returns>Pointer to the unmanaged data structure.</returns>
         public IntPtr ImportFileFromStream(Stream stream, PostProcessSteps flags, String formatHint, IntPtr propStore)
         {
             LoadIfNotLoaded();
@@ -1065,7 +1065,7 @@ namespace Assimp.Unmanaged
         /// <summary>
         /// Gets the native Assimp DLL's minor version number.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Assimp minor version number</returns>
         public uint GetVersionMinor()
         {
             LoadIfNotLoaded();

@@ -45,8 +45,8 @@ namespace Assimp
         /// <summary>
         /// Constructs a new Ray.
         /// </summary>
-        /// <param name="pos"></param>
-        /// <param name="dir"></param>
+        /// <param name="pos">Origin of the ray.</param>
+        /// <param name="dir">Direction of the ray.</param>
         public Ray(Vector3D pos, Vector3D dir)
         {
             Position = pos;

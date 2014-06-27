@@ -181,7 +181,7 @@ namespace Assimp
         /// <summary>
         /// Returns a matrix representation of the quaternion.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Rotation matrix representing the quaternion.</returns>
         public Matrix3x3 GetMatrix()
         {
             float xx = X * X;
@@ -217,7 +217,7 @@ namespace Assimp
         /// <param name="start">Start rotation when factor == 0</param>
         /// <param name="end">End rotation when factor == 1</param>
         /// <param name="factor">Interpolation factor between 0 and 1, values beyond this range yield undefined values</param>
-        /// <returns></returns>
+        /// <returns>Interpolated quaternion.</returns>
         public static Quaternion Slerp(Quaternion start, Quaternion end, float factor)
         {
             //Calc cosine theta
@@ -263,10 +263,10 @@ namespace Assimp
         /// <summary>
         /// Rotates a point by this quaternion.
         /// </summary>
-        /// <param name="vec">Point to rotate</param>
+        /// <param name="pt">Point to rotate</param>
         /// <param name="quat">Quaternion representing the rotation</param>
-        /// <returns></returns>
-        public static Vector3D Rotate(Vector3D vec, Quaternion quat)
+        /// <returns>Rotated point.</returns>
+        public static Vector3D Rotate(Vector3D pt, Quaternion quat)
         {
             float x2 = quat.X + quat.X;
             float y2 = quat.Y + quat.Y;
@@ -285,9 +285,9 @@ namespace Assimp
 
             float zz2 = quat.Z * z2;
 
-            float x = ((vec.X * ((1.0f - yy2) - zz2)) + (vec.Y * (xy2 - wz2))) + (vec.Z * (xz2 + wy2));
-            float y = ((vec.X * (xy2 + wz2)) + (vec.Y * ((1.0f - xx2) - zz2))) + (vec.Z * (yz2 - wx2));
-            float z = ((vec.X * (xz2 - wy2)) + (vec.Y * (yz2 + wx2))) + (vec.Z * ((1.0f - xx2) - yy2));
+            float x = ((pt.X * ((1.0f - yy2) - zz2)) + (pt.Y * (xy2 - wz2))) + (pt.Z * (xz2 + wy2));
+            float y = ((pt.X * (xy2 + wz2)) + (pt.Y * ((1.0f - xx2) - zz2))) + (pt.Z * (yz2 - wx2));
+            float z = ((pt.X * (xz2 - wy2)) + (pt.Y * (yz2 + wx2))) + (pt.Z * ((1.0f - xx2) - yy2));
 
             Vector3D v;
             v.X = x;
