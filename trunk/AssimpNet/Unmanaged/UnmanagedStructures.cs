@@ -201,6 +201,7 @@ namespace Assimp.Unmanaged
     /// <summary>
     /// Represents an aiMesh struct. Note: This structure requires marshaling, due to the arrays of IntPtrs.
     /// </summary>
+    [NativeCustomMarshaler(typeof(AiMeshMarshaler))]
     [StructLayout(LayoutKind.Sequential)]
     [CLSCompliant(false)]
     public struct AiMesh
@@ -254,7 +255,8 @@ namespace Assimp.Unmanaged
         public IntPtr[] TextureCoords;
 
         /// <summary>
-        /// unsigned int[4], array of ints denoting the number of components for each set of texture coordinates - UV (2), UVW (3) for example.
+        /// unsigned int[Max_Value], array of ints denoting the number of components for each set of texture coordinates - UV (2), UVW (3) for example.
+        /// Max_Value is a defined constant.
         /// </summary>
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = AiDefines.AI_MAX_NUMBER_OF_TEXTURECOORDS, ArraySubType = UnmanagedType.U4)]
         public uint[] NumUVComponents;
@@ -879,6 +881,7 @@ namespace Assimp.Unmanaged
     /// <summary>
     /// Represents an aiAnimMesh struct. Note: This structure requires marshaling, due to the array of IntPtrs.
     /// </summary>
+    [NativeCustomMarshaler(typeof(AiAnimMeshMarshaler))]
     [StructLayout(LayoutKind.Sequential)]
     [CLSCompliant(false)]
     public struct AiAnimMesh

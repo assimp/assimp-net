@@ -23,6 +23,8 @@
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Collections.Generic;
+using System.Reflection;
 
 namespace Assimp
 {
@@ -38,6 +40,14 @@ namespace Assimp
     /// </summary>
     public static class MemoryHelper
     {
+        private static Dictionary<Type, INativeCustomMarshaler> s_customMarshalers;
+
+        static MemoryHelper()
+        {
+            s_customMarshalers = new Dictionary<Type, INativeCustomMarshaler>();
+            PreloadMarshalerTypes();
+        }
+
         #region Marshaling Interop
 
         /// <summary>
@@ -51,7 +61,6 @@ namespace Assimp
             where Managed : class, IMarshalable<Managed, Native>, new()
             where Native : struct
         {
-
             return ToNativeArray<Managed, Native>(managedArray, false);
         }
 
@@ -68,7 +77,6 @@ namespace Assimp
             where Managed : class, IMarshalable<Managed, Native>, new()
             where Native : struct
         {
-
             if(managedArray == null || managedArray.Length == 0)
                 return IntPtr.Zero;
 
@@ -107,7 +115,7 @@ namespace Assimp
                         }
                         else
                         {
-                            Marshal.StructureToPtr(nativeValue, ptr, true);
+                            MarshalPointer<Native>(ref nativeValue, ptr);
                         }
                     }
 
@@ -125,7 +133,7 @@ namespace Assimp
                     }
                     else
                     {
-                        Marshal.StructureToPtr(nativeValue, currPos, true);
+                        MarshalPointer<Native>(ref nativeValue, currPos);
                     }
                 }
             }
@@ -145,7 +153,6 @@ namespace Assimp
             where Managed : class, IMarshalable<Managed, Native>, new()
             where Native : struct
         {
-
             return FromNativeArray<Managed, Native>(nativeArray, length, false);
         }
 
@@ -163,7 +170,6 @@ namespace Assimp
             where Managed : class, IMarshalable<Managed, Native>, new()
             where Native : struct
         {
-
             if(nativeArray == IntPtr.Zero || length == 0)
                 return new Managed[0];
 
@@ -204,7 +210,7 @@ namespace Assimp
         }
 
         /// <summary>
-        /// Marshals an array of blittable structs to a c-style unmanaged array (void*). This should not be used on types
+        /// Marshals an array of blittable structs to a c-style unmanaged array (void*). This should not be used on non-blittable types
         /// that require marshaling by the runtime (e.g. has MarshalAs attributes).
         /// </summary>
         /// <typeparam name="T">Struct type</typeparam>
@@ -223,7 +229,7 @@ namespace Assimp
         }
 
         /// <summary>
-        /// Marshals an array of blittable structs from a c-style unmanaged array (void*).This should not be used on types
+        /// Marshals an array of blittable structs from a c-style unmanaged array (void*). This should not be used on non-blittable types
         /// that require marshaling by the runtime (e.g. has MarshalAs attributes).
         /// </summary>
         /// <typeparam name="T">Struct type</typeparam>
@@ -317,7 +323,7 @@ namespace Assimp
             }
             else
             {
-                Marshal.StructureToPtr(nativeValue, ptr, true);
+                MarshalPointer<Native>(ref nativeValue, ptr);
             }
 
             return ptr;
@@ -359,7 +365,8 @@ namespace Assimp
         }
 
         /// <summary>
-        /// Convienence method for marshaling a pointer to a structure.
+        /// Convienence method for marshaling a pointer to a structure. Only use if the type is not blittable, otherwise
+        /// use the read methods for blittable types.
         /// </summary>
         /// <typeparam name="T">Struct type</typeparam>
         /// <param name="ptr">Pointer to marshal</param>
@@ -369,11 +376,21 @@ namespace Assimp
             if(ptr == IntPtr.Zero)
                 value = default(T);
 
-            value = (T) Marshal.PtrToStructure(ptr, typeof(T));
+            Type type = typeof(T);
+
+            INativeCustomMarshaler marshaler;
+            if (HasNativeCustomMarshaler(type, out marshaler))
+            {
+                value = (T)marshaler.MarshalNativeToManaged(ptr);
+                return;
+            }
+
+            value = (T) Marshal.PtrToStructure(ptr, type);
         }
 
         /// <summary>
-        /// Convienence method for marshaling a pointer to a structure.
+        /// Convienence method for marshaling a pointer to a structure. Only use if the type is not blittable, otherwise
+        /// use the read methods for blittable types.
         /// </summary>
         /// <typeparam name="T">Struct type</typeparam>
         /// <param name="ptr">Pointer to marshal</param>
@@ -383,30 +400,86 @@ namespace Assimp
             if(ptr == IntPtr.Zero)
                 return default(T);
 
-            return (T) Marshal.PtrToStructure(ptr, typeof(T));
+            Type type = typeof(T);
+
+            INativeCustomMarshaler marshaler;
+            if (HasNativeCustomMarshaler(type, out marshaler))
+                return (T) marshaler.MarshalNativeToManaged(ptr);
+
+            return (T) Marshal.PtrToStructure(ptr, type);
         }
 
         /// <summary>
-        /// Computes the size of the struct type using Marshal SizeOf. Required for any struct that requires
-        /// marshaling by the runtime (e.g. has MarshalAs attributes).
+        /// Convienence method for marshaling a structure to a pointer. Only use if the type is not blittable,
+        /// otherwise use the write methods for blittable types.
+        /// </summary>
+        /// <typeparam name="T">Struct type</typeparam>
+        /// <param name="value">Struct to marshal</param>
+        /// <param name="ptr">Pointer to unmanaged chunk of memory which must be allocated prior to this call</param>
+        public static void MarshalPointer<T>(T value, IntPtr ptr) where T : struct
+        {
+            if (ptr == IntPtr.Zero)
+                return;
+
+            INativeCustomMarshaler marshaler;
+            if (HasNativeCustomMarshaler(typeof(T), out marshaler))
+            {
+                marshaler.MarshalManagedToNative((Object)value, ptr);
+                return;
+            }
+
+            Marshal.StructureToPtr((Object)value, ptr, true);
+        }
+
+        /// <summary>
+        /// Convienence method for marshaling a structure to a pointer. Only use if the type is not blittable, otherwise
+        /// use the write methods for blittable types.
+        /// </summary>
+        /// <typeparam name="T">Struct type</typeparam>
+        /// <param name="value">Struct to marshal</param>
+        /// <param name="ptr">Pointer to unmanaged chunk of memory which must be allocated prior to this call</param>
+        public static void MarshalPointer<T>(ref T value, IntPtr ptr) where T : struct
+        {
+            if (ptr == IntPtr.Zero)
+                return;
+
+            INativeCustomMarshaler marshaler;
+            if (HasNativeCustomMarshaler(typeof(T), out marshaler))
+            {
+                marshaler.MarshalManagedToNative((Object)value, ptr);
+                return;
+            }
+
+            Marshal.StructureToPtr((Object)value, ptr, true);
+        }
+
+        /// <summary>
+        /// Computes the size of the struct type using Marshal SizeOf. Only use if the type is not blittable, thus requiring marshaling by the runtime,
+        /// (e.g. has MarshalAs attributes), otherwise use the SizeOf methods for blittable types.
         /// </summary>
         /// <typeparam name="T">Struct type</typeparam>
         /// <returns>Size of the struct in bytes.</returns>
         public static unsafe int MarshalSizeOf<T>() where T : struct
         {
-            return Marshal.SizeOf(typeof(T));
+            Type type = typeof(T);
+
+            INativeCustomMarshaler marshaler;
+            if (HasNativeCustomMarshaler(type, out marshaler))
+                return marshaler.NativeDataSize;
+
+            return Marshal.SizeOf(type);
         }
 
         /// <summary>
-        /// Computes the size of the struct array using Marshal SizeOf. Required for any struct that requires
-        /// marshaling by the runtime (e.g. has MarshalAs attributes).
+        /// Computes the size of the struct array using Marshal SizeOf. Only use if the type is not blittable, thus requiring marshaling by the runtime,
+        /// (e.g. has MarshalAs attributes), otherwise use the SizeOf methods for blittable types.
         /// </summary>
         /// <typeparam name="T">Struct type</typeparam>
         /// <param name="array">Array of structs</param>
         /// <returns>Total size, in bytes, of the array's contents.</returns>
         public static int MarshalSizeOf<T>(T[] array) where T : struct
-        {
-            return array == null ? 0 : array.Length * Marshal.SizeOf(typeof(T));
+        { 
+            return array == null ? 0 : array.Length * MarshalSizeOf<T>();
         }
 
         #endregion
@@ -468,8 +541,8 @@ namespace Assimp
         }
 
         /// <summary>
-        /// Computes the size of the struct type. Not safe if any fields have a MarshalAs attribute, use
-        /// <see cref="MarshalSizeOf{T}()"/> instead.
+        /// Computes the size of the struct type. Only use if the type is blittable, where marshaling by the runtime is NOT required
+        /// (e.g. does not have MarshalAs attributes and can have its raw bytes copied), otherwise use the Marshal SizeOf methods for non-blittable types.
         /// </summary>
         /// <typeparam name="T">Struct type</typeparam>
         /// <returns>Size of the struct in bytes.</returns>
@@ -479,8 +552,8 @@ namespace Assimp
         }
 
         /// <summary>
-        /// Computes the size of the struct array. Not safe if any fields have a MarshalAs attribute, use
-        /// <see cref="MarshalSizeOf{T}()"/> instead.
+        /// Computes the size of the struct array. Only use if the type is blittable, where marshaling by the runtime is NOT required
+        /// (e.g. does not have MarshalAs attributes and can have its raw bytes copied), otherwise use the Marshal SizeOf methods for non-blittable types.
         /// </summary>
         /// <typeparam name="T">Struct type</typeparam>
         /// <param name="array">Array of structs</param>
@@ -661,6 +734,40 @@ namespace Assimp
             }
 
             return false;
+        }
+
+        //Helper for getting a native custom marshaler
+        private static bool HasNativeCustomMarshaler(Type type, out INativeCustomMarshaler marshaler)
+        {
+            marshaler = null;
+
+            if (type == null)
+                return false;
+
+            if (!s_customMarshalers.TryGetValue(type, out marshaler))
+            {
+                Object[] customAttributes = type.GetCustomAttributes(typeof(NativeCustomMarshalerAttribute), false);
+                if (customAttributes.Length != 0)
+                    marshaler = (customAttributes[0] as NativeCustomMarshalerAttribute).Marshaler;
+
+                s_customMarshalers.Add(type, marshaler);
+            }
+
+            return marshaler != null;
+        }
+
+        //Helper for preloading all struct types in the library with their marshaler or with no marshaler
+        private static void PreloadMarshalerTypes()
+        {
+            Assembly assembly = Assembly.GetAssembly(typeof(MemoryHelper));
+            foreach (Type type in assembly.GetTypes())
+            {
+                if (type.IsValueType && !type.IsEnum)
+                {
+                    INativeCustomMarshaler marshaler;
+                    HasNativeCustomMarshaler(type, out marshaler);
+                }
+            }
         }
 
         #endregion

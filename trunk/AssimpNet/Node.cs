@@ -286,6 +286,9 @@ namespace Assimp
 
         #region IMarshalable Implemention
 
+        /// <summary>
+        /// Gets a value indicating whether this instance is native blittable.
+        /// </summary>
         bool IMarshalable<Node, AiNode>.IsNativeBlittable
         {
             get { return true; }

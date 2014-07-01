@@ -33,7 +33,6 @@ namespace Assimp
         where Managed : class, new()
         where Native : struct
     {
-
         /// <summary>
         /// Gets if the native value type is blittable (that is, does not require marshaling by the runtime, e.g. has MarshalAs attributes).
         /// </summary>
@@ -51,5 +50,32 @@ namespace Assimp
         /// </summary>
         /// <param name="nativeValue">Input native value</param>
         void FromNative(ref Native nativeValue);
+    }
+
+    /// <summary>
+    /// Custom marshaler for usage with the <see cref="MemoryHelper"/> for performing marshaling
+    /// to-and-from unmanaged memory for non-blittable types. A type must be attributed with <see cref="NativeCustomMarshalerAttribute"/>
+    /// to automatically have an instance of its marshaler be utilized.
+    /// </summary>
+    public interface INativeCustomMarshaler
+    {
+        /// <summary>
+        /// Gets the native data size in bytes.
+        /// </summary>
+        int NativeDataSize { get; }
+
+        /// <summary>
+        /// Marshals the managed object to the unmanaged chunk of memory.
+        /// </summary>
+        /// <param name="managedObj">Managed object to marshal.</param>
+        /// <param name="nativeData">Unmanaged chunk of memory to write to.</param>
+        void MarshalManagedToNative(Object managedObj, IntPtr nativeData);
+
+        /// <summary>
+        /// Marshals the managed object from the unmanaged chunk of memory.
+        /// </summary>
+        /// <param name="nativeData">Unmanaged chunk of memory to read from.</param>
+        /// <returns>Managed object marshaled.</returns>
+        Object MarshalNativeToManaged(IntPtr nativeData);
     }
 }
