@@ -73,6 +73,7 @@
     <Compile Include="Color3D.cs" />
     <Compile Include="Color4D.cs" />
     <Compile Include="Configs\PropertyConfig.cs" />
+    <Compile Include="NativeMarshalerAttribute.cs" />
     <Compile Include="FileIOSystem.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="ExportDataBlob.cs" />
@@ -96,6 +97,7 @@
     <Compile Include="TextureSlot.cs" />
     <Compile Include="Unmanaged\AiMatKeys.cs" />
     <Compile Include="Unmanaged\AssimpLibrary.cs" />
+    <Compile Include="Unmanaged\NativeCustomMarshalers.cs" />
     <Compile Include="UVTransform.cs" />
     <Compile Include="VectorKey.cs" />
     <Compile Include="Light.cs" />
