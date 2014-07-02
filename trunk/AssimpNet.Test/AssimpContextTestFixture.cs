@@ -59,6 +59,20 @@ namespace Assimp.Test
         }
 
         [Test]
+        public void TestImportExportImportFile()
+        {
+            String colladaPath = Path.Combine(TestHelper.RootPath, "TestFiles\\duck.dae");
+            String plyPath = Path.Combine(TestHelper.RootPath, "TestFiles\\duck2.dae");
+
+            AssimpContext context = new AssimpContext();
+            Scene ducky = context.ImportFile(colladaPath);
+            context.ExportFile(ducky, plyPath, "collada");
+
+            Scene ducky2 = context.ImportFile(plyPath);
+            Assert.IsNotNull(ducky2);
+        }
+
+        [Test]
         public void TestExportToFile()
         {
             String path = Path.Combine(TestHelper.RootPath, "TestFiles\\ExportedTriangle.obj");

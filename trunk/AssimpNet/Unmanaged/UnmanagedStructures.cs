@@ -201,7 +201,6 @@ namespace Assimp.Unmanaged
     /// <summary>
     /// Represents an aiMesh struct. Note: This structure requires marshaling, due to the arrays of IntPtrs.
     /// </summary>
-    [NativeCustomMarshaler(typeof(AiMeshMarshaler))]
     [StructLayout(LayoutKind.Sequential)]
     [CLSCompliant(false)]
     public struct AiMesh
@@ -243,24 +242,21 @@ namespace Assimp.Unmanaged
         public IntPtr BiTangents;
 
         /// <summary>
-        /// aiColor*[Max_Value], array of arrays of vertex colors. Max_Value is a defined constant.
+        /// aiColor4D*[Max_Value], array of arrays of vertex colors. Max_Value is defined as <see cref="AiDefines.AI_MAX_NUMBER_OF_COLOR_SETS"/>.
         /// </summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = AiDefines.AI_MAX_NUMBER_OF_COLOR_SETS, ArraySubType = UnmanagedType.SysUInt)]
-        public IntPtr[] Colors;
+        public AiMeshColorArray Colors;
 
         /// <summary>
-        /// aiColor*[Max_Value], array of arrays of texture coordinates. Max_Value is a defined constant.
+        /// aiVector3D*[Max_Value], array of arrays of texture coordinates. Max_Value is defined as <see cref="AiDefines.AI_MAX_NUMBER_OF_TEXTURECOORDS"/>.
         /// </summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = AiDefines.AI_MAX_NUMBER_OF_TEXTURECOORDS, ArraySubType = UnmanagedType.SysUInt)]
-        public IntPtr[] TextureCoords;
+        public AiMeshTextureCoordinateArray TextureCoords;
 
         /// <summary>
         /// unsigned int[Max_Value], array of ints denoting the number of components for each set of texture coordinates - UV (2), UVW (3) for example.
-        /// Max_Value is a defined constant.
+        /// Max_Value is defined as <see cref="AiDefines.AI_MAX_NUMBER_OF_TEXTURECOORDS"/>.
         /// </summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = AiDefines.AI_MAX_NUMBER_OF_TEXTURECOORDS, ArraySubType = UnmanagedType.U4)]
-        public uint[] NumUVComponents;
-
+        public AiMeshUVComponentArray NumUVComponents;
+ 
         /// <summary>
         /// aiFace*, array of faces.
         /// </summary>
@@ -881,7 +877,6 @@ namespace Assimp.Unmanaged
     /// <summary>
     /// Represents an aiAnimMesh struct. Note: This structure requires marshaling, due to the array of IntPtrs.
     /// </summary>
-    [NativeCustomMarshaler(typeof(AiAnimMeshMarshaler))]
     [StructLayout(LayoutKind.Sequential)]
     [CLSCompliant(false)]
     public struct AiAnimMesh
@@ -907,16 +902,14 @@ namespace Assimp.Unmanaged
         public IntPtr BiTangents;
 
         /// <summary>
-        /// aiColor4D*[4], replacement vertex colors.
+        /// aiColor4D*[Max_Value], array of arrays of vertex colors. Max_Value is defined as <see cref="AiDefines.AI_MAX_NUMBER_OF_COLOR_SETS"/>.
         /// </summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = AiDefines.AI_MAX_NUMBER_OF_COLOR_SETS, ArraySubType = UnmanagedType.SysUInt)]
-        public IntPtr[] Colors;
+        public AiMeshColorArray Colors;
 
         /// <summary>
-        /// aiVector3D*[4], replacement texture coordinates.
+        /// aiVector3D*[Max_Value], array of arrays of texture coordinates. Max_Value is defined as <see cref="AiDefines.AI_MAX_NUMBER_OF_TEXTURECOORDS"/>.
         /// </summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = AiDefines.AI_MAX_NUMBER_OF_TEXTURECOORDS, ArraySubType = UnmanagedType.SysUInt)]
-        public IntPtr[] TextureCoords;
+        public AiMeshTextureCoordinateArray TextureCoords;
 
         /// <summary>
         /// unsigned int, number of vertices.
@@ -932,7 +925,7 @@ namespace Assimp.Unmanaged
     public struct AiExportFormatDesc
     {
         /// <summary>
-        /// char*, a short string ID to uniquely identify the export format. e.g. "dae" or "obj"
+        /// char*, a short string ID to uniquely identify the export format. e.g. "collada" or "obj"
         /// </summary>
         public IntPtr FormatId;
 
@@ -1125,6 +1118,265 @@ namespace Assimp.Unmanaged
     [CLSCompliant(false)]
     public delegate void AiFileCloseProc(IntPtr fileIO, IntPtr file);
 
+
+    #endregion
+
+    #region Collections
+
+    /// <summary>
+    /// Fixed length array for representing the color channels of a mesh. Length is equal
+    /// to <see cref="AiDefines.AI_MAX_NUMBER_OF_COLOR_SETS"/>.
+    /// </summary>
+    [StructLayout(LayoutKind.Sequential)]
+    [CLSCompliant(false)]
+    public unsafe struct AiMeshColorArray
+    {
+        //No fixed size intptrs
+        private IntPtr m_ptr0, m_ptr1, m_ptr2, m_ptr3, m_ptr4, m_ptr5, m_ptr6, m_ptr7;
+
+        /// <summary>
+        /// Gets the length of the array.
+        /// </summary>
+        public int Length
+        {
+            get
+            {
+                return AiDefines.AI_MAX_NUMBER_OF_COLOR_SETS;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets an array value at the specified index.
+        /// </summary>
+        /// <param name="index">Zero-based index.</param>
+        public IntPtr this[int index]
+        {
+            get
+            {
+                switch(index)
+                {
+                    case 0:
+                        return m_ptr0;
+                    case 1:
+                        return m_ptr1;
+                    case 2:
+                        return m_ptr2;
+                    case 3:
+                        return m_ptr3;
+                    case 4:
+                        return m_ptr4;
+                    case 5:
+                        return m_ptr5;
+                    case 6:
+                        return m_ptr6;
+                    case 7:
+                        return m_ptr7;
+                    default:
+                        return IntPtr.Zero;
+                }
+            }
+            set
+            {
+                switch(index)
+                {
+                    case 0:
+                        m_ptr0 = value;
+                        break;
+                    case 1:
+                        m_ptr1 = value;
+                        break;
+                    case 2:
+                        m_ptr2 = value;
+                        break;
+                    case 3:
+                        m_ptr3 = value;
+                        break;
+                    case 4:
+                        m_ptr4 = value;
+                        break;
+                    case 5:
+                        m_ptr5 = value;
+                        break;
+                    case 6:
+                        m_ptr6 = value;
+                        break;
+                    case 7:
+                        m_ptr7 = value;
+                        break;
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Fixed length array for representing the texture coordinate channels of a mesh. Length is equal
+    /// to <see cref="AiDefines.AI_MAX_NUMBER_OF_TEXTURECOORDS"/>.
+    /// </summary>
+    [StructLayout(LayoutKind.Sequential)]
+    [CLSCompliant(false)]
+    public unsafe struct AiMeshTextureCoordinateArray
+    {
+        //No fixed size intptrs
+        private IntPtr m_ptr0, m_ptr1, m_ptr2, m_ptr3, m_ptr4, m_ptr5, m_ptr6, m_ptr7;
+
+        /// <summary>
+        /// Gets the length of the array.
+        /// </summary>
+        public int Length
+        {
+            get
+            {
+                return AiDefines.AI_MAX_NUMBER_OF_TEXTURECOORDS;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets an array value at the specified index.
+        /// </summary>
+        /// <param name="index">Zero-based index.</param>
+        public IntPtr this[int index]
+        {
+            get
+            {
+                switch(index)
+                {
+                    case 0:
+                        return m_ptr0;
+                    case 1:
+                        return m_ptr1;
+                    case 2:
+                        return m_ptr2;
+                    case 3:
+                        return m_ptr3;
+                    case 4:
+                        return m_ptr4;
+                    case 5:
+                        return m_ptr5;
+                    case 6:
+                        return m_ptr6;
+                    case 7:
+                        return m_ptr7;
+                    default:
+                        return IntPtr.Zero;
+                }
+            }
+            set
+            {
+                switch(index)
+                {
+                    case 0:
+                        m_ptr0 = value;
+                        break;
+                    case 1:
+                        m_ptr1 = value;
+                        break;
+                    case 2:
+                        m_ptr2 = value;
+                        break;
+                    case 3:
+                        m_ptr3 = value;
+                        break;
+                    case 4:
+                        m_ptr4 = value;
+                        break;
+                    case 5:
+                        m_ptr5 = value;
+                        break;
+                    case 6:
+                        m_ptr6 = value;
+                        break;
+                    case 7:
+                        m_ptr7 = value;
+                        break;
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Fixed length array for representing the number of UV components for each texture coordinate channel of a mesh. Length is equal
+    /// to <see cref="AiDefines.AI_MAX_NUMBER_OF_TEXTURECOORDS"/>.
+    /// </summary>
+    [StructLayout(LayoutKind.Sequential)]
+    [CLSCompliant(false)]
+    public struct AiMeshUVComponentArray
+    {
+        //Could use fixed size array here, but have an inkling that constantly fixing for each indexer operation might be burdensome
+        private uint m_uvw0, m_uvw1, m_uvw2, m_uvw3, m_uvw4, m_uvw5, m_uvw6, m_uvw7;
+
+        /// <summary>
+        /// Gets the length of the array.
+        /// </summary>
+        public int Length
+        {
+            get
+            {
+                return AiDefines.AI_MAX_NUMBER_OF_TEXTURECOORDS;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets an array value at the specified index.
+        /// </summary>
+        /// <param name="index">Zero-based index.</param>
+        public uint this[int index]
+        {
+            get
+            {
+                switch(index)
+                {
+                    case 0:
+                        return m_uvw0;
+                    case 1:
+                        return m_uvw1;
+                    case 2:
+                        return m_uvw2;
+                    case 3:
+                        return m_uvw3;
+                    case 4:
+                        return m_uvw4;
+                    case 5:
+                        return m_uvw5;
+                    case 6:
+                        return m_uvw6;
+                    case 7:
+                        return m_uvw7;
+                    default:
+                        return 0;
+                }
+            }
+            set
+            {
+                switch(index)
+                {
+                    case 0:
+                        m_uvw0 = value;
+                        break;
+                    case 1:
+                        m_uvw1 = value;
+                        break;
+                    case 2:
+                        m_uvw2 = value;
+                        break;
+                    case 3:
+                        m_uvw3 = value;
+                        break;
+                    case 4:
+                        m_uvw4 = value;
+                        break;
+                    case 5:
+                        m_uvw5 = value;
+                        break;
+                    case 6:
+                        m_uvw6 = value;
+                        break;
+                    case 7:
+                        m_uvw7 = value;
+                        break;
+                }
+            }
+        }
+    }
 
     #endregion
 }

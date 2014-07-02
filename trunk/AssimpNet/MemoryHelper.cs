@@ -40,13 +40,7 @@ namespace Assimp
     /// </summary>
     public static class MemoryHelper
     {
-        private static Dictionary<Type, INativeCustomMarshaler> s_customMarshalers;
-
-        static MemoryHelper()
-        {
-            s_customMarshalers = new Dictionary<Type, INativeCustomMarshaler>();
-            PreloadMarshalerTypes();
-        }
+        private static Dictionary<Type, INativeCustomMarshaler> s_customMarshalers = new Dictionary<Type, INativeCustomMarshaler>();
 
         #region Marshaling Interop
 
@@ -754,20 +748,6 @@ namespace Assimp
             }
 
             return marshaler != null;
-        }
-
-        //Helper for preloading all struct types in the library with their marshaler or with no marshaler
-        private static void PreloadMarshalerTypes()
-        {
-            Assembly assembly = Assembly.GetAssembly(typeof(MemoryHelper));
-            foreach (Type type in assembly.GetTypes())
-            {
-                if (type.IsValueType && !type.IsEnum)
-                {
-                    INativeCustomMarshaler marshaler;
-                    HasNativeCustomMarshaler(type, out marshaler);
-                }
-            }
         }
 
         #endregion

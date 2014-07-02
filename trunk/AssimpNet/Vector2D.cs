@@ -262,7 +262,7 @@ namespace Assimp
         }
 
         /// <summary>
-        /// Tets equality between two vectors.
+        /// Tests equality between two vectors.
         /// </summary>
         /// <param name="a">First vector</param>
         /// <param name="b">Second vector</param>

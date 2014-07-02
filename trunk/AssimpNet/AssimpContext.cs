@@ -32,7 +32,7 @@ namespace Assimp
     /// Represents an Assimp Import/Export context that load or save models using the unmanaged library. Additionally, conversion
     /// functionality is offered to bypass loading model data into managed memory.
     /// </summary>
-    public class AssimpContext : IDisposable
+    public sealed class AssimpContext : IDisposable
     {
         private bool m_isDisposed;
         private Dictionary<String, PropertyConfig> m_configs;
@@ -928,7 +928,7 @@ namespace Assimp
         /// Releases unmanaged and - optionally - managed resources
         /// </summary>
         /// <param name="disposing">True to release both managed and unmanaged resources; False to release only unmanaged resources.</param>
-        protected void Dispose(bool disposing)
+        private void Dispose(bool disposing)
         {
             if(!m_isDisposed)
             {
@@ -937,6 +937,7 @@ namespace Assimp
                     if(UsingCustomIOSystem)
                         m_ioSystem.Dispose();
                 }
+
                 m_isDisposed = true;
             }
         }

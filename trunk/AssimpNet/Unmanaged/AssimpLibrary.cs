@@ -314,7 +314,7 @@ namespace Assimp.Unmanaged
         {
             LoadIfNotLoaded();
 
-            int count = m_impl.GetFunction<AssimpDelegates.aiGetExportFormatCount>(AssimpFunctionNames.aiGetExportFormatCount)().ToInt32();
+            int count = (int) m_impl.GetFunction<AssimpDelegates.aiGetExportFormatCount>(AssimpFunctionNames.aiGetExportFormatCount)().ToUInt32();
 
             if(count == 0)
                 return new ExportFormatDescription[0];
@@ -325,8 +325,8 @@ namespace Assimp.Unmanaged
 
             for(int i = 0; i < count; i++)
             {
-                IntPtr formatDescPtr = func(new IntPtr(i));
-                if(formatDescPtr != null)
+                IntPtr formatDescPtr = func(new UIntPtr((uint)i));
+                if(formatDescPtr != IntPtr.Zero)
                 {
                     AiExportFormatDesc desc = MemoryHelper.Read<AiExportFormatDesc>(formatDescPtr);
                     descriptions[i] = new ExportFormatDescription(ref desc);
@@ -1296,10 +1296,10 @@ namespace Assimp.Unmanaged
         #region Export Delegates
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl), AssimpFunctionName(AssimpFunctionNames.aiGetExportFormatCount)]
-        public delegate IntPtr aiGetExportFormatCount();
+        public delegate UIntPtr aiGetExportFormatCount();
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl), AssimpFunctionName(AssimpFunctionNames.aiGetExportFormatDescription)]
-        public delegate IntPtr aiGetExportFormatDescription(IntPtr index);
+        public delegate IntPtr aiGetExportFormatDescription(UIntPtr index);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl), AssimpFunctionName(AssimpFunctionNames.aiExportSceneToBlob)]
         public delegate IntPtr aiExportSceneToBlob(IntPtr scene, [In, MarshalAs(UnmanagedType.LPStr)] String formatId, uint preProcessing);
