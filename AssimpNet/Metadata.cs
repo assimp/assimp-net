@@ -31,6 +31,7 @@ namespace Assimp
     /// <summary>
     /// Represents a container for holding metadata, representing as key-value pairs.
     /// </summary>
+    [Serializable]
     public sealed class Metadata : Dictionary<String, Metadata.Entry>, IMarshalable<Metadata, AiMetadata>
     {
         /// <summary>
@@ -233,6 +234,28 @@ namespace Assimp
             {
                 m_dataType = dataType;
                 m_data = data;
+            }
+
+            /// <summary>
+            /// Tests equality between two entries.
+            /// </summary>
+            /// <param name="a">First entry</param>
+            /// <param name="b">Second entry</param>
+            /// <returns>True if the entries are equal, false otherwise</returns>
+            public static bool operator ==(Entry a, Entry b)
+            {
+                return a.Equals(b);
+            }
+
+            /// <summary>
+            /// Tests inequality between two entries.
+            /// </summary>
+            /// <param name="a">First entry</param>
+            /// <param name="b">Second entry</param>
+            /// <returns>True if the entries are not equal, false otherwise</returns>
+            public static bool operator !=(Entry a, Entry b)
+            {
+                return !a.Equals(b);
             }
 
             /// <summary>

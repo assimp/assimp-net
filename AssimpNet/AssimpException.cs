@@ -27,6 +27,7 @@ namespace Assimp
     /// <summary>
     /// AssimpNet general exception.
     /// </summary>
+    [Serializable]
     public class AssimpException : Exception
     {
 

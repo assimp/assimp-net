@@ -306,7 +306,7 @@ namespace Assimp
         /// </summary>
         bool IMarshalable<MeshAnimationAttachment, AiAnimMesh>.IsNativeBlittable
         {
-            get { return false; }
+            get { return true; }
         }
 
         /// <summary>
@@ -320,8 +320,8 @@ namespace Assimp
             nativeValue.Normals = IntPtr.Zero;
             nativeValue.Tangents = IntPtr.Zero;
             nativeValue.BiTangents = IntPtr.Zero;
-            nativeValue.Colors = new IntPtr[AiDefines.AI_MAX_NUMBER_OF_COLOR_SETS];
-            nativeValue.TextureCoords = new IntPtr[AiDefines.AI_MAX_NUMBER_OF_TEXTURECOORDS];
+            nativeValue.Colors = new AiMeshColorArray();
+            nativeValue.TextureCoords = new AiMeshTextureCoordinateArray();
             nativeValue.NumVertices = (uint) VertexCount;
 
             if(VertexCount > 0)
@@ -399,31 +399,21 @@ namespace Assimp
                     m_bitangents.AddRange(MemoryHelper.FromNativeArray<Vector3D>(nativeValue.BiTangents, vertexCount));
 
                 //Vertex Color channels
-                IntPtr[] colors = nativeValue.Colors;
-
-                if(colors != null)
+                for(int i = 0; i < nativeValue.Colors.Length; i++)
                 {
-                    for(int i = 0; i < colors.Length; i++)
-                    {
-                        IntPtr colorPtr = colors[i];
+                    IntPtr colorPtr = nativeValue.Colors[i];
 
-                        if(colorPtr != IntPtr.Zero)
-                            m_colors[i].AddRange(MemoryHelper.FromNativeArray<Color4D>(colorPtr, vertexCount));
-                    }
+                    if(colorPtr != IntPtr.Zero)
+                        m_colors[i].AddRange(MemoryHelper.FromNativeArray<Color4D>(colorPtr, vertexCount));
                 }
 
                 //Texture coordinate channels
-                IntPtr[] texCoords = nativeValue.TextureCoords;
-
-                if(texCoords != null)
+                for(int i = 0; i < nativeValue.TextureCoords.Length; i++)
                 {
-                    for(int i = 0; i < texCoords.Length; i++)
-                    {
-                        IntPtr texCoordsPtr = texCoords[i];
+                    IntPtr texCoordsPtr = nativeValue.TextureCoords[i];
 
-                        if(texCoordsPtr != IntPtr.Zero)
-                            m_texCoords[i].AddRange(MemoryHelper.FromNativeArray<Vector3D>(texCoordsPtr, vertexCount));
-                    }
+                    if(texCoordsPtr != IntPtr.Zero)
+                        m_texCoords[i].AddRange(MemoryHelper.FromNativeArray<Vector3D>(texCoordsPtr, vertexCount));
                 }
             }
         }
@@ -438,48 +428,38 @@ namespace Assimp
             if(nativeValue == IntPtr.Zero)
                 return;
 
-            AiMesh aiMesh = MemoryHelper.MarshalStructure<AiMesh>(nativeValue);
+            AiAnimMesh aiAnimMesh = MemoryHelper.Read<AiAnimMesh>(nativeValue);
 
-            if(aiMesh.NumVertices > 0)
+            if(aiAnimMesh.NumVertices > 0)
             {
-                if(aiMesh.Vertices != IntPtr.Zero)
-                    MemoryHelper.FreeMemory(aiMesh.Vertices);
+                if(aiAnimMesh.Vertices != IntPtr.Zero)
+                    MemoryHelper.FreeMemory(aiAnimMesh.Vertices);
 
-                if(aiMesh.Normals != IntPtr.Zero)
-                    MemoryHelper.FreeMemory(aiMesh.Normals);
+                if(aiAnimMesh.Normals != IntPtr.Zero)
+                    MemoryHelper.FreeMemory(aiAnimMesh.Normals);
 
-                if(aiMesh.Tangents != IntPtr.Zero)
-                    MemoryHelper.FreeMemory(aiMesh.Tangents);
+                if(aiAnimMesh.Tangents != IntPtr.Zero)
+                    MemoryHelper.FreeMemory(aiAnimMesh.Tangents);
 
-                if(aiMesh.BiTangents != IntPtr.Zero)
-                    MemoryHelper.FreeMemory(aiMesh.BiTangents);
+                if(aiAnimMesh.BiTangents != IntPtr.Zero)
+                    MemoryHelper.FreeMemory(aiAnimMesh.BiTangents);
 
                 //Vertex Color channels
-                IntPtr[] colors = aiMesh.Colors;
-
-                if(colors != null)
+                for(int i = 0; i < aiAnimMesh.Colors.Length; i++)
                 {
-                    for(int i = 0; i < colors.Length; i++)
-                    {
-                        IntPtr colorPtr = colors[i];
+                    IntPtr colorPtr = aiAnimMesh.Colors[i];
 
-                        if(colorPtr != IntPtr.Zero)
-                            MemoryHelper.FreeMemory(colorPtr);
-                    }
+                    if(colorPtr != IntPtr.Zero)
+                        MemoryHelper.FreeMemory(colorPtr);
                 }
 
                 //Texture coordinate channels
-                IntPtr[] texCoords = aiMesh.TextureCoords;
-
-                if(texCoords != null)
+                for(int i = 0; i < aiAnimMesh.TextureCoords.Length; i++)
                 {
-                    for(int i = 0; i < texCoords.Length; i++)
-                    {
-                        IntPtr texCoordsPtr = texCoords[i];
+                    IntPtr texCoordsPtr = aiAnimMesh.TextureCoords[i];
 
-                        if(texCoordsPtr != IntPtr.Zero)
-                            MemoryHelper.FreeMemory(texCoordsPtr);
-                    }
+                    if(texCoordsPtr != IntPtr.Zero)
+                        MemoryHelper.FreeMemory(texCoordsPtr);
                 }
             }
 
