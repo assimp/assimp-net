@@ -79,6 +79,10 @@ namespace Assimp
             m_formatId = Marshal.PtrToStringAnsi(formatDesc.FormatId);
             m_description = Marshal.PtrToStringAnsi(formatDesc.Description);
             m_fileExtension = Marshal.PtrToStringAnsi(formatDesc.FileExtension);
+
+            //Stupid hack, for some reason the formatID for COLLADA format is always messed up
+            if (m_fileExtension == "dae")
+                m_formatId = "collada";
         }
     }
 }
