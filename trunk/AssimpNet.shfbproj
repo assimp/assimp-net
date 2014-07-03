@@ -16,7 +16,7 @@
     <Name>Documentation</Name>
     <!-- SHFB properties -->
     <OutputPath>C:\Users\Nicholas.Woodfield\Documents\Visual Studio 2012\Projects\AssimpNet\Docs\</OutputPath>
-    <HtmlHelpName>AssimpNet Documentation %28June 2014%29</HtmlHelpName>
+    <HtmlHelpName>AssimpNet Documentation %28July 2014%29</HtmlHelpName>
     <Language>en-US</Language>
     <PresentationStyle>VS2013</PresentationStyle>
     <HelpFileVersion>3.1.0.0</HelpFileVersion>
@@ -27,7 +27,7 @@
       <DocumentationSource sourceFile="AssimpNet\bin\Net45-Release\AssimpNet.dll" />
       <DocumentationSource sourceFile="AssimpNet\bin\Net45-Release\AssimpNet.XML" />
     </DocumentationSources>
-    <HelpTitle>AssimpNet Documentation %28June 2014%29</HelpTitle>
+    <HelpTitle>AssimpNet Documentation %28July 2014%29</HelpTitle>
     <CopyrightText>Copyright &amp;#169%3b 2012-2014 AssimpNet - Nicholas Woodfield. All rights reserved.</CopyrightText>
     <NamespaceSummaries>
       <NamespaceSummaryItem name="(global)" isDocumented="False" />
