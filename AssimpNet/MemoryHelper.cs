@@ -569,6 +569,18 @@ namespace Assimp
         }
 
         /// <summary>
+        /// Adds an offset to the pointer, taking into account the pointer alignment.
+        /// </summary>
+        /// <param name="ptr">Pointer.</param>
+        /// <param name="offset">Offset.</param>
+        /// <returns>New pointer</returns>
+        public static IntPtr AddIntPtrAligned(IntPtr ptr, int offset)
+        {
+            int pad = (int) (ptr.ToInt64() % (long) IntPtr.Size);
+            return AddIntPtr(ptr, offset + pad);
+        }
+
+        /// <summary>
         /// Performs a memcopy that copies data from the memory pointed to by the source pointer to the memory pointer by the destination pointer.
         /// </summary>
         /// <param name="pDest">Destination memory location</param>
@@ -625,6 +637,19 @@ namespace Assimp
         }
 
         /// <summary>
+        /// Reads a single element from the memory location, taking into account the alignment.
+        /// </summary>
+        /// <typeparam name="T">Struct type</typeparam>
+        /// <param name="pSrc">Pointer to memory location</param>
+        /// <returns>The read value</returns>
+        public static unsafe T ReadAligned<T>(IntPtr pSrc) where T : struct
+        {
+            int pad = (int) (pSrc.ToInt64() % (long) IntPtr.Size);
+
+            return InternalInterop.ReadInline<T>((void*) AddIntPtr(pSrc, pad));
+        }
+
+        /// <summary>
         /// Writes data from the array to the memory location.
         /// </summary>
         /// <typeparam name="T">Struct type</typeparam>
@@ -646,6 +671,19 @@ namespace Assimp
         public static unsafe void Write<T>(IntPtr pDest, ref T data) where T : struct
         {
             InternalInterop.WriteInline<T>((void*) pDest, ref data);
+        }
+
+        /// <summary>
+        /// Writes a single element to the memory location, taking into account the alignment.
+        /// </summary>
+        /// <typeparam name="T">Struct type</typeparam>
+        /// <param name="pDest">Pointer to memory location</param>
+        /// <param name="data">The value to write</param>
+        public static unsafe void WriteAligned<T>(IntPtr pDest, ref T data) where T : struct
+        {
+            int pad = (int)(pDest.ToInt64() % (long) IntPtr.Size);
+
+            InternalInterop.WriteInline<T>((void*) AddIntPtr(pDest, pad), ref data);
         }
 
         #endregion
