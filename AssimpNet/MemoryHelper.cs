@@ -776,13 +776,16 @@ namespace Assimp
             if (type == null)
                 return false;
 
-            if (!s_customMarshalers.TryGetValue(type, out marshaler))
+            lock(s_customMarshalers)
             {
-                Object[] customAttributes = type.GetCustomAttributes(typeof(NativeCustomMarshalerAttribute), false);
-                if (customAttributes.Length != 0)
-                    marshaler = (customAttributes[0] as NativeCustomMarshalerAttribute).Marshaler;
+                if(!s_customMarshalers.TryGetValue(type, out marshaler))
+                {
+                    Object[] customAttributes = type.GetCustomAttributes(typeof(NativeCustomMarshalerAttribute), false);
+                    if(customAttributes.Length != 0)
+                        marshaler = (customAttributes[0] as NativeCustomMarshalerAttribute).Marshaler;
 
-                s_customMarshalers.Add(type, marshaler);
+                    s_customMarshalers.Add(type, marshaler);
+                }
             }
 
             return marshaler != null;
