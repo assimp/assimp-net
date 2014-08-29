@@ -346,7 +346,7 @@ namespace Assimp
         /// <returns>True if successful, false otherwise</returns>
         public bool SetFloatValue(float value)
         {
-            if(m_type != PropertyType.Float || m_type != PropertyType.Integer)
+            if(m_type != PropertyType.Float && m_type != PropertyType.Integer)
                 return false;
 
             return SetValueAs<float>(value);
@@ -371,7 +371,7 @@ namespace Assimp
         /// <returns>True if successful, false otherwise</returns>
         public bool SetIntegerValue(int value)
         {
-            if(m_type != PropertyType.Float || m_type != PropertyType.Integer)
+            if(m_type != PropertyType.Float && m_type != PropertyType.Integer)
                 return false;
 
             return SetValueAs<int>(value);
@@ -438,7 +438,7 @@ namespace Assimp
         /// <returns>True if successful, otherwise false</returns>
         public bool SetFloatArrayValue(float[] values)
         {
-            if(m_type != PropertyType.Float || m_type != PropertyType.Integer)
+            if(m_type != PropertyType.Float && m_type != PropertyType.Integer)
                 return false;
 
             return SetValueArrayAs<float>(values);
@@ -479,7 +479,7 @@ namespace Assimp
         /// <returns>True if successful, otherwise false</returns>
         public bool SetIntegerArrayValue(int[] values)
         {
-            if(m_type != PropertyType.Float || m_type != PropertyType.Integer)
+            if(m_type != PropertyType.Float && m_type != PropertyType.Integer)
                 return false;
 
             return SetValueArrayAs<int>(values);
