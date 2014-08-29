@@ -246,26 +246,6 @@ namespace Assimp
         }
 
         /// <summary>
-        /// Constructs a new Light.
-        /// </summary>
-        /// <param name="light">Unmanaged AiLight struct</param>
-        internal Light(ref AiLight light)
-        {
-            m_name = light.Name.GetString();
-            m_lightType = light.Type;
-            m_angleInnerCone = light.AngleInnerCone;
-            m_angleOuterCone = light.AngleOuterCone;
-            m_attConstant = light.AttenuationConstant;
-            m_attLinear = light.AttenuationLinear;
-            m_attQuadratic = light.AttenuationQuadratic;
-            m_position = light.Position;
-            m_direction = light.Direction;
-            m_diffuse = light.ColorDiffuse;
-            m_specular = light.ColorSpecular;
-            m_ambient = light.ColorAmbient;
-        }
-
-        /// <summary>
         /// Constructs a new instance of the <see cref="Light"/> class.
         /// </summary>
         public Light()

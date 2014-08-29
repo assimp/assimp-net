@@ -44,7 +44,7 @@ namespace Assimp
         private float m_aspectRatio;
 
         /// <summary>
-        /// Gets the name of the camera. This corresponds to a node in the
+        /// Gets or sets the name of the camera. This corresponds to a node in the
         /// scenegraph with the same name. This node specifies the position of the
         /// camera in the scene hierarchy and can be animated.
         /// </summary>
@@ -54,10 +54,14 @@ namespace Assimp
             {
                 return m_name;
             }
+            set
+            {
+                m_name = value;
+            }
         }
 
         /// <summary>
-        /// Gets the position of the camera relative to the coordinate space defined by
+        /// Gets or sets the position of the camera relative to the coordinate space defined by
         /// the corresponding node. THe default value is 0|0|0.
         /// </summary>
         public Vector3D Position
@@ -66,10 +70,14 @@ namespace Assimp
             {
                 return m_position;
             }
+            set
+            {
+                m_position = value;
+            }
         }
 
         /// <summary>
-        /// Gets the 'up' vector of the camera, relative to the coordinate space defined by the
+        /// Gets or sets the 'up' vector of the camera, relative to the coordinate space defined by the
         /// corresponding node. The 'right' vector of the camera is the cross product of the up
         /// and direction vectors. The default value is 0|1|0.
         /// </summary>
@@ -79,10 +87,14 @@ namespace Assimp
             {
                 return m_up;
             }
+            set
+            {
+                m_up = value;
+            }
         }
 
         /// <summary>
-        /// Gets the viewing direction of the camera, relative to the coordiante space defined by the corresponding node.
+        /// Gets or sets the viewing direction of the camera, relative to the coordinate space defined by the corresponding node.
         /// The default value is 0|0|1.
         /// </summary>
         public Vector3D Direction
@@ -91,10 +103,14 @@ namespace Assimp
             {
                 return m_direction;
             }
+            set
+            {
+                m_direction = value;
+            }
         }
 
         /// <summary>
-        /// Gets the half horizontal field of view angle, in radians. The FoV angle is
+        /// Gets or sets the half horizontal field of view angle, in radians. The FoV angle is
         /// the angle between the center line of the screen and the left or right border. The default
         /// value is 1/4PI.
         /// </summary>
@@ -104,10 +120,14 @@ namespace Assimp
             {
                 return m_fieldOfView;
             }
+            set
+            {
+                m_fieldOfView = value;
+            }
         }
 
         /// <summary>
-        /// Gets the distance of the near clipping plane from the camera. The value may not
+        /// Gets or sets the distance of the near clipping plane from the camera. The value may not
         /// be 0.0f for arithmetic reasons to prevent a division through zero. The default value is 0.1f;
         /// </summary>
         public float ClipPlaneNear
@@ -116,10 +136,14 @@ namespace Assimp
             {
                 return m_clipPlaneNear;
             }
+            set
+            {
+                m_clipPlaneNear = value;
+            }
         }
 
         /// <summary>
-        /// Gets the distance of the far clipping plane from the camera. The far clippling plane must
+        /// Gets or sets the distance of the far clipping plane from the camera. The far clippling plane must
         /// be further than the near clippling plane. The default value is 1000.0f. The ratio between
         /// the near and far plane should not be too large (between 1000 - 10000 should be ok) to avoid
         /// floating-point inaccuracies which can lead to z-fighting.
@@ -130,10 +154,14 @@ namespace Assimp
             {
                 return m_clipPlaneFar;
             }
+            set
+            {
+                m_clipPlaneFar = value;
+            }
         }
 
         /// <summary>
-        /// Gets the screen aspect ratio. This is the ratio between the width and height of the screen. Typical
+        /// Gets or sets the screen aspect ratio. This is the ratio between the width and height of the screen. Typical
         /// values are 4/3, 1/2, or 1/1. This value is 0 if the aspect ratio is not defined in the source file.
         /// The default value is zero.
         /// </summary>
@@ -142,6 +170,10 @@ namespace Assimp
             get
             {
                 return m_aspectRatio;
+            }
+            set
+            {
+                m_aspectRatio = value;
             }
         }
 
