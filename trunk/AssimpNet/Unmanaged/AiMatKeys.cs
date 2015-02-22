@@ -33,6 +33,10 @@ namespace Assimp.Unmanaged
     /// </summary>
     public static class AiMatKeys
     {
+        /// <summary>
+        /// Material name (String)
+        /// </summary>
+        public const String NAME_BASE = "?mat.name";
 
         /// <summary>
         /// Material name (String)
@@ -42,7 +46,17 @@ namespace Assimp.Unmanaged
         /// <summary>
         /// Two sided property (boolean)
         /// </summary>
+        public const String TWOSIDED_BASE = "$mat.twosided";
+
+        /// <summary>
+        /// Two sided property (boolean)
+        /// </summary>
         public const String TWOSIDED = "$mat.twosided,0,0";
+
+        /// <summary>
+        /// Shading mode property (ShadingMode)
+        /// </summary>
+        public const String SHADING_MODEL_BASE = "$mat.shadingm";
 
         /// <summary>
         /// Shading mode property (ShadingMode)
@@ -52,7 +66,17 @@ namespace Assimp.Unmanaged
         /// <summary>
         /// Enable wireframe property (boolean)
         /// </summary>
+        public const String ENABLE_WIREFRAME_BASE = "$mat.wireframe";
+
+        /// <summary>
+        /// Enable wireframe property (boolean)
+        /// </summary>
         public const String ENABLE_WIREFRAME = "$mat.wireframe,0,0";
+
+        /// <summary>
+        /// Blending function (BlendMode)
+        /// </summary>
+        public const String BLEND_FUNC_BASE = "$mat.blend";
 
         /// <summary>
         /// Blending function (BlendMode)
@@ -62,7 +86,17 @@ namespace Assimp.Unmanaged
         /// <summary>
         /// Opacity (float)
         /// </summary>
+        public const String OPACITY_BASE = "$mat.opacity";
+
+        /// <summary>
+        /// Opacity (float)
+        /// </summary>
         public const String OPACITY = "$mat.opacity,0,0";
+
+        /// <summary>
+        /// Bumpscaling (float)
+        /// </summary>
+        public const String BUMPSCALING_BASE = "$mat.bumpscaling";
 
         /// <summary>
         /// Bumpscaling (float)
@@ -72,7 +106,17 @@ namespace Assimp.Unmanaged
         /// <summary>
         /// Shininess (float)
         /// </summary>
+        public const String SHININESS_BASE = "$mat.shininess";
+
+        /// <summary>
+        /// Shininess (float)
+        /// </summary>
         public const String SHININESS = "$mat.shininess,0,0";
+
+        /// <summary>
+        /// Reflectivity (float)
+        /// </summary>
+        public const String REFLECTIVITY_BASE = "$mat.reflectivity";
 
         /// <summary>
         /// Reflectivity (float)
@@ -82,7 +126,17 @@ namespace Assimp.Unmanaged
         /// <summary>
         /// Shininess strength (float)
         /// </summary>
+        public const String SHININESS_STRENGTH_BASE = "$mat.shinpercent";
+
+        /// <summary>
+        /// Shininess strength (float)
+        /// </summary>
         public const String SHININESS_STRENGTH = "$mat.shinpercent,0,0";
+
+        /// <summary>
+        /// Refracti (float)
+        /// </summary>
+        public const String REFRACTI_BASE = "$mat.refracti";
 
         /// <summary>
         /// Refracti (float)
@@ -92,7 +146,17 @@ namespace Assimp.Unmanaged
         /// <summary>
         /// Diffuse color (Color4D)
         /// </summary>
+        public const String COLOR_DIFFUSE_BASE = "$clr.diffuse";
+
+        /// <summary>
+        /// Diffuse color (Color4D)
+        /// </summary>
         public const String COLOR_DIFFUSE = "$clr.diffuse,0,0";
+
+        /// <summary>
+        /// Ambient color (Color4D)
+        /// </summary>
+        public const String COLOR_AMBIENT_BASE = "$clr.ambient";
 
         /// <summary>
         /// Ambient color (Color4D)
@@ -102,7 +166,17 @@ namespace Assimp.Unmanaged
         /// <summary>
         /// Specular color (Color4D)
         /// </summary>
+        public const String COLOR_SPECULAR_BASE = "$clr.specular";
+
+        /// <summary>
+        /// Specular color (Color4D)
+        /// </summary>
         public const String COLOR_SPECULAR = "$clr.specular,0,0";
+
+        /// <summary>
+        /// Emissive color (Color4D)
+        /// </summary>
+        public const String COLOR_EMISSIVE_BASE = "$clr.emissive";
 
         /// <summary>
         /// Emissive color (Color4D)
@@ -112,12 +186,27 @@ namespace Assimp.Unmanaged
         /// <summary>
         /// Transparent color (Color4D)
         /// </summary>
+        public const String COLOR_TRANSPARENT_BASE = "$clr.transparent";
+
+        /// <summary>
+        /// Transparent color (Color4D)
+        /// </summary>
         public const String COLOR_TRANSPARENT = "$clr.transparent,0,0";
 
         /// <summary>
         /// Reflective color (Color4D)
         /// </summary>
+        public const String COLOR_REFLECTIVE_BASE = "$clr.reflective";
+
+        /// <summary>
+        /// Reflective color (Color4D)
+        /// </summary>
         public const String COLOR_REFLECTIVE = "$clr.reflective,0,0";
+
+        /// <summary>
+        /// Background image (String)
+        /// </summary>
+        public const String GLOBAL_BACKGROUND_IMAGE_BASE = "?bg.global";
 
         /// <summary>
         /// Background image (String)
@@ -177,7 +266,7 @@ namespace Assimp.Unmanaged
         /// <summary>
         /// Helper function to get the fully qualified name of a texture property type name. Takes
         /// in a base name constant, a texture type, and a texture index and outputs the name in the format:
-        /// <para>"baseName.TextureType.texIndex"</para>
+        /// <para>"baseName,TextureType,texIndex"</para>
         /// </summary>
         /// <param name="baseName">Base name</param>
         /// <param name="texType">Texture type</param>
@@ -186,6 +275,25 @@ namespace Assimp.Unmanaged
         public static String GetFullTextureName(String baseName, TextureType texType, int texIndex)
         {
             return String.Format("{0},{1},{2}", baseName, (int) texType, texIndex);
+        }
+
+        /// <summary>
+        /// Helper function to get the base name from a fully qualified name of a material property type name. The format
+        /// of such a string is:
+        /// <para>"baseName,TextureType,texIndex"</para>
+        /// </summary>
+        /// <param name="fullyQualifiedName">Fully qualified material property name.</param>
+        /// <returns>Base name of the property type.</returns>
+        public static String GetBaseName(String fullyQualifiedName)
+        {
+            if(String.IsNullOrEmpty(fullyQualifiedName))
+                return String.Empty;
+
+            String[] substrings = fullyQualifiedName.Split(',');
+            if(substrings != null && substrings.Length == 3)
+                return substrings[0];
+
+            return String.Empty;
         }
     }
 }
