@@ -21,6 +21,7 @@
 */
 
 using System;
+using System.Diagnostics;
 using System.Text;
 using Assimp.Unmanaged;
 
@@ -53,6 +54,8 @@ namespace Assimp
             {
                 m_name = value;
                 m_fullQualifiedNameNeedsUpdate = true;
+
+                AssertIsBaseName();
             }
         }
 
@@ -169,162 +172,172 @@ namespace Assimp
         /// <summary>
         /// Constructs a new instance of the <see cref="MaterialProperty"/> class. Constructs a buffer property.
         /// </summary>
-        /// <param name="name">Name of the property</param>
+        /// <param name="baseName">Base name of the property</param>
         /// <param name="buffer">Property value</param>
-        public MaterialProperty(String name, byte[] buffer)
+        public MaterialProperty(String baseName, byte[] buffer)
         {
-            m_name = name;
+            m_name = baseName;
             m_type = PropertyType.Buffer;
             m_texIndex = 0;
             m_texType = TextureType.None;
             m_rawValue = buffer;
+
+            AssertIsBaseName();
         }
 
         /// <summary>
         /// Constructs a new instance of the <see cref="MaterialProperty"/> class. Constructs a float property.
         /// </summary>
-        /// <param name="name">Name of the property</param>
+        /// <param name="baseName">Base name of the property</param>
         /// <param name="value">Property value</param>
-        public MaterialProperty(String name, float value)
+        public MaterialProperty(String baseName, float value)
         {
-            m_name = name;
+            m_name = baseName;
             m_type = PropertyType.Float;
             m_texIndex = 0;
             m_texType = TextureType.None;
             m_rawValue = null;
 
             SetFloatValue(value);
+            AssertIsBaseName();
         }
 
         /// <summary>
         /// Constructs a new instance of the <see cref="MaterialProperty"/> class. Constructs an integer property.
         /// </summary>
-        /// <param name="name">Name of the property</param>
+        /// <param name="baseName">Base name of the property</param>
         /// <param name="value">Property value</param>
-        public MaterialProperty(String name, int value)
+        public MaterialProperty(String baseName, int value)
         {
-            m_name = name;
+            m_name = baseName;
             m_type = PropertyType.Integer;
             m_texIndex = 0;
             m_texType = TextureType.None;
             m_rawValue = null;
 
             SetIntegerValue(value);
+            AssertIsBaseName();
         }
 
         /// <summary>
         /// Constructs a new instance of the <see cref="MaterialProperty"/> class. Constructs a boolean property.
         /// </summary>
-        /// <param name="name">Name of the property</param>
+        /// <param name="baseName">Name of the property</param>
         /// <param name="value">Property value</param>
-        public MaterialProperty(String name, bool value)
+        public MaterialProperty(String baseName, bool value)
         {
-            m_name = name;
+            m_name = baseName;
             m_type = PropertyType.Integer;
             m_texIndex = 0;
             m_texType = TextureType.None;
             m_rawValue = null;
 
             SetBooleanValue(value);
+            AssertIsBaseName();
         }
 
         /// <summary>
         /// Constructs a new instance of the <see cref="MaterialProperty"/> class. Creates a string property.
         /// </summary>
-        /// <param name="name">Name of the property</param>
+        /// <param name="baseName">Base name of the property</param>
         /// <param name="value">Property value</param>
-        public MaterialProperty(String name, String value)
+        public MaterialProperty(String baseName, String value)
         {
-            m_name = name;
+            m_name = baseName;
             m_type = PropertyType.String;
             m_texIndex = 0;
             m_texType = TextureType.None;
             m_rawValue = null;
 
             SetStringValue(value);
+            AssertIsBaseName();
         }
-
 
         /// <summary>
         /// Constructs a new instance of the <see cref="MaterialProperty"/> class. Creates a texture property.
         /// </summary>
-        /// <param name="name">Name of the property</param>
+        /// <param name="baseName">Base name of the property</param>
         /// <param name="value">Property value</param>
         /// <param name="texType">Texture type</param>
         /// <param name="textureIndex">Texture index</param>
-        public MaterialProperty(String name, String value, TextureType texType, int textureIndex)
+        public MaterialProperty(String baseName, String value, TextureType texType, int textureIndex)
         {
-            m_name = name;
+            m_name = baseName;
             m_type = PropertyType.String;
             m_texIndex = textureIndex;
             m_texType = texType;
             m_rawValue = null;
 
             SetStringValue(value);
+            AssertIsBaseName();
         }
 
         /// <summary>
         /// Constructs a new instance of the <see cref="MaterialProperty"/> class. Creates a float array property.
         /// </summary>
-        /// <param name="name">Name of the property</param>
+        /// <param name="baseName">Base name of the property</param>
         /// <param name="values">Property values</param>
-        public MaterialProperty(String name, float[] values)
+        public MaterialProperty(String baseName, float[] values)
         {
-            m_name = name;
+            m_name = baseName;
             m_type = PropertyType.Float;
             m_texIndex = 0;
             m_texType = TextureType.None;
             m_rawValue = null;
 
             SetFloatArrayValue(values);
+            AssertIsBaseName();
         }
 
         /// <summary>
         /// Constructs a new instance of the <see cref="MaterialProperty"/> class. Creates a int array property.
         /// </summary>
-        /// <param name="name">Name of the property</param>
+        /// <param name="baseName">Base name of the property</param>
         /// <param name="values">Property values</param>
-        public MaterialProperty(String name, int[] values)
+        public MaterialProperty(String baseName, int[] values)
         {
-            m_name = name;
+            m_name = baseName;
             m_type = PropertyType.Integer;
             m_texIndex = 0;
             m_texType = TextureType.None;
             m_rawValue = null;
 
             SetIntegerArrayValue(values);
+            AssertIsBaseName();
         }
 
         /// <summary>
         /// Constructs a new instance of the <see cref="MaterialProperty"/> class. Creates a Color3D property.
         /// </summary>
-        /// <param name="name">Name of the property</param>
+        /// <param name="baseName">Base name of the property</param>
         /// <param name="value">Property value</param>
-        public MaterialProperty(String name, Color3D value)
+        public MaterialProperty(String baseName, Color3D value)
         {
-            m_name = name;
+            m_name = baseName;
             m_type = PropertyType.Float;
             m_texIndex = 0;
             m_texType = TextureType.None;
             m_rawValue = null;
 
             SetColor3DValue(value);
+            AssertIsBaseName();
         }
 
         /// <summary>
         /// Constructs a new instance of the <see cref="MaterialProperty"/> class. Creates a Color4D property.
         /// </summary>
-        /// <param name="name">Name of the property</param>
+        /// <param name="baseName">Base name of the property</param>
         /// <param name="value">Property value</param>
-        public MaterialProperty(String name, Color4D value)
+        public MaterialProperty(String baseName, Color4D value)
         {
-            m_name = name;
+            m_name = baseName;
             m_type = PropertyType.Float;
             m_texIndex = 0;
             m_texType = TextureType.None;
             m_rawValue = null;
 
             SetColor4DValue(value);
+            AssertIsBaseName();
         }
 
         /// <summary>
@@ -683,6 +696,12 @@ namespace Assimp
             }
 
             return data;
+        }
+
+        [Conditional("DEBUG")]
+        private void AssertIsBaseName()
+        {
+            Debug.Assert(!m_name.Contains(","));
         }
 
         #region IMarshalable Implementation

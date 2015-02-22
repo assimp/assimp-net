@@ -79,7 +79,7 @@ namespace Assimp
 
                 if(prop == null)
                 {
-                    prop = new MaterialProperty(AiMatKeys.NAME, value);
+                    prop = new MaterialProperty(AiMatKeys.NAME_BASE, value);
                     AddProperty(prop);
                 }
 
@@ -117,7 +117,7 @@ namespace Assimp
 
                 if(prop == null)
                 {
-                    prop = new MaterialProperty(AiMatKeys.TWOSIDED, value);
+                    prop = new MaterialProperty(AiMatKeys.TWOSIDED_BASE, value);
                     AddProperty(prop);
                 }
 
@@ -155,7 +155,7 @@ namespace Assimp
 
                 if(prop == null)
                 {
-                    prop = new MaterialProperty(AiMatKeys.SHADING_MODEL, (int) value);
+                    prop = new MaterialProperty(AiMatKeys.SHADING_MODEL_BASE, (int) value);
                     AddProperty(prop);
                 }
 
@@ -193,7 +193,7 @@ namespace Assimp
 
                 if(prop == null)
                 {
-                    prop = new MaterialProperty(AiMatKeys.ENABLE_WIREFRAME, value);
+                    prop = new MaterialProperty(AiMatKeys.ENABLE_WIREFRAME_BASE, value);
                     AddProperty(prop);
                 }
 
@@ -231,7 +231,7 @@ namespace Assimp
 
                 if(prop == null)
                 {
-                    prop = new MaterialProperty(AiMatKeys.BLEND_FUNC, (int) value);
+                    prop = new MaterialProperty(AiMatKeys.BLEND_FUNC_BASE, (int) value);
                     AddProperty(prop);
                 }
 
@@ -269,7 +269,7 @@ namespace Assimp
 
                 if(prop == null)
                 {
-                    prop = new MaterialProperty(AiMatKeys.OPACITY, value);
+                    prop = new MaterialProperty(AiMatKeys.OPACITY_BASE, value);
                     AddProperty(prop);
                 }
 
@@ -307,7 +307,7 @@ namespace Assimp
 
                 if(prop == null)
                 {
-                    prop = new MaterialProperty(AiMatKeys.BUMPSCALING, value);
+                    prop = new MaterialProperty(AiMatKeys.BUMPSCALING_BASE, value);
                     AddProperty(prop);
                 }
 
@@ -345,7 +345,7 @@ namespace Assimp
 
                 if(prop == null)
                 {
-                    prop = new MaterialProperty(AiMatKeys.SHININESS, value);
+                    prop = new MaterialProperty(AiMatKeys.SHININESS_BASE, value);
                     AddProperty(prop);
                 }
 
@@ -383,7 +383,7 @@ namespace Assimp
 
                 if(prop == null)
                 {
-                    prop = new MaterialProperty(AiMatKeys.SHININESS_STRENGTH, value);
+                    prop = new MaterialProperty(AiMatKeys.SHININESS_STRENGTH_BASE, value);
                     AddProperty(prop);
                 }
 
@@ -422,7 +422,7 @@ namespace Assimp
 
                 if(prop == null)
                 {
-                    prop = new MaterialProperty(AiMatKeys.REFLECTIVITY, value);
+                    prop = new MaterialProperty(AiMatKeys.REFLECTIVITY_BASE, value);
                     AddProperty(prop);
                 }
 
@@ -460,7 +460,7 @@ namespace Assimp
 
                 if(prop == null)
                 {
-                    prop = new MaterialProperty(AiMatKeys.COLOR_DIFFUSE, value);
+                    prop = new MaterialProperty(AiMatKeys.COLOR_DIFFUSE_BASE, value);
                     AddProperty(prop);
                 }
 
@@ -498,7 +498,7 @@ namespace Assimp
 
                 if(prop == null)
                 {
-                    prop = new MaterialProperty(AiMatKeys.COLOR_AMBIENT, value);
+                    prop = new MaterialProperty(AiMatKeys.COLOR_AMBIENT_BASE, value);
                     AddProperty(prop);
                 }
 
@@ -536,7 +536,7 @@ namespace Assimp
 
                 if(prop == null)
                 {
-                    prop = new MaterialProperty(AiMatKeys.COLOR_SPECULAR, value);
+                    prop = new MaterialProperty(AiMatKeys.COLOR_SPECULAR_BASE, value);
                     AddProperty(prop);
                 }
 
@@ -574,7 +574,7 @@ namespace Assimp
 
                 if(prop == null)
                 {
-                    prop = new MaterialProperty(AiMatKeys.COLOR_EMISSIVE, value);
+                    prop = new MaterialProperty(AiMatKeys.COLOR_EMISSIVE_BASE, value);
                     AddProperty(prop);
                 }
 
@@ -612,7 +612,7 @@ namespace Assimp
 
                 if(prop == null)
                 {
-                    prop = new MaterialProperty(AiMatKeys.COLOR_TRANSPARENT, value);
+                    prop = new MaterialProperty(AiMatKeys.COLOR_TRANSPARENT_BASE, value);
                     AddProperty(prop);
                 }
 
@@ -650,7 +650,7 @@ namespace Assimp
 
                 if(prop == null)
                 {
-                    prop = new MaterialProperty(AiMatKeys.COLOR_REFLECTIVE, value);
+                    prop = new MaterialProperty(AiMatKeys.COLOR_REFLECTIVE_BASE, value);
                     AddProperty(prop);
                 }
 
@@ -1227,7 +1227,7 @@ namespace Assimp
             MaterialProperty texNameProp = GetProperty(texName);
 
             if(texNameProp == null)
-                AddProperty(new MaterialProperty(texName, texture.FilePath));
+                AddProperty(new MaterialProperty(AiMatKeys.TEXTURE_BASE, texture.FilePath, texType, texIndex));
             else
                 texNameProp.SetStringValue(texture.FilePath);
 
@@ -1251,37 +1251,37 @@ namespace Assimp
             MaterialProperty texFlagsNameProp = GetProperty(texFlagsName);
 
             if(mappingNameProp == null)
-                AddProperty(new MaterialProperty(mappingName, (int) texture.Mapping));
+                AddProperty(new MaterialProperty(AiMatKeys.MAPPING_BASE, (int) texture.Mapping));
             else
                 mappingNameProp.SetIntegerValue((int) texture.Mapping);
 
             if(uvIndexNameProp == null)
-                AddProperty(new MaterialProperty(uvIndexName, texture.UVIndex));
+                AddProperty(new MaterialProperty(AiMatKeys.MAPPING_BASE, (int) texture.Mapping));
             else
                 uvIndexNameProp.SetIntegerValue(texture.UVIndex);
 
             if(blendFactorNameProp == null)
-                AddProperty(new MaterialProperty(blendFactorName, texture.BlendFactor));
+                AddProperty(new MaterialProperty(AiMatKeys.TEXBLEND_BASE, texture.BlendFactor));
             else
                 blendFactorNameProp.SetFloatValue(texture.BlendFactor);
 
             if(texOpNameProp == null)
-                AddProperty(new MaterialProperty(texOpName, (int) texture.Operation));
+                AddProperty(new MaterialProperty(AiMatKeys.TEXOP_BASE, (int) texture.Operation));
             else
                 texOpNameProp.SetIntegerValue((int) texture.Operation);
 
             if(uMapModeNameProp == null)
-                AddProperty(new MaterialProperty(uMapModeName, (int) texture.WrapModeU));
+                AddProperty(new MaterialProperty(AiMatKeys.MAPPINGMODE_U_BASE, (int) texture.WrapModeU));
             else
                 uMapModeNameProp.SetIntegerValue((int) texture.WrapModeU);
 
             if(vMapModeNameProp == null)
-                AddProperty(new MaterialProperty(vMapModeName, (int) texture.WrapModeV));
+                AddProperty(new MaterialProperty(AiMatKeys.MAPPINGMODE_V_BASE, (int) texture.WrapModeV));
             else
                 vMapModeNameProp.SetIntegerValue((int) texture.WrapModeV);
 
             if(texFlagsNameProp == null)
-                AddProperty(new MaterialProperty(texFlagsName, texture.Flags));
+                AddProperty(new MaterialProperty(AiMatKeys.TEXFLAGS_BASE, texture.Flags));
             else
                 texFlagsNameProp.SetIntegerValue(texture.Flags);
 
