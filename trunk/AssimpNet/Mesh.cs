@@ -528,7 +528,10 @@ namespace Assimp
                         }
                     }
                 }
+
+                return indices.ToArray();
             }
+
             return null;
         }
 
@@ -552,8 +555,10 @@ namespace Assimp
                         }
                     }
                 }
+
                 return indices.ToArray();
             }
+
             return null;
         }
 
