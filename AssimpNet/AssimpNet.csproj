@@ -73,6 +73,7 @@
     <Compile Include="Color3D.cs" />
     <Compile Include="Color4D.cs" />
     <Compile Include="Configs\PropertyConfig.cs" />
+    <Compile Include="ImportFormatDescription.cs" />
     <Compile Include="NativeMarshalerAttribute.cs" />
     <Compile Include="FileIOSystem.cs" />
     <Compile Include="Enums.cs" />

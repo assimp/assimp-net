@@ -946,6 +946,74 @@ namespace Assimp.Unmanaged
     /// </summary>
     [StructLayout(LayoutKind.Sequential)]
     [CLSCompliant(false)]
+    public struct AiImporterDesc
+    {
+        public IntPtr mName;
+
+        /// <summary>
+        /// Original author (left blank if unknown or whole assimp team) 
+        /// </summary>
+        public IntPtr mAuthor;
+
+        /// <summary>
+        /// Current maintainer, left blank if the author maintains
+        /// </summary>
+        public IntPtr mMaintainer;
+
+        /// <summary>
+        /// Implementation comments, i.e. unimplemented features
+        /// </summary>
+        public IntPtr mComments;
+
+        /// <summary>
+        /// These flags indicate some characteristics common to many
+        /// importers. */
+        /// </summary>
+        public uint mFlags;
+
+        /// <summary>
+        /// Minimum format version that can be loaded im major.minor format,
+        /// both are set to 0 if there is either no version scheme 
+        /// or if the loader doesn't care. */
+        /// </summary>
+        public uint mMinMajor;
+        public uint mMinMinor;
+
+        /// <summary>
+        /// Maximum format version that can be loaded im major.minor format,
+        /// both are set to 0 if there is either no version scheme 
+        /// or if the loader doesn't care. Loaders that expect to be
+        /// forward-compatible to potential future format versions should 
+        /// indicate  zero, otherwise they should specify the current
+        /// maximum version.*/
+        public uint mMaxMajor;
+        public uint mMaxMinor;
+
+        /// <summary>
+        /// List of file extensions this importer can handle.
+        /// List entries are separated by space characters.
+        /// All entries are lower case without a leading dot (i.e.
+        /// "xml dae" would be a valid value. Note that multiple
+        /// importers may respond to the same file extension -
+        /// assimp calls all importers in the order in which they
+        /// are registered and each importer gets the opportunity
+        /// to load the file until one importer "claims" the file. Apart
+        /// from file extension checks, importers typically use
+        /// other methods to quickly reject files (i.e. magic
+        /// words) so this does not mean that common or generic
+        /// file extensions such as XML would be tediously slow. */
+        /// </summary>
+        public IntPtr mFileExtensions;
+
+    }
+
+
+    /// <summary>
+    /// Describes a blob of exported scene data. Blobs can be nested, the first blob always has an empty name. Nested
+    /// blobs represent auxillary files produced by the exporter (e.g. material files) and are named accordingly.
+    /// </summary>
+    [StructLayout(LayoutKind.Sequential)]
+    [CLSCompliant(false)]
     public struct AiExportDataBlob
     {
         /// <summary>

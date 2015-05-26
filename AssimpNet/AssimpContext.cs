@@ -40,6 +40,7 @@ namespace Assimp
 
         private ExportFormatDescription[] m_exportFormats;
         private String[] m_importFormats;
+        private ImportFormatDescription[] m_importFormatsDesc;
 
         private float m_scale = 1.0f;
         private float m_xAxisRotation = 0.0f;
@@ -818,6 +819,19 @@ namespace Assimp
                 m_importFormats = AssimpLibrary.Instance.GetExtensionList();
 
             return (String[]) m_importFormats.Clone();
+        }
+
+
+        /// <summary>
+        /// Gets the model formats description that are supported for import by Assimp.
+        /// </summary>
+        /// <returns>Import formats supported</returns>
+        public ImportFormatDescription[] GetSupportedImportDescription()
+        {
+            if (m_importFormatsDesc == null)
+                m_importFormatsDesc = AssimpLibrary.Instance.GetImportFormatDescriptions();
+
+            return (ImportFormatDescription[])m_importFormatsDesc.Clone();
         }
 
         /// <summary>
