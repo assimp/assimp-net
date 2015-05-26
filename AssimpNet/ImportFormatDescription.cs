@@ -142,7 +142,6 @@ namespace Assimp
         /// <param name="formatDesc">Unmanaged structure</param>
         internal ImportFormatDescription(ref AiImporterDesc formatDesc, int id)
         {
-            uint temp;
             m_formatId = id.ToString();
             m_description = Marshal.PtrToStringAnsi(formatDesc.mName);
             m_fileExtension = Marshal.PtrToStringAnsi(formatDesc.mFileExtensions);
