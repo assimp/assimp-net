@@ -302,6 +302,37 @@ namespace Assimp.Unmanaged
             return func(scene, (uint) flags);
         }
 
+
+    	/// <summary>
+        /// Gets all supported import formats.
+        /// </summary>
+        /// <returns>Array of supported import formats.</returns>
+        public ImportFormatDescription[] GetImportFormatDescriptions()
+        {
+            LoadIfNotLoaded();
+
+            int count = (int) m_impl.GetFunction<AssimpDelegates.aiGetImportFormatCount>(AssimpFunctionNames.aiGetImportFormatCount)().ToUInt32();
+
+            if(count == 0)
+                return new ImportFormatDescription[0];
+
+            ImportFormatDescription[] descriptions = new ImportFormatDescription[count];
+
+            AssimpDelegates.aiGetImportFormatDescription func = m_impl.GetFunction<AssimpDelegates.aiGetImportFormatDescription>(AssimpFunctionNames.aiGetImportFormatDescription);
+
+            for(int i = 0; i < count; i++)
+            {
+                IntPtr formatDescPtr = func(new UIntPtr((uint)i));
+                if(formatDescPtr != IntPtr.Zero)
+                {
+                    AiImporterDesc desc = MemoryHelper.Read<AiImporterDesc>(formatDescPtr);
+                    descriptions[i] = new ImportFormatDescription(ref desc, i);
+                }
+            }
+
+            return descriptions;
+        }
+
         #endregion
 
         #region Export Methods
@@ -879,6 +910,19 @@ namespace Assimp.Unmanaged
         }
 
         /// <summary>
+        /// Gets the number of importer types that are currently supported by Assimp
+        /// </summary>
+        /// <returns>Number supported format extensions</returns>
+        public int GetImporterCount()
+        {
+            LoadIfNotLoaded();
+
+            int count = (int) m_impl.GetFunction<AssimpDelegates.aiGetExportFormatCount>(AssimpFunctionNames.aiGetExportFormatCount)().ToUInt32();
+            
+            return count;
+        }
+        
+        /// <summary>
         /// Gets the memory requirements of the scene.
         /// </summary>
         /// <param name="scene">Pointer to the unmanaged scene data structure.</param>
@@ -1180,6 +1224,8 @@ namespace Assimp.Unmanaged
         public const String aiImportFileFromMemoryWithProperties = "aiImportFileFromMemoryWithProperties";
         public const String aiReleaseImport = "aiReleaseImport";
         public const String aiApplyPostProcessing = "aiApplyPostProcessing";
+        public const String aiGetImportFormatCount = "aiGetImportFormatCount";
+        public const String aiGetImportFormatDescription = "aiGetImportFormatDescription";
 
         #endregion
 
@@ -1291,6 +1337,11 @@ namespace Assimp.Unmanaged
         [UnmanagedFunctionPointer(CallingConvention.Cdecl), AssimpFunctionName(AssimpFunctionNames.aiApplyPostProcessing)]
         public delegate IntPtr aiApplyPostProcessing(IntPtr scene, uint Flags);
 
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl), AssimpFunctionName(AssimpFunctionNames.aiGetImportFormatCount)]
+        public delegate UIntPtr aiGetImportFormatCount();
+
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl), AssimpFunctionName(AssimpFunctionNames.aiGetImportFormatDescription)]
+        public delegate IntPtr aiGetImportFormatDescription(UIntPtr index);
         #endregion
 
         #region Export Delegates
