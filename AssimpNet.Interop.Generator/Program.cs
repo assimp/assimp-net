@@ -124,7 +124,13 @@ namespace AssimpNet.Interop.Generator
 
             RemoveInteropClass(assemblyDef);
 
-            assemblyDef.Write(filePath, writerParams);
+            string tempFile = Path.GetTempFileName();
+
+            assemblyDef.Write(tempFile, writerParams);
+            assemblyDef.Dispose();
+
+            File.Delete(filePath);
+            File.Copy(tempFile, filePath);
 
             Console.WriteLine("Interop Generation complete.");
         }
