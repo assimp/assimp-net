@@ -588,6 +588,10 @@ namespace Assimp.Unmanaged
         /// aiMeshAnim**, mesh animation channels. Each channel affects a single mesh. 
         /// </summary>
         public IntPtr MeshChannels;
+
+        public IntPtr MorphMeshChannels;
+
+        public uint NumMorphMeshChannels;
     }
 
     /// <summary>
