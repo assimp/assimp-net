@@ -237,21 +237,19 @@ namespace Assimp
             nativeValue.PositionKeys = IntPtr.Zero;
 
             if(nativeValue.NumPositionKeys > 0)
-                MemoryHelper.ToNativeArray<VectorKey>(m_positionKeys.ToArray());
-
+                nativeValue.PositionKeys = MemoryHelper.ToNativeArray<VectorKey>(m_positionKeys.ToArray());
 
             nativeValue.NumRotationKeys = (uint) m_rotationKeys.Count;
             nativeValue.RotationKeys = IntPtr.Zero;
 
             if(nativeValue.NumRotationKeys > 0)
-                MemoryHelper.ToNativeArray<QuaternionKey>(m_rotationKeys.ToArray());
-
+                nativeValue.RotationKeys = MemoryHelper.ToNativeArray<QuaternionKey>(m_rotationKeys.ToArray());
 
             nativeValue.NumScalingKeys = (uint) m_scalingKeys.Count;
             nativeValue.ScalingKeys = IntPtr.Zero;
 
             if(nativeValue.NumScalingKeys > 0)
-                MemoryHelper.ToNativeArray<VectorKey>(m_scalingKeys.ToArray());
+                nativeValue.ScalingKeys = MemoryHelper.ToNativeArray<VectorKey>(m_scalingKeys.ToArray());
         }
 
         /// <summary>
