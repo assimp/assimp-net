@@ -29,6 +29,7 @@ using Assimp.Configs;
 using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
+using OpenTK.Input;
 
 namespace Assimp.Sample
 {
@@ -79,7 +80,8 @@ namespace Assimp.Sample
                     for(int i = 0; i < mesh.VertexCount; i++)
                     {
                         Vector3 tmp = FromVector(mesh.Vertices[i]);
-                        Vector3.Transform(ref tmp, ref trafo, out tmp);
+                        Matrix3 trafo3 = new Matrix3(trafo);
+                        Vector3.Transform(ref tmp, ref trafo3, out tmp);
 
                         min.X = Math.Min(min.X, tmp.X);
                         min.Y = Math.Min(min.Y, tmp.Y);
@@ -114,7 +116,7 @@ namespace Assimp.Sample
             {
                 m_angle = 0.0f;
             }
-            if(Keyboard[OpenTK.Input.Key.Escape])
+            if(Keyboard.GetState()[Key.Escape])
             {
                 this.Exit();
             }

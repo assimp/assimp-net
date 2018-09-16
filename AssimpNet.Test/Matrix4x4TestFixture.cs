@@ -186,7 +186,7 @@ namespace Assimp.Test
             float y = 2.0f;
             float z = 3.0f;
 
-            TK.Matrix4 tkM = TK.Matrix4.Scale(x, y, z);
+            TK.Matrix4 tkM = TK.Matrix4.CreateScale(x, y, z);
             Matrix4x4 m = Matrix4x4.FromScaling(new Vector3D(x, y, z));
 
             TestHelper.AssertEquals(tkM, m, "Testing from scaling");
