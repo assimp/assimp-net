@@ -44,16 +44,7 @@ namespace Assimp.Test
             {
                 if(m_rootPath == null)
                 {
-                    Assembly entryAssembly = Assembly.GetEntryAssembly();
-                    String dirPath = String.Empty;
-
-                    if(entryAssembly == null)
-                        entryAssembly = Assembly.GetCallingAssembly();
-
-                    if(entryAssembly != null)
-                        dirPath = Path.GetDirectoryName(entryAssembly.Location);
-
-                    m_rootPath = dirPath;
+                    m_rootPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
                 }
 
                 return m_rootPath;

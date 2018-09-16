@@ -21,47 +21,49 @@
 */
 
 using System;
+using System.Runtime.CompilerServices;
 
 namespace Assimp
 {
     /// <summary>
-    /// Internal usage only for fast-interop - used to find where we need to patch up code and is removed after the patching process.
+    /// Originally used to identify where the AssimpNet.Interop.Generator utility would patch IL for fast
+    /// memory manipulation, now a thin wrapper around the System.Runtime.CompilerServices package.
     /// </summary>
     internal static class InternalInterop
     {
         public static unsafe void WriteArray<T>(IntPtr pDest, T[] data, int startIndex, int count) where T : struct
         {
-            throw new NotImplementedException();
+            Unsafe.CopyBlock(pDest.ToPointer(), Unsafe.AsPointer(ref data[startIndex]), (uint)(SizeOfInline<T>() * count));
         }
 
         public static unsafe void ReadArray<T>(IntPtr pSrc, T[] data, int startIndex, int count) where T : struct
         {
-            throw new NotImplementedException();
+            Unsafe.CopyBlock(Unsafe.AsPointer(ref data[startIndex]), pSrc.ToPointer(), (uint)(SizeOfInline<T>() * count));
         }
 
         public static unsafe void WriteInline<T>(void* pDest, ref T srcData) where T : struct
         {
-            throw new NotImplementedException();
+            Unsafe.Copy(pDest, ref srcData);
         }
 
         public static unsafe T ReadInline<T>(void* pSrc) where T : struct
         {
-            throw new NotImplementedException();
+            return Unsafe.Read<T>(pSrc);
         }
 
         public static unsafe int SizeOfInline<T>()
         {
-            throw new NotImplementedException();
+            return Unsafe.SizeOf<T>();
         }
 
         public static unsafe void MemCopyInline(void* pDest, void* pSrc, int count)
         {
-            throw new NotImplementedException();
+            Unsafe.CopyBlock(pDest, pSrc, (uint)count);
         }
 
         public static unsafe void MemSetInline(void* pDest, byte value, int count)
         {
-            throw new NotImplementedException();
+            Unsafe.InitBlock(pDest, value, (uint)count);
         }
     }
 }
