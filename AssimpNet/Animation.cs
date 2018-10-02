@@ -161,10 +161,12 @@ namespace Assimp {
             nativeValue.TicksPerSecond = m_ticksPerSecond;
             nativeValue.NumChannels = (uint) NodeAnimationChannelCount;
             nativeValue.NumMeshChannels = (uint) MeshAnimationChannelCount;
+            nativeValue.NumMorphMeshChannels = 0;
             nativeValue.Channels = IntPtr.Zero;
             nativeValue.MeshChannels = IntPtr.Zero;
+            nativeValue.MorphMeshChannels = IntPtr.Zero;
 
-            if(nativeValue.NumChannels > 0)
+            if (nativeValue.NumChannels > 0)
                 nativeValue.Channels = MemoryHelper.ToNativeArray<NodeAnimationChannel, AiNodeAnim>(m_nodeChannels.ToArray(), true);
 
             if(nativeValue.NumMeshChannels > 0)
