@@ -206,6 +206,33 @@ namespace Assimp.Test
         }
 
         [Test]
+        public unsafe void TestImportFromMemory()
+        {
+            String path = Path.Combine(TestHelper.RootPath, "TestFiles\\duck.dae");
+
+            byte[] memory = File.ReadAllBytes(path);
+
+            fixed (byte* ptr = memory)
+            {
+                AssimpContext importer = new AssimpContext();
+                LogStream.IsVerboseLoggingEnabled = true;
+
+                LogStream logstream = new LogStream(delegate (String msg, String userData)
+                {
+                    Console.WriteLine(msg);
+                });
+
+                logstream.Attach();
+
+                Scene scene = importer.ImportFileFromMemory(new IntPtr(ptr), (uint) memory.Length, ".dae");
+
+                Assert.IsNotNull(scene);
+                Assert.IsTrue((scene.SceneFlags & SceneFlags.Incomplete) != SceneFlags.Incomplete);
+            }
+           
+        }
+
+        [Test]
         public void TestSupportedFormats()
         {
             AssimpContext importer = new AssimpContext();

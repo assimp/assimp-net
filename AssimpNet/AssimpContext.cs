@@ -239,6 +239,77 @@ namespace Assimp
 
         #endregion
 
+        #region ImportFileFromMemory
+
+        /// <summary>
+        /// Imports a model from the memory without running any post-process steps. The importer sets configurations
+        /// and loads the model into managed memory, releasing the unmanaged memory used by Assimp. It is up to the caller to dispose/unlock the memory.
+        /// </summary>
+        /// <param name="buffer">Pointer to memory location</param>
+        /// <param name="length">Length of buffer in memory</param>
+        /// <param name="formatHint">Format extension to serve as a hint to Assimp to choose which importer to use</param>
+        /// <returns>The imported scene</returns>
+        /// <exception cref="AssimpException">Thrown if the pointer is not valid (null or zero) or the length is zero or if the format hint is null or empty.</exception>
+        /// <exception cref="System.ObjectDisposedException">Thrown if the context has already been disposed of.</exception>
+        public Scene ImportFileFromMemory(IntPtr buffer, uint length, String formatHint)
+        {
+            return ImportFileFromMemory(buffer, length, PostProcessSteps.None, formatHint);
+        }
+
+        /// <summary>
+        /// Imports a model from the stream. The importer sets configurations
+        /// and loads the model into managed memory, releasing the unmanaged memory used by Assimp. It is up to the caller to dispose of the stream.
+        /// </summary>
+        /// <param name="buffer">Pointer to memory location</param>
+        /// <param name="length">Length of buffer in memory</param>
+        /// <param name="postProcessFlags">Post processing flags, if any</param>
+        /// <param name="formatHint">Format extension to serve as a hint to Assimp to choose which importer to use</param>
+        /// <returns>The imported scene</returns>
+        /// <exception cref="AssimpException">Thrown if the pointer is not valid (null or zero) or the length is zero or if the format hint is null or empty.</exception>
+        /// <exception cref="System.ObjectDisposedException">Thrown if the context has already been disposed of.</exception>
+        public Scene ImportFileFromMemory(IntPtr buffer, uint length, PostProcessSteps postProcessFlags, String formatHint)
+        {
+            CheckDisposed();
+
+            if (buffer == IntPtr.Zero) 
+                throw new AssimpException("buffer", "Pointer to memory location must not be zero.");
+
+            if (length <= 0) 
+                throw new AssimpException("length", "Length of buffer must be greater than zero.");
+
+            if (String.IsNullOrEmpty(formatHint))
+                throw new AssimpException("formatHint", "Format hint is null or empty");
+
+            IntPtr ptr = IntPtr.Zero;
+            PrepareImport();
+
+            try
+            {
+                ptr = AssimpLibrary.Instance.ImportFileFromMemory(buffer, length, PostProcessSteps.None, formatHint, m_propStore);
+
+                if (ptr == IntPtr.Zero)
+                    throw new AssimpException("Error importing file: " + AssimpLibrary.Instance.GetErrorString());
+
+                TransformScene(ptr);
+
+                if (postProcessFlags != PostProcessSteps.None)
+                    ptr = AssimpLibrary.Instance.ApplyPostProcessing(ptr, postProcessFlags);
+
+                return Scene.FromUnmanagedScene(ptr);
+            }
+            finally
+            {
+                CleanupImport();
+
+                if (ptr != IntPtr.Zero)
+                {
+                    AssimpLibrary.Instance.ReleaseImport(ptr);
+                }
+            }
+        }
+
+        #endregion
+
         #region ImportFile
 
         /// <summary>
