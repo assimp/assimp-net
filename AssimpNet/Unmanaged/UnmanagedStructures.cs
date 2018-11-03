@@ -622,6 +622,11 @@ namespace Assimp.Unmanaged
         public Vector3D Direction;
 
         /// <summary>
+        /// Direction up.
+        /// </summary>
+        public Vector3D Up;
+        
+        /// <summary>
         /// Attenuation constant value.
         /// </summary>
         public float AttenuationConstant;
