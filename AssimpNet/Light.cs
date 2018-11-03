@@ -45,9 +45,11 @@ namespace Assimp
         private float m_attQuadratic;
         private Vector3D m_position;
         private Vector3D m_direction;
+        private Vector3D m_up;
         private Color3D m_diffuse;
         private Color3D m_specular;
         private Color3D m_ambient;
+
 
         /// <summary>
         /// Gets or sets the name of the light source. This corresponds to a node present in the scenegraph.
@@ -198,6 +200,21 @@ namespace Assimp
         }
 
         /// <summary>
+        /// Gets or sets the direction up.
+        /// </summary>
+        public Vector3D Up
+        {
+            get
+            {
+                return m_up;
+            }
+            set
+            {
+                m_up = value;
+            }
+        }
+
+        /// <summary>
         /// Gets or sets the diffuse color of the light source.  The diffuse light color is multiplied with
         /// the diffuse material color to obtain the final color that contributes to the diffuse shading term.
         /// </summary>
@@ -282,6 +299,7 @@ namespace Assimp
             nativeValue.ColorSpecular = m_specular;
             nativeValue.Direction = m_direction;
             nativeValue.Position = m_position;
+            nativeValue.Up = m_up;
         }
 
         /// <summary>
@@ -302,6 +320,7 @@ namespace Assimp
             m_diffuse = nativeValue.ColorDiffuse;
             m_specular = nativeValue.ColorSpecular;
             m_ambient = nativeValue.ColorAmbient;
+            m_up = nativeValue.Up;
         }
 
         /// <summary>
