@@ -46,6 +46,7 @@ namespace Assimp
         private Vector3D m_position;
         private Vector3D m_direction;
         private Vector3D m_up;
+        private Vector2D m_size;
         private Color3D m_diffuse;
         private Color3D m_specular;
         private Color3D m_ambient;
@@ -215,6 +216,21 @@ namespace Assimp
         }
 
         /// <summary>
+        /// Gets or sets size of na Area light.
+        /// </summary>
+        public Vector2D Size
+        {
+            get
+            {
+                return m_size;
+            }
+            set
+            {
+                m_size = value;
+            }
+        }
+
+        /// <summary>
         /// Gets or sets the diffuse color of the light source.  The diffuse light color is multiplied with
         /// the diffuse material color to obtain the final color that contributes to the diffuse shading term.
         /// </summary>
@@ -300,6 +316,7 @@ namespace Assimp
             nativeValue.Direction = m_direction;
             nativeValue.Position = m_position;
             nativeValue.Up = m_up;
+            nativeValue.Size = m_size;
         }
 
         /// <summary>
@@ -321,6 +338,7 @@ namespace Assimp
             m_specular = nativeValue.ColorSpecular;
             m_ambient = nativeValue.ColorAmbient;
             m_up = nativeValue.Up;
+            m_size = nativeValue.Size;
         }
 
         /// <summary>

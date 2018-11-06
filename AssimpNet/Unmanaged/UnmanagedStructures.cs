@@ -665,6 +665,12 @@ namespace Assimp.Unmanaged
         /// Spot light outer angle.
         /// </summary>
         public float AngleOuterCone;
+
+        /// <summary>
+        /// Size of an Area light.
+        /// </summary>
+        public Vector2D Size;
+
     }
 
     /// <summary>
