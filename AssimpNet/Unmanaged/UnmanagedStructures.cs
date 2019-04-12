@@ -104,6 +104,11 @@ namespace Assimp.Unmanaged
         public IntPtr Cameras;
 
         /// <summary>
+        /// aiMetadata*
+        /// </summary>
+        public IntPtr MetaData;
+
+        /// <summary>
         /// void*, Private data do not touch!
         /// </summary>
         public IntPtr PrivateData;
