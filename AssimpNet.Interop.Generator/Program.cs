@@ -32,7 +32,8 @@ using Mono.Collections.Generic;
 namespace AssimpNet.Interop.Generator
 {
     /// <summary>
-    /// Console program that patches AssimpNet.dll, by iterating over all types and finding stubs to replace with IL code. Original idea (and some of the IL code) credit goes to SharpDX, 
+    /// Console program that patches AssimpNet.dll, by iterating over all types and finding stubs to replace with IL code.
+    /// Original idea (and some of the IL code) credit goes to SharpDX, 
     /// the generator below is ported from the Tesla 3D engine project.
     /// </summary>
     class Program
@@ -302,7 +303,7 @@ namespace AssimpNet.Interop.Generator
         {
             //Make sure we import IntPtr::op_explicit(void*)
             MethodInfo opExplicitInfo = typeof(IntPtr).GetMethod("op_Explicit", new Type[] { typeof(void*) });
-            MethodReference opExplicitRef = method.Module.Import(opExplicitInfo);
+            MethodReference opExplicitRef = method.Module.ImportReference(opExplicitInfo);
 
             method.Body.Instructions.Clear();
             method.Body.InitLocals = true;
@@ -351,7 +352,7 @@ namespace AssimpNet.Interop.Generator
         {
             //Make sure we import IntPtr::op_explicit(void*)
             MethodInfo opExplicitInfo = typeof(IntPtr).GetMethod("op_Explicit", new Type[] { typeof(void*) });
-            MethodReference opExplicitRef = method.Module.Import(opExplicitInfo);
+            MethodReference opExplicitRef = method.Module.ImportReference(opExplicitInfo);
 
             method.Body.Instructions.Clear();
             method.Body.InitLocals = true;
