@@ -627,6 +627,11 @@ namespace Assimp.Unmanaged
         public Vector3D Direction;
 
         /// <summary>
+        /// Direction up.
+        /// </summary>
+        public Vector3D Up;
+        
+        /// <summary>
         /// Attenuation constant value.
         /// </summary>
         public float AttenuationConstant;
@@ -665,6 +670,12 @@ namespace Assimp.Unmanaged
         /// Spot light outer angle.
         /// </summary>
         public float AngleOuterCone;
+
+        /// <summary>
+        /// Size of an Area light.
+        /// </summary>
+        public Vector2D Size;
+
     }
 
     /// <summary>
