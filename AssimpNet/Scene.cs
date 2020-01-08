@@ -370,6 +370,7 @@ namespace Assimp
             nativeValue.Cameras = IntPtr.Zero;
             nativeValue.Textures = IntPtr.Zero;
             nativeValue.Animations = IntPtr.Zero;
+            nativeValue.MetaData = IntPtr.Zero;
             nativeValue.PrivateData = IntPtr.Zero;
 
             nativeValue.NumMaterials = (uint) MaterialCount;
